@@ -12,7 +12,11 @@ var configuration = builder.Configuration;
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(v =>
+{
+    v.JsonSerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString;
+    v.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -52,7 +56,7 @@ builder.Services.AddSqlite<ChatServerDbContext>("Data Source=ChatServer.db");
 
 builder.Services.Configure<AppConfig>(builder.Configuration.GetSection("AppConfig"));
 
-// ¼øÈ¨
+// ï¿½ï¿½È¨
 builder.Services.AddAuthentication(options => options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

@@ -24,7 +24,7 @@ namespace StudentChat.Server.Controllers
         [HttpPost("UploadImage")]
         public async Task<ApiResult<BinaryUploadResultData>> UploadImage(IFormFile file)
         {
-            if (file.Length > 1 << 10 << 10)
+            if (file.Length > (1 << 10 << 10))
             {
                 // cannot greator than 1mb
                 return ApiResult<BinaryUploadResultData>.CreateErr("太大了");
