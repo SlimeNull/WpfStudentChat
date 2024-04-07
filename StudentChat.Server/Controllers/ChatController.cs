@@ -85,6 +85,8 @@ namespace StudentChat.Server.Controllers
             }
 
             var messages = await query
+                .Include(msg => msg.ImageAttachments)
+                .Include(msg => msg.FileAttachments)
                 .Select(msg => (CommonModels.PrivateMessage)msg)
                 .ToListAsync();
 
@@ -145,6 +147,8 @@ namespace StudentChat.Server.Controllers
             }
 
             var messages = await query
+                .Include(msg => msg.ImageAttachments)
+                .Include(msg => msg.FileAttachments)
                 .Select(msg => (CommonModels.GroupMessage)msg)
                 .ToListAsync();
 
@@ -163,6 +167,36 @@ namespace StudentChat.Server.Controllers
                 return ApiResult.CreateErr("No such friend");
             }
 
+            if (request.ImageAttachments is not null)
+            {
+                foreach (var attachment in request.ImageAttachments)
+                {
+                    var dataExist = await _dbContext.Images
+                        .AsNoTracking()
+                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
+
+                    if (!dataExist)
+                    {
+                        return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
+                    }
+                }
+            }
+
+            if (request.FileAttachments is not null)
+            {
+                foreach (var attachment in request.FileAttachments)
+                {
+                    var dataExist = await _dbContext.Files
+                        .AsNoTracking()
+                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
+
+                    if (!dataExist)
+                    {
+                        return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
+                    }
+                }
+            }
+
             var entry = _dbContext.PrivateMessages.Add(
                 new PrivateMessage()
                 {
@@ -171,6 +205,36 @@ namespace StudentChat.Server.Controllers
                     Content = request.Content,
                     SentTime = DateTimeOffset.Now,
                 });
+
+            await _dbContext.SaveChangesAsync();
+
+            if (request.ImageAttachments is not null)
+            {
+                foreach (var attachment in request.ImageAttachments)
+                {
+                    await _dbContext.PrivateMessageImageAttachments.AddAsync(
+                        new PrivateMessageImageAttachment()
+                        {
+                            Name = attachment.Name,
+                            MessageId = entry.Entity.Id,
+                            AttachmentHash = attachment.AttachmentHash,
+                        });
+                }
+            }
+
+            if (request.FileAttachments is not null)
+            {
+                foreach (var attachment in request.FileAttachments)
+                {
+                    await _dbContext.PrivateMessageFileAttachments.AddAsync(
+                        new PrivateMessageFileAttachment()
+                        {
+                            Name = attachment.Name,
+                            MessageId = entry.Entity.Id,
+                            AttachmentHash = attachment.AttachmentHash,
+                        });
+                }
+            }
 
             await _dbContext.SaveChangesAsync();
             await _messageNotifyService.OnPrivateMessageSent((CommonModels.PrivateMessage)entry.Entity);
@@ -190,6 +254,36 @@ namespace StudentChat.Server.Controllers
                 return ApiResult.CreateErr("No such group");
             }
 
+            if (request.ImageAttachments is not null)
+            {
+                foreach (var attachment in request.ImageAttachments)
+                {
+                    var dataExist = await _dbContext.Images
+                        .AsNoTracking()
+                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
+
+                    if (!dataExist)
+                    {
+                        return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
+                    }
+                }
+            }
+
+            if (request.FileAttachments is not null)
+            {
+                foreach (var attachment in request.FileAttachments)
+                {
+                    var dataExist = await _dbContext.Files
+                        .AsNoTracking()
+                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
+
+                    if (!dataExist)
+                    {
+                        return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
+                    }
+                }
+            }
+
             var entry = _dbContext.GroupMessages.Add(
                 new GroupMessage()
                 {
@@ -200,6 +294,37 @@ namespace StudentChat.Server.Controllers
                 });
 
             await _dbContext.SaveChangesAsync();
+
+            if (request.ImageAttachments is not null)
+            {
+                foreach (var attachment in request.ImageAttachments)
+                {
+                    await _dbContext.GroupMessageImageAttachments.AddAsync(
+                        new GroupMessageImageAttachment()
+                        {
+                            Name = attachment.Name,
+                            MessageId = entry.Entity.Id,
+                            AttachmentHash = attachment.AttachmentHash,
+                        });
+                }
+            }
+
+            if (request.FileAttachments is not null)
+            {
+                foreach (var attachment in request.FileAttachments)
+                {
+                    await _dbContext.GroupMessageFileAttachments.AddAsync(
+                        new GroupMessageFileAttachment()
+                        {
+                            Name = attachment.Name,
+                            MessageId = entry.Entity.Id,
+                            AttachmentHash = attachment.AttachmentHash,
+                        });
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
+
             await _messageNotifyService.OnGroupMessageSent((CommonModels.GroupMessage)entry.Entity);
 
             return ApiResult.CreateOk();

@@ -27,7 +27,21 @@ namespace StudentChat.Server.Models.Database
                 SenderId = message.SenderId,
                 ReceiverId = message.ReceiverId,
                 Content = message.Content,
-                SentTime = message.SentTime
+                SentTime = message.SentTime,
+                ImageAttachments = message.ImageAttachments
+                    ?.Select(attachment => new CommonModels.Attachment()
+                    {
+                        Name = attachment.Name,
+                        AttachmentHash = attachment.AttachmentHash,
+                    })
+                    ?.ToList(),
+                FileAttachments = message.FileAttachments
+                    ?.Select(attachment => new CommonModels.Attachment()
+                    {
+                        Name = attachment.Name,
+                        AttachmentHash = attachment.AttachmentHash,
+                    })
+                    ?.ToList()
             };
         }
     }

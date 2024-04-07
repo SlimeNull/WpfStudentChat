@@ -3,6 +3,7 @@
     public class GroupMessageImageAttachment
     {
         public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public int MessageId { get; set; }
         public string AttachmentHash { get; set; } = string.Empty;

@@ -21,8 +21,8 @@ namespace StudentChat.Models.Network
     public record class QueryGroupMessagesRequestData(int GroupId, DateTimeOffset? StartTime, DateTimeOffset? EndTime, int Count);
     public record class QueryGroupMessagesResultData(List<GroupMessage> Messages);
 
-    public record class SendPrivateMessageRequestData(int ReceiverId, string Content);
-    public record class SendGroupMessageRequestData(int GroupId, string Content);
+    public record class SendPrivateMessageRequestData(int ReceiverId, string Content, List<Attachment>? ImageAttachments, List<Attachment>? FileAttachments);
+    public record class SendGroupMessageRequestData(int GroupId, string Content, List<Attachment>? ImageAttachments, List<Attachment>? FileAttachments);
 
 
 
@@ -35,7 +35,8 @@ namespace StudentChat.Models.Network
     /// </summary>
     /// <param name="UserId">要添加的好友的 ID</param>
     /// <param name="Message">附加消息</param>
-    public record class SendFriendRequestRequestData(int UserId, string Message);
-    public record class SendGroupRequestRequestData(int GroupId, string Message);
-    public record class DealRequestRequestData(int RequestId);
+    public record class SendFriendRequestRequestData(int UserId, string? Message);
+    public record class SendGroupRequestRequestData(int GroupId, string? Message);
+    public record class AcceptRequestRequestData(int RequestId);
+    public record class RejectRequestRequestData(int RequestId, string? Reason);
 }

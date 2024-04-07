@@ -9,5 +9,8 @@
         public string Content { get; set; } = string.Empty;
 
         public DateTimeOffset SentTime { get; set; }
+
+        public List<Attachment>? ImageAttachments { get; set; }
+        public List<Attachment>? FileAttachments { get; set; }
     }
 }

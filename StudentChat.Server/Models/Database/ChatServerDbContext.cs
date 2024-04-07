@@ -16,7 +16,9 @@ namespace StudentChat.Server.Models.Database
         public DbSet<FriendRequest> FriendRequests { get; set; }
         public DbSet<GroupRequest> GroupRequests { get; set; }
         public DbSet<PrivateMessageImageAttachment> PrivateMessageImageAttachments { get; set; }
+        public DbSet<PrivateMessageFileAttachment> PrivateMessageFileAttachments { get; set; }
         public DbSet<GroupMessageImageAttachment> GroupMessageImageAttachments { get; set; }
+        public DbSet<GroupMessageFileAttachment> GroupMessageFileAttachments { get; set; }
 
         public ChatServerDbContext(DbContextOptions<ChatServerDbContext> options) : base(options)
         {

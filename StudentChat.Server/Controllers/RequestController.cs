@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentChat.Models.Network;
 using StudentChat.Server.Extensions;
 using StudentChat.Server.Models;
@@ -34,7 +35,15 @@ namespace StudentChat.Server.Controllers
 
             if (alreadyExist)
             {
-                return ApiResult.CreateErr("已经发送过请求了");
+                return ApiResult.CreateErr("You have already sent a request");
+            }
+
+            var userExist = await _dbContext.Users
+                .AnyAsync(user => user.Id == request.UserId);
+
+            if (!userExist)
+            {
+                return ApiResult.CreateErr("No such user");
             }
 
             var entry = _dbContext.FriendRequests.Add(
@@ -59,7 +68,15 @@ namespace StudentChat.Server.Controllers
 
             if (alreadyExist)
             {
-                return ApiResult.CreateErr("已经发送过请求了");
+                return ApiResult.CreateErr("You have already sent a request");
+            }
+
+            var groupExist = await _dbContext.Groups
+                .AnyAsync(group => group.Id == request.GroupId);
+
+            if (!groupExist)
+            {
+                return ApiResult.CreateErr("No such group");
             }
 
             var entry = _dbContext.GroupRequests.Add(
@@ -78,30 +95,157 @@ namespace StudentChat.Server.Controllers
 
 
         [HttpPost("AcceptFriendRequest")]
-        public Task<ApiResult> AcceptFriendRequestAsync(DealRequestRequestData request)
+        public async Task<ApiResult> AcceptFriendRequestAsync(AcceptRequestRequestData request)
         {
-            throw new NotImplementedException();
+            var selfId = HttpContext.GetUserId();
+            var friendRequest = await _dbContext.FriendRequests
+                .FirstOrDefaultAsync(fr => fr.ReceiverId == selfId && fr.Id == request.RequestId);
+
+            if (friendRequest is null)
+            {
+                return ApiResult.CreateErr("No such friend request");
+            }
+
+            if (friendRequest.IsDone)
+            {
+                return ApiResult.CreateErr("This request has already been processed");
+            }
+
+            friendRequest.IsDone = true;
+
+            await _dbContext.UserFriends.AddAsync(
+                new UserFriend()
+                {
+                    FromUserId = friendRequest.SenderId,
+                    ToUserId = selfId,
+                });
+
+            await _dbContext.SaveChangesAsync();
+
+            var requestSender = _dbContext.Users.First(u => u.Id == friendRequest.SenderId);
+            var requestReceiver = _dbContext.Users.First(u => u.Id == friendRequest.ReceiverId);
+            await _notifyService.OnFriendIncreased(requestSender.Id, (CommonModels.User)requestReceiver);
+            await _notifyService.OnFriendIncreased(requestReceiver.Id, (CommonModels.User)requestSender);
+
+            return ApiResult.CreateOk();
         }
 
         [HttpPost("RejectFriendRequest")]
-        public Task<ApiResult> RejectFriendRequestAsync(DealRequestRequestData request)
+        public async Task<ApiResult> RejectFriendRequestAsync(AcceptRequestRequestData request)
         {
-            throw new NotImplementedException();
+            var selfId = HttpContext.GetUserId();
+            var friendRequest = await _dbContext.FriendRequests
+                .FirstOrDefaultAsync(fr => fr.ReceiverId == selfId && fr.Id == request.RequestId);
 
+            if (friendRequest is null)
+            {
+                return ApiResult.CreateErr("No such friend request");
+            }
+
+            if (friendRequest.IsDone)
+            {
+                return ApiResult.CreateErr("This request has already been processed");
+            }
+
+            friendRequest.IsDone = true;
+
+            //await _dbContext.UserFriends.AddAsync(
+            //    new UserFriend()
+            //    {
+            //        FromUserId = friendRequest.SenderId,
+            //        ToUserId = selfId,
+            //    });
+
+            await _dbContext.SaveChangesAsync();
+
+            //var requestSender = _dbContext.Users.First(u => u.Id == friendRequest.SenderId);
+            //var requestReceiver = _dbContext.Users.First(u => u.Id == friendRequest.ReceiverId);
+            //await _notifyService.OnFriendIncreased(requestSender.Id, (CommonModels.User)requestReceiver);
+            //await _notifyService.OnFriendIncreased(requestReceiver.Id, (CommonModels.User)requestSender);
+
+            return ApiResult.CreateOk();
         }
 
         [HttpPost("AcceptGroupRequest")]
-        public Task<ApiResult> AcceptGroupRequestAsync(DealRequestRequestData request)
+        public async Task<ApiResult> AcceptGroupRequestAsync(AcceptRequestRequestData request)
         {
-            throw new NotImplementedException();
+            var selfId = HttpContext.GetUserId();
+            var groupRequest = await _dbContext.GroupRequests
+                .FirstOrDefaultAsync(gr => gr.Id == request.RequestId);
 
+            if (groupRequest is null)
+            {
+                return ApiResult.CreateErr("No such group request");
+            }
+
+            if (groupRequest.IsDone)
+            {
+                return ApiResult.CreateErr("This request has already been processed");
+            }
+
+            var group = await _dbContext.Groups
+                .AsNoTracking()
+                .FirstAsync(g => g.Id == groupRequest.GroupId);
+
+            if (group.OwnerId != selfId)
+            {
+                return ApiResult.CreateErr("You are not owner of that group");
+            }
+
+            groupRequest.IsDone = true;
+
+            await _dbContext.GroupMembers.AddAsync(
+                new GroupMember()
+                {
+                    UserId = groupRequest.SenderId,
+                    GroupId = groupRequest.GroupId,
+                });
+
+            await _dbContext.SaveChangesAsync();
+            await _notifyService.OnGroupIncreased(groupRequest.SenderId, (CommonModels.Group)group);
+
+            return ApiResult.CreateOk();
         }
 
         [HttpPost("RejectGroupRequest")]
-        public Task<ApiResult> RejectGroupRequestAsync(DealRequestRequestData request)
+        public async Task<ApiResult> RejectGroupRequestAsync(AcceptRequestRequestData request)
         {
-            throw new NotImplementedException();
+            var selfId = HttpContext.GetUserId();
+            var groupRequest = await _dbContext.GroupRequests
+                .FirstOrDefaultAsync(gr => gr.Id == request.RequestId);
 
+            if (groupRequest is null)
+            {
+                return ApiResult.CreateErr("No such group request");
+            }
+
+            if (groupRequest.IsDone)
+            {
+                return ApiResult.CreateErr("This request has already been processed");
+            }
+
+            var group = await _dbContext.Groups
+                .AsNoTracking()
+                .FirstAsync(g => g.Id == groupRequest.GroupId);
+
+            if (group.OwnerId != selfId)
+            {
+                return ApiResult.CreateErr("You are not owner of that group");
+            }
+
+            groupRequest.IsDone = true;
+
+            //await _dbContext.GroupMembers.AddAsync(
+            //    new GroupMember()
+            //    {
+            //        UserId = groupRequest.SenderId,
+            //        GroupId = groupRequest.GroupId,
+            //    });
+
+            await _dbContext.SaveChangesAsync();
+            //await _notifyService.OnGroupIncreased(groupRequest.SenderId, (CommonModels.Group)group);
+
+            return ApiResult.CreateOk();
         }
     }
 }

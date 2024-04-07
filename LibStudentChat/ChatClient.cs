@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using StudentChat.Models;
 using StudentChat.Models.Events;
 using StudentChat.Models.Network;
 using StudentChat.Utilites;
@@ -129,6 +130,31 @@ public class ChatClient
         return apiResult.Data;
     }
 
+    private async Task PostAsync<TRequestData>(string path, TRequestData requestData)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, path);
+        request.Content = JsonContent.Create(requestData);
+
+        if (token is not null)
+        {
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+
+        var response = await _httpClient.SendAsync(request);
+
+        var apiResult = await response.Content.ReadFromJsonAsync<ApiResult>();
+
+        if (apiResult is null)
+        {
+            throw new Exception("Server returns empty result");
+        }
+
+        if (!apiResult.Ok)
+        {
+            throw new Exception(apiResult.Message);
+        }
+    }
+
     private async Task<BinaryUploadResultData> UploadBinary(string path, string parameterName, byte[] fileContent, int offset, int count, string contentType)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, path);
@@ -170,13 +196,89 @@ public class ChatClient
         byte[] passwordHash = SHA256.HashData(passwordBytes);
         string passwordHashText = Convert.ToHexString(passwordHash);
 
-        var result = await PostAsync<LoginRequestData, LoginResultData>("/api/Auth/Login", new LoginRequestData(username, passwordHashText));
+        var result = await PostAsync<LoginRequestData, LoginResultData>(
+            "/api/Auth/Login", 
+            new LoginRequestData(username, passwordHashText));
 
         token = result.Token;
         backgroundTasksCancellation = new();
 
         // start background task
         _ = BackgroundTasks(backgroundTasksCancellation.Token);
+    }
+
+    public async Task<List<PrivateMessage>> QueryPrivateMessages(int userId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count)
+    {
+        var result = await PostAsync<QueryPrivateMessagesRequestData, QueryPrivateMessagesResultData>(
+            "api/Chat/QueryPrivateMessages", 
+            new QueryPrivateMessagesRequestData(userId, startTime, endTime, count));
+
+        return result.Messages;
+    }
+
+    public async Task<List<GroupMessage>> QueryGroupMessages(int groupId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count)
+    {
+        var result = await PostAsync<QueryGroupMessagesRequestData, QueryGroupMessagesResultData>(
+            "api/Chat/QueryGroupMessages",
+            new QueryGroupMessagesRequestData(groupId, startTime, endTime, count));
+
+        return result.Messages;
+    }
+
+    public async Task SendPrivateMessage(int receiverId, string content, List<Attachment>? imageAttachments, List<Attachment>? fileAttachments)
+    {
+        await PostAsync<SendPrivateMessageRequestData>(
+            "api/Chat/SendPrivateMessage",
+            new SendPrivateMessageRequestData(receiverId, content, imageAttachments, fileAttachments));
+    }
+
+    public async Task SendGroupMessage(int groupId, string content, List<Attachment>? imageAttachments, List<Attachment>? fileAttachments)
+    {
+        await PostAsync<SendGroupMessageRequestData>(
+            "api/Chat/SendGroupMessage",
+            new SendGroupMessageRequestData(groupId, content, imageAttachments, fileAttachments));
+    }
+
+    public async Task SendFriendRequest(int userId, string? message)
+    {
+        await PostAsync<SendFriendRequestRequestData>(
+            "api/Request/SendFriendRequest",
+            new SendFriendRequestRequestData(userId, message));
+    }
+
+    public async Task SendGroupRequest(int groupId, string? message)
+    {
+        await PostAsync<SendGroupRequestRequestData>(
+            "api/Request/SendGroupRequest",
+            new SendGroupRequestRequestData(groupId, message));
+    }
+
+    public async Task AcceptFriendRequest(int requestId)
+    {
+        await PostAsync<AcceptRequestRequestData>(
+            "api/Request/AcceptFriendRequest",
+            new AcceptRequestRequestData(requestId));
+    }
+
+    public async Task AcceptGroupRequest(int requestId)
+    {
+        await PostAsync<AcceptRequestRequestData>(
+            "api/Request/AcceptGroupRequest",
+            new AcceptRequestRequestData(requestId));
+    }
+
+    public async Task RejectFriendRequest(int requestId, string? reason)
+    {
+        await PostAsync<RejectRequestRequestData>(
+            "api/Request/RejectFriendRequest",
+            new RejectRequestRequestData(requestId, reason));
+    }
+
+    public async Task RejectGroupRequest(int requestId, string? reason)
+    {
+        await PostAsync<RejectRequestRequestData>(
+            "api/Request/RejectGroupRequest",
+            new RejectRequestRequestData(requestId, reason));
     }
 
     public event EventHandler<PrivateMessageReceivedEventArgs>? PrivateMessageReceived;
