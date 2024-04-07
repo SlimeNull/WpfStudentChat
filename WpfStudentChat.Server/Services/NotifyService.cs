@@ -1,8 +1,8 @@
-﻿using LibStudentChat.Models;
-using WpfStudentChat.Server.Utilities;
-using CommonModels = LibStudentChat.Models;
+﻿using StudentChat.Models;
+using StudentChat.Server.Utilities;
+using CommonModels = StudentChat.Models;
 
-namespace WpfStudentChat.Server.Services
+namespace StudentChat.Server.Services
 {
     public class NotifyService
     {

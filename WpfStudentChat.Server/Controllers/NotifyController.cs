@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WpfStudentChat.Server.Extensions;
-using WpfStudentChat.Server.Services;
-using WpfStudentChat.Server.Models.Database;
+using StudentChat.Server.Extensions;
+using StudentChat.Server.Services;
+using StudentChat.Server.Models.Database;
 
-namespace WpfStudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers
 {
     [ApiController]
     [Authorize(Roles = "User")]

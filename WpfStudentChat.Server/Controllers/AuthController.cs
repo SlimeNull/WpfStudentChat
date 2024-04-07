@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using StudentChat.Models.Network;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Services;
+using StudentChat.Server.Models;
+using StudentChat.Server.Services;
 
-namespace WpfStudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
-
-        public record LoginRequestData(string UserName, string PasswordHash);
-        public record LoginResultData(string Token);
 
 
         public AuthController(AuthService authService)

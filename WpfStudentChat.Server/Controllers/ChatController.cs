@@ -3,13 +3,14 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WpfStudentChat.Server.Extensions;
-using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Models.Database;
-using WpfStudentChat.Server.Services;
-using CommonModels = LibStudentChat.Models;
+using StudentChat.Models.Network;
+using StudentChat.Server.Extensions;
+using StudentChat.Server.Models;
+using StudentChat.Server.Models.Database;
+using StudentChat.Server.Services;
+using CommonModels = StudentChat.Models;
 
-namespace WpfStudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers
 {
     [ApiController]
     [Authorize(Roles = "User")]
@@ -18,15 +19,6 @@ namespace WpfStudentChat.Server.Controllers
     {
         private readonly ChatServerDbContext _dbContext;
         private readonly NotifyService _messageNotifyService;
-
-        public record class QueryPrivateMessagesRequestData(int UserId, DateTimeOffset? StartTime, DateTimeOffset? EndTime, int Count);
-        public record class QueryPrivateMessagesResultData(List<CommonModels.PrivateMessage> Messages);
-
-        public record class QueryGroupMessagesRequestData(int GroupId, DateTimeOffset? StartTime, DateTimeOffset? EndTime, int Count);
-        public record class QueryGroupMessagesResultData(List<CommonModels.GroupMessage> Messages);
-
-        public record class SendPrivateMessageRequestData(CommonModels.PrivateMessage Message);
-        public record class SendGroupMessageRequestData(CommonModels.GroupMessage Message);
 
 
 

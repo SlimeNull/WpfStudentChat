@@ -1,6 +1,6 @@
-@WpfStudentChat.Server_HostAddress = http://localhost:5270
+@StudentChat.Server_HostAddress = http://localhost:5270
 
-GET {{WpfStudentChat.Server_HostAddress}}/weatherforecast/
+GET {{StudentChat.Server_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

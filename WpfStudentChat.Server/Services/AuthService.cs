@@ -5,10 +5,10 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Models.Database;
+using StudentChat.Server.Models;
+using StudentChat.Server.Models.Database;
 
-namespace WpfStudentChat.Server.Services
+namespace StudentChat.Server.Services
 {
     public class AuthService
     {

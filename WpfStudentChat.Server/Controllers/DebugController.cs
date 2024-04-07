@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace WpfStudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers
 {
     [Route("api/[controller]")]
     public class DebugController : ControllerBase

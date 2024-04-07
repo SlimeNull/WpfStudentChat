@@ -1,4 +1,4 @@
-﻿namespace WpfStudentChat.Server.Utilities
+﻿namespace StudentChat.Server.Utilities
 {
     public class AsyncEventHandler<TEventArgs> where TEventArgs : EventArgs
     {

@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Models.Database;
+using StudentChat.Models.Network;
+using StudentChat.Server.Models;
+using StudentChat.Server.Models.Database;
 
-namespace WpfStudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers
 {
     [Controller]
     [Route("api/[controller]")]
@@ -13,8 +14,6 @@ namespace WpfStudentChat.Server.Controllers
     public class BinaryController : ControllerBase
     {
         private readonly ChatServerDbContext _dbContext;
-
-        public record BinaryUploadResultData(string Hash);
 
         public BinaryController(ChatServerDbContext dbContext)
         {

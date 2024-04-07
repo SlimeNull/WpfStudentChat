@@ -2,9 +2,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Models.Database;
-using WpfStudentChat.Server.Services;
+using StudentChat.Server.Models;
+using StudentChat.Server.Models.Database;
+using StudentChat.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

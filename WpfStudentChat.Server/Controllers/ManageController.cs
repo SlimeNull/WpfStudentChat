@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Models.Database;
-using CommonModels = LibStudentChat.Models;
+using StudentChat.Models.Network;
+using StudentChat.Server.Models;
+using StudentChat.Server.Models.Database;
+using CommonModels = StudentChat.Models;
 
-namespace WpfStudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,9 +15,6 @@ namespace WpfStudentChat.Server.Controllers
     public class ManageController : ControllerBase
     {
         private readonly ChatServerDbContext _dbContext;
-
-        public record class AddUserRequestData(CommonModels.User User, string PasswordHash);
-        public record class AddUserResultData(CommonModels.User User);
 
         public ManageController(ChatServerDbContext dbContext)
         {

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace WpfStudentChat.Server.Extensions
+namespace StudentChat.Server.Extensions
 {
     public static class HttpContextExtensions
     {

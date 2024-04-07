@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using LibStudentChat;
+using StudentChat;
 using WpfStudentChat.Models.Messages;
 
 namespace WpfStudentChat.ViewModels.Windows;

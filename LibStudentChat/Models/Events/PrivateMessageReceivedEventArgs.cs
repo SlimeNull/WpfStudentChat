@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibStudentChat.Models.Events
+namespace StudentChat.Models.Events
 {
     public class PrivateMessageReceivedEventArgs(PrivateMessage message) : EventArgs
     {

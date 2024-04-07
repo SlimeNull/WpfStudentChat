@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WpfStudentChat.Server.Models.Database
+namespace StudentChat.Server.Models.Database
 {
     public class FileBinary
     {

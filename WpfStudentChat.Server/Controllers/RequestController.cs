@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WpfStudentChat.Server.Extensions;
-using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Models.Database;
-using WpfStudentChat.Server.Services;
-using CommonModels = LibStudentChat.Models;
+using StudentChat.Models.Network;
+using StudentChat.Server.Extensions;
+using StudentChat.Server.Models;
+using StudentChat.Server.Models.Database;
+using StudentChat.Server.Services;
+using CommonModels = StudentChat.Models;
 
-namespace WpfStudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers
 {
     [ApiController]
     [Authorize(Roles = "User")]
@@ -16,15 +17,6 @@ namespace WpfStudentChat.Server.Controllers
     {
         private readonly ChatServerDbContext _dbContext;
         private readonly NotifyService _notifyService;
-
-        /// <summary>
-        /// 发送好友请求的请求数据
-        /// </summary>
-        /// <param name="UserId">要添加的好友的 ID</param>
-        /// <param name="Message">附加消息</param>
-        public record class SendFriendRequestRequestData(int UserId, string Message);
-        public record class SendGroupRequestRequestData(int GroupId, string Message);
-        public record class DealRequestRequestData(int RequestId);
 
         public RequestController(
             ChatServerDbContext dbContext,

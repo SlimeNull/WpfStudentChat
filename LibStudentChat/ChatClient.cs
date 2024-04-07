@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.Tracing;
 using System.Text.Json;
-using LibStudentChat.Models.Events;
-using LibStudentChat.Utilites;
+using StudentChat.Models.Events;
+using StudentChat.Utilites;
 
-namespace LibStudentChat;
+namespace StudentChat;
 
 public class ChatClient
 {
@@ -99,8 +99,6 @@ public class ChatClient
         {
             await backgroundTasksCancellation.CancelAsync();
         }
-
-
     }
 
     public event EventHandler<PrivateMessageReceivedEventArgs>? PrivateMessageReceived;

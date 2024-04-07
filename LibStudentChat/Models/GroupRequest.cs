@@ -1,4 +1,4 @@
-﻿namespace LibStudentChat.Models
+﻿namespace StudentChat.Models
 {
     public class GroupRequest
     {

@@ -1,4 +1,4 @@
-﻿namespace WpfStudentChat.Server.Models
+﻿namespace StudentChat.Server.Models
 {
     public class AppConfig
     {

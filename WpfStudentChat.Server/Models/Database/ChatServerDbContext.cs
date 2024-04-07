@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace WpfStudentChat.Server.Models.Database
+namespace StudentChat.Server.Models.Database
 {
     public class ChatServerDbContext : DbContext
     {

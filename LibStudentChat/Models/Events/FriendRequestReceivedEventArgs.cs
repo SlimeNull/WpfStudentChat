@@ -1,4 +1,4 @@
-﻿namespace LibStudentChat.Models.Events
+﻿namespace StudentChat.Models.Events
 {
     public class FriendRequestReceivedEventArgs(FriendRequest request) : EventArgs
     {

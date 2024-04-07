@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LibStudentChat;
+using StudentChat;
 using Microsoft.Extensions.Options;
 using WpfStudentChat.Models;
 

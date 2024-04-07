@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace LibStudentChat.Utilites;
+namespace StudentChat.Utilites;
 
 public record class ServerSentEvent(string Event, string? Data, string? Id, string? Retry)
 {
