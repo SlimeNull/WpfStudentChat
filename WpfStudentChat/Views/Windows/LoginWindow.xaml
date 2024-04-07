@@ -5,8 +5,8 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:local="clr-namespace:WpfStudentChat.Views.Windows"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-                 xmlns:helpers="clr-namespace:WpfStudentChat.Helpers"
                  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                 xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
                  mc:Ignorable="d"
                  Title="SimpleChat - Login"
                  Height="300" Width="400"
@@ -45,7 +45,7 @@
                 <ui:TextBlock Text="密码: " Width="60" />
                 <ui:PasswordBox Width="200">
                     <b:Interaction.Behaviors>
-                        <helpers:PasswordBoxBehavior Password="{Binding ViewModel.Password,Mode=TwoWay}" />
+                        <mb:PasswordBoxBehavior Password="{Binding ViewModel.Password,Mode=TwoWay}" />
                     </b:Interaction.Behaviors>
                 </ui:PasswordBox>
             </StackPanel>

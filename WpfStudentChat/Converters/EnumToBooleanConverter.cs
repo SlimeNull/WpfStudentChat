@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using Wpf.Ui.Appearance;
 
-namespace WpfStudentChat.Helpers
+namespace WpfStudentChat.Converters
 {
     internal class EnumToBooleanConverter : IValueConverter
     {

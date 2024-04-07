@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xaml.Behaviors;
 using Wpf.Ui.Controls;
 
-namespace WpfStudentChat.Helpers;
+namespace WpfStudentChat.Behaviors;
 
 public class PasswordBoxBehavior : Behavior<PasswordBox>
 {
@@ -11,7 +11,7 @@ public class PasswordBoxBehavior : Behavior<PasswordBox>
         set { SetValue(PasswordProperty, value); }
     }
 
-    public static readonly DependencyProperty PasswordProperty = DependencyProperty.Register("Password", typeof(string), typeof(PasswordBoxBehavior), new PropertyMetadata(string.Empty, (dp,v) =>
+    public static readonly DependencyProperty PasswordProperty = DependencyProperty.Register("Password", typeof(string), typeof(PasswordBoxBehavior), new PropertyMetadata(string.Empty, (dp, v) =>
     {
         var obj = (PasswordBoxBehavior)dp;
         var passwordBox = obj.AssociatedObject;
@@ -20,7 +20,7 @@ public class PasswordBoxBehavior : Behavior<PasswordBox>
 
     protected override void OnAttached()
     {
-        AssociatedObject.PasswordChanged += AssociatedObject_PasswordChanged; ;
+        AssociatedObject.PasswordChanged += AssociatedObject_PasswordChanged;
     }
 
 
