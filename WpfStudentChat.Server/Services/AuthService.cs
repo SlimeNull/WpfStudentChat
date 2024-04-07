@@ -34,8 +34,14 @@ namespace WpfStudentChat.Server.Services
         private bool IsManagerAccount(string userName, string passwordHash)
             => _appConfig.Value.ManagerUserName == userName && passwordHash.Equals(Sha256(_appConfig.Value.ManagerPassword), StringComparison.OrdinalIgnoreCase);
 
-        private Task<bool> HasAccountAsync(string userName, string passwordHash)
-            => _dbContext.Users.AnyAsync(user => user.UserName == userName && user.PasswordHash == passwordHash);
+        private async Task<int> GetUserIdAsync(string userName, string passwordHash)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.UserName == userName && user.PasswordHash == passwordHash);
+            if (user is null)
+                return -1;
+
+            return user.Id;
+        }
 
         private string CreateToken(IEnumerable<Claim> claims)
         {
@@ -67,11 +73,12 @@ namespace WpfStudentChat.Server.Services
             return CreateToken(claims);
         }
 
-        private string CreateNormalUserToken(string userName)
+        private string CreateNormalUserToken(string userName, int userId)
         {
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Role, "user"),
             };
 
@@ -84,15 +91,13 @@ namespace WpfStudentChat.Server.Services
                 return null;
 
             if (IsManagerAccount(userName, passwordHash))
-            {
                 return CreateManagerToken();
-            }
-            else if (await HasAccountAsync(userName, passwordHash))
-            {
-                return CreateNormalUserToken(userName);
-            }
 
-            return null;
+            int userId = await GetUserIdAsync(userName, passwordHash);
+            if (userId < 0)
+                return null;
+
+            return CreateNormalUserToken(userName, userId);
         }
     }
 }

@@ -14,8 +14,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSqlite<ChatServerDbContext>("Data Source=ChatServer.db");
+
+builder.Services.AddSingleton<MessageNotifyService>();
 builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddSqlite<ChatServerDbContext>("Data Source=ChatServer.db");
 builder.Services.Configure<AppConfig>(builder.Configuration.GetSection("AppConfig"));
 
 // ¼øÈ¨

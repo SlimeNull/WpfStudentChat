@@ -21,4 +21,8 @@
     <Folder Include="Views\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LibStudentChat\LibStudentChat.csproj" />
+  </ItemGroup>
+
 </Project>

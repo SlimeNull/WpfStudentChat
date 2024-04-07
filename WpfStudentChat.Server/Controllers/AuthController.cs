@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WpfStudentChat.Server.Models;
 using WpfStudentChat.Server.Models.Database;
@@ -23,6 +24,7 @@ namespace WpfStudentChat.Server.Controllers
 
 
         [HttpPost("Login")]
+        [AllowAnonymous]
         public async Task<ApiResult<LoginResultData>> LoginAsync([FromBody] LoginRequestData request)
         {
             var token = await _authService.GetTokenAsync(request.UserName, request.PasswordHash);
