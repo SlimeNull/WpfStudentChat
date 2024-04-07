@@ -28,7 +28,7 @@ namespace StudentChat.Server.Controllers
 
             if (token is null)
             {
-                return ApiResult<LoginResultData>.CreateErr();
+                return ApiResult<LoginResultData>.CreateErr("Invalid user name or password hash");
             }
             else
             {

@@ -12,7 +12,7 @@ public class ApplicationHostService : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private INavigationWindow _navigationWindow;
+    private INavigationWindow? _navigationWindow;
 
     public ApplicationHostService(IServiceProvider serviceProvider)
     {
@@ -42,18 +42,11 @@ public class ApplicationHostService : IHostedService
     /// </summary>
     private async Task HandleActivationAsync()
     {
-        if (!Application.Current.Windows.OfType<MainWindow>().Any())
-        {
-            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-            Application.Current.MainWindow = mainWindow;
-
-            _navigationWindow = mainWindow;
-        }
+        var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+        _navigationWindow = mainWindow;
 
         var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
-        loginWindow.ShowDialog();
-
-        if (loginWindow.ViewModel.IsLogged)
+        if (loginWindow.ShowDialog() ?? false)
         {
             _navigationWindow.ShowWindow();
             _navigationWindow.Navigate(typeof(Views.Pages.DashboardPage));

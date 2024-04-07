@@ -50,7 +50,7 @@
                 </ui:PasswordBox>
             </StackPanel>
             <Border HorizontalAlignment="Center" Margin="0 36 0 0">
-                <Button Content="登录" Padding="36 10" Command="{Binding ViewModel.LoginCommand}" />
+                <Button Content="登录" Padding="36 10" Command="{Binding LoginCommand}" />
             </Border>
         </StackPanel>
     </DockPanel>

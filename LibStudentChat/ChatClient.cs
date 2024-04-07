@@ -141,7 +141,6 @@ public class ChatClient
         }
 
         var response = await _httpClient.SendAsync(request);
-
         var apiResult = await response.Content.ReadFromJsonAsync<ApiResult>();
 
         if (apiResult is null)
@@ -169,7 +168,6 @@ public class ChatClient
         }
 
         var response = await _httpClient.SendAsync(request);
-
         var apiResult = await response.Content.ReadFromJsonAsync<ApiResult<BinaryUploadResultData>>();
 
         if (apiResult is null)

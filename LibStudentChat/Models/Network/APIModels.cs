@@ -30,6 +30,19 @@ namespace StudentChat.Models.Network
     public record class AddUserResultData(User User);
 
 
+    public record class GetUserRequestData(int UserId);
+    public record class GetUserResultData(User User);
+    public record class GetGroupRequestData(int GroupId);
+    public record class GetGroupResultData(Group Group);
+
+
+    public record class SearchUserRequestData(string Keyword, int Skip, int Count);
+    public record class SearchUserResultData(List<User> Users);
+    public record class SearchGroupRequestData(string Keyword, int Skip, int Count);
+    public record class SearchGroupResultData(List<Group> Groups);
+
+
+
     /// <summary>
     /// 发送好友请求的请求数据
     /// </summary>

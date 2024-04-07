@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Wpf.Ui.Controls;
-using WpfStudentChat.Models.Messages;
+using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Windows;
 
 namespace WpfStudentChat.Views.Windows;
@@ -8,24 +9,39 @@ namespace WpfStudentChat.Views.Windows;
 /// <summary>
 /// Interaction logic for LoginWindow.xaml
 /// </summary>
-public partial class LoginWindow : FluentWindow, IRecipient<LoggedMessage>
+public partial class LoginWindow : FluentWindow
 {
-    private readonly IMessenger _messenger;
+    private readonly ChatClientService _chatClientService;
 
     public LoginWindowViewModel ViewModel { get; }
 
-    public LoginWindow(LoginWindowViewModel loginWindowViewModel, IMessenger messenger)
+    public LoginWindow(
+        LoginWindowViewModel viewModel,
+        ChatClientService chatClientService)
     {
-        ViewModel = loginWindowViewModel;
-        _messenger = messenger;
-        DataContext = this;
-        InitializeComponent();
 
-        messenger.Register<LoggedMessage>(this);
+        ViewModel = viewModel;
+        _chatClientService = chatClientService;
+        DataContext = this;
+
+        InitializeComponent();
     }
 
-    public void Receive(LoggedMessage message)
+    [RelayCommand]
+    public async Task LoginAsync()
     {
-        Close();
+        try
+        {
+            await _chatClientService.Client.LoginAsync(ViewModel.Username, ViewModel.Password);
+
+            DialogResult = true;
+            Close();
+        }
+        catch (Exception)
+        {
+            System.Windows.MessageBox.Show("登录失败");
+            DialogResult = false;
+            return;
+        }
     }
 }
