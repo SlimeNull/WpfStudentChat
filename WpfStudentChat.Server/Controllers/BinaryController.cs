@@ -44,6 +44,7 @@ namespace WpfStudentChat.Server.Controllers
                 new ImageBinary()
                 {
                     Hash = hashText,
+                    ContentType = file.ContentType,
                     Data = bytes,
                 });
 
@@ -74,6 +75,7 @@ namespace WpfStudentChat.Server.Controllers
                 new FileBinary()
                 {
                     Hash = hashText,
+                    ContentType = file.ContentType,
                     Data = bytes,
                 });
 
@@ -92,7 +94,7 @@ namespace WpfStudentChat.Server.Controllers
                 return NotFound();
             }
 
-            return File(image.Data, "image/jpeg");
+            return File(image.Data, image.ContentType);
         }
 
         [HttpGet("GetFile/{hash}")]
