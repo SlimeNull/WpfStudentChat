@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wpf.Ui;
+using WpfStudentChat.Models;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
 using WpfStudentChat.ViewModels.Windows;
@@ -22,11 +23,16 @@ public partial class App
     // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
     // https://docs.microsoft.com/dotnet/core/extensions/configuration
     // https://docs.microsoft.com/dotnet/core/extensions/logging
-    private static readonly IHost _host = Host
+    public static IHost Host { get; } = Microsoft.Extensions.Hosting.Host
         .CreateDefaultBuilder()
-        .ConfigureAppConfiguration(c => { c.SetBasePath(AppContext.BaseDirectory); })
+        .ConfigureAppConfiguration(c => 
+        { 
+            c.SetBasePath(AppContext.BaseDirectory); 
+        })
         .ConfigureServices((context, services) =>
         {
+            services.Configure<AppConfig>(context.Configuration);
+
             services.AddHostedService<ApplicationHostService>();
             services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
 
@@ -43,9 +49,13 @@ public partial class App
             services.AddSingleton<INavigationService, NavigationService>();
 
             // Main window with navigation
-            services.AddSingleton<INavigationWindow, MainWindow>();
+            services.AddSingleton<MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
 
+            // Chat
+            services.AddSingleton<ChatClientService>();
+
+            // Pages
             services.AddSingleton<DashboardPage>();
             services.AddSingleton<DashboardViewModel>();
             services.AddSingleton<DataPage>();
@@ -53,37 +63,23 @@ public partial class App
             services.AddSingleton<SettingsPage>();
             services.AddSingleton<SettingsViewModel>();
 
+            // Windows
             services.AddSingleton<LoginWindow>();
             services.AddSingleton<LoginWindowViewModel>();
         }).Build();
 
-    /// <summary>
-    /// Gets registered service.
-    /// </summary>
-    /// <typeparam name="T">Type of the service to get.</typeparam>
-    /// <returns>Instance of the service or <see langword="null"/>.</returns>
-    public static T GetService<T>()
-        where T : class
+    protected override void OnStartup(StartupEventArgs e)
     {
-        return _host.Services.GetService(typeof(T)) as T;
+        base.OnStartup(e);
+        Host.Start();
     }
 
-    /// <summary>
-    /// Occurs when the application is loading.
-    /// </summary>
-    private void OnStartup(object sender, StartupEventArgs e)
+    protected override async void OnExit(ExitEventArgs e)
     {
-        _host.Start();
-    }
-
-    /// <summary>
-    /// Occurs when the application is closing.
-    /// </summary>
-    private async void OnExit(object sender, ExitEventArgs e)
-    {
-        await _host.StopAsync();
-
-        _host.Dispose();
+        base.OnExit(e);
+        
+        await Host.StopAsync();
+        Host.Dispose();
     }
 
     /// <summary>

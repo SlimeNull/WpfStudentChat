@@ -129,6 +129,36 @@ public class ChatClient
         return apiResult.Data;
     }
 
+    private async Task<BinaryUploadResultData> UploadBinary(string path, string parameterName, byte[] fileContent, int offset, int count, string contentType)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, path);
+        var requestContent = new MultipartFormDataContent();
+        request.Content = requestContent;
+
+        requestContent.Add(new ByteArrayContent(fileContent, offset, count), parameterName);
+
+        if (token is not null)
+        {
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+
+        var response = await _httpClient.SendAsync(request);
+
+        var apiResult = await response.Content.ReadFromJsonAsync<ApiResult<BinaryUploadResultData>>();
+
+        if (apiResult is null)
+        {
+            throw new Exception("Server returns empty result");
+        }
+
+        if (!apiResult.Ok || apiResult.Data is null)
+        {
+            throw new Exception(apiResult.Message);
+        }
+
+        return apiResult.Data;
+    }
+
     public async Task LoginAsync(string username, string password)
     {
         if (backgroundTasksCancellation is not null)

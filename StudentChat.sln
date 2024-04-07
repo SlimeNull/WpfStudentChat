@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentChat.Server", "WpfStudentChat.Server\StudentChat.Server.csproj", "{159B0089-7F22-4A13-8FAA-E72ED97F1D6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentChat.Server", "StudentChat.Server\StudentChat.Server.csproj", "{159B0089-7F22-4A13-8FAA-E72ED97F1D6B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibStudentChat", "LibStudentChat\LibStudentChat.csproj", "{085E651F-1551-4918-BEF6-A46E170305C6}"
 EndProject

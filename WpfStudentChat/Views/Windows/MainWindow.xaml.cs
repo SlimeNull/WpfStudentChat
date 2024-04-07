@@ -6,7 +6,7 @@ using WpfStudentChat.ViewModels.Windows;
 
 namespace WpfStudentChat.Views.Windows;
 
-public partial class MainWindow : INavigationWindow
+public partial class MainWindow : FluentWindow, INavigationWindow
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -35,13 +35,7 @@ public partial class MainWindow : INavigationWindow
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
-        loginWindow.ShowDialog();
-        if (!loginWindow.ViewModel.IsLogged)
-        {
-            Close();
-            return;
-        }
+
     }
 
     #region INavigationWindow methods

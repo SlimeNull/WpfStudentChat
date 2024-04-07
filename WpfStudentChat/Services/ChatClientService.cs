@@ -11,11 +11,11 @@ namespace WpfStudentChat.Services
 {
     public class ChatClientService
     {
-        ChatClient _client;
+        public ChatClient Client { get; }
 
         public ChatClientService(IOptionsSnapshot<AppConfig> optionsAppConfig)
         {
-            _client = new(new Uri(optionsAppConfig.Value.BaseUri, UriKind.Absolute));
+            Client = new(new Uri(optionsAppConfig.Value.BaseUri, UriKind.Absolute));
         }
 
         

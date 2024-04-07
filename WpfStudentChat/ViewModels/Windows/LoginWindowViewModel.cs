@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using StudentChat;
 using WpfStudentChat.Models.Messages;
+using WpfStudentChat.Services;
 
 namespace WpfStudentChat.ViewModels.Windows;
 
-public partial class LoginWindowViewModel(IMessenger messenger) : ObservableObject
+public partial class LoginWindowViewModel(ChatClientService chatClientService, IMessenger messenger) : ObservableObject
 {
     [ObservableProperty] private string _username = string.Empty;
     [ObservableProperty] private string _password = string.Empty;
@@ -14,11 +15,9 @@ public partial class LoginWindowViewModel(IMessenger messenger) : ObservableObje
     [RelayCommand]
     public async Task Login()
     {
-        ChatClient chat = null!;
-
         try
         {
-            await chat.LoginAsync(Username, Password);
+            await chatClientService.Client.LoginAsync(Username, Password);
 
             IsLogged = true;
             messenger.Send(new LoggedMessage());

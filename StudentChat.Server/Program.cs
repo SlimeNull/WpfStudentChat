@@ -88,6 +88,8 @@ app.MapControllers();
 
 await app.StartAsync();
 
+#if DEBUG
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ChatServerDbContext>();
@@ -111,6 +113,8 @@ using (var scope = app.Services.CreateScope())
         });
     }
 
+    await dbContext.SaveChangesAsync();
+
     if (!dbContext.UserFriends.Any(uf => uf.FromUserId == 0 && uf.ToUserId == 1))
     {
         await dbContext.UserFriends.AddAsync(
@@ -123,5 +127,7 @@ using (var scope = app.Services.CreateScope())
 
     await dbContext.SaveChangesAsync();
 }
+
+#endif
 
 await app.WaitForShutdownAsync();

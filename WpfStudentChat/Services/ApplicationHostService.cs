@@ -44,12 +44,23 @@ public class ApplicationHostService : IHostedService
     {
         if (!Application.Current.Windows.OfType<MainWindow>().Any())
         {
-            _navigationWindow = (
-                _serviceProvider.GetService(typeof(INavigationWindow)) as INavigationWindow
-            )!;
-            _navigationWindow!.ShowWindow();
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            Application.Current.MainWindow = mainWindow;
 
+            _navigationWindow = mainWindow;
+        }
+
+        var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
+        loginWindow.ShowDialog();
+
+        if (loginWindow.ViewModel.IsLogged)
+        {
+            _navigationWindow.ShowWindow();
             _navigationWindow.Navigate(typeof(Views.Pages.DashboardPage));
+        }
+        else
+        {
+            Application.Current.Shutdown();
         }
 
         await Task.CompletedTask;
