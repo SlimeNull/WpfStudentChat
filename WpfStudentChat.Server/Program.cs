@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using StudentChat.Server.Models;
 using StudentChat.Server.Models.Database;
 using StudentChat.Server.Services;
+using StudentChat.Server.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -94,20 +95,30 @@ using (var scope = app.Services.CreateScope())
 
     if (!dbContext.Users.Any(u => u.UserName == "Test"))
     {
-        dbContext.Users.Add(new User()
+        await dbContext.Users.AddAsync(new User()
         {
             UserName = "Test",
-            PasswordHash = "TestHash"
+            PasswordHash = HashUtils.SHA256Text("TestHash"),
         });
     }
 
     if (!dbContext.Users.Any(u => u.UserName == "Test2"))
     {
-        dbContext.Users.Add(new User()
+        await dbContext.Users.AddAsync(new User()
         {
             UserName = "Test2",
-            PasswordHash = "TestHash"
+            PasswordHash = HashUtils.SHA256Text("TestHash")
         });
+    }
+
+    if (!dbContext.UserFriends.Any(uf => uf.FromUserId == 0 && uf.ToUserId == 1))
+    {
+        await dbContext.UserFriends.AddAsync(
+            new UserFriend()
+            {
+                FromUserId = 1,
+                ToUserId = 2,
+            });
     }
 
     await dbContext.SaveChangesAsync();

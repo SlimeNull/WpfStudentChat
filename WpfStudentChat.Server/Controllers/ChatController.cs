@@ -49,7 +49,7 @@ namespace StudentChat.Server.Controllers
         public async Task<ApiResult> SendPrivateMessageAsync(SendPrivateMessageRequestData request)
         {
             int selfUserId = HttpContext.GetUserId();
-            bool selfHasFriend = await _dbContext.CheckUserHasFriendAsync(selfUserId, request.Message.ReceiverId);
+            bool selfHasFriend = await _dbContext.CheckUserHasFriendAsync(selfUserId, request.ReceiverId);
 
             if (!selfHasFriend)
             {
@@ -60,8 +60,8 @@ namespace StudentChat.Server.Controllers
                 new PrivateMessage()
                 {
                     SenderId = selfUserId,
-                    ReceiverId = request.Message.ReceiverId,
-                    Content = request.Message.Content,
+                    ReceiverId = request.ReceiverId,
+                    Content = request.Content,
                     SentTime = DateTimeOffset.Now,
                 });
 
@@ -76,7 +76,7 @@ namespace StudentChat.Server.Controllers
         public async Task<ApiResult> SendGroupMessageAsync(SendGroupMessageRequestData request)
         {
             int selfUserId = HttpContext.GetUserId();
-            bool selfHasGroup = await _dbContext.CheckUserHasGroupAsync(selfUserId, request.Message.GroupId);
+            bool selfHasGroup = await _dbContext.CheckUserHasGroupAsync(selfUserId, request.GroupId);
 
             if (!selfHasGroup)
             {
@@ -87,8 +87,8 @@ namespace StudentChat.Server.Controllers
                 new GroupMessage()
                 {
                     SenderId = selfUserId,
-                    GroupId = request.Message.GroupId,
-                    Content = request.Message.Content,
+                    GroupId = request.GroupId,
+                    Content = request.Content,
                     SentTime = DateTimeOffset.Now,
                 });
 

@@ -1,6 +1,10 @@
 ﻿using System.Diagnostics.Tracing;
+using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using StudentChat.Models.Events;
+using StudentChat.Models.Network;
 using StudentChat.Utilites;
 
 namespace StudentChat;
@@ -36,9 +40,15 @@ public class ChatClient
         const string EventNameGroupDecreased = "groupDecreased";
 
         var request = new HttpRequestMessage(HttpMethod.Get, new Uri("/api/Notify", UriKind.Relative));
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
         var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         var serverSentEvents = ServerSentEvent.EnumerateFromStream(response.Content.ReadAsStream(), cancellationToken);
-        
+
+#if DEBUG
+        await Console.Out.WriteLineAsync("Notify events ok");
+#endif
+
         await foreach (var serverSentEvent in serverSentEvents)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -92,13 +102,51 @@ public class ChatClient
         }
     }
 
-    
+    private async Task<TResultData> PostAsync<TRequestData, TResultData>(string path, TRequestData requestData)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, path);
+        request.Content = JsonContent.Create(requestData);
+
+        if (token is not null)
+        {
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+
+        var response = await _httpClient.SendAsync(request);
+
+        var apiResult = await response.Content.ReadFromJsonAsync<ApiResult<TResultData>>();
+
+        if (apiResult is null)
+        {
+            throw new Exception("Server returns empty result");
+        }
+
+        if (!apiResult.Ok || apiResult.Data is null)
+        {
+            throw new Exception(apiResult.Message);
+        }
+
+        return apiResult.Data;
+    }
+
     public async Task LoginAsync(string username, string password)
     {
         if (backgroundTasksCancellation is not null)
         {
             await backgroundTasksCancellation.CancelAsync();
         }
+
+        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+        byte[] passwordHash = SHA256.HashData(passwordBytes);
+        string passwordHashText = Convert.ToHexString(passwordHash);
+
+        var result = await PostAsync<LoginRequestData, LoginResultData>("/api/Auth/Login", new LoginRequestData(username, passwordHashText));
+
+        token = result.Token;
+        backgroundTasksCancellation = new();
+
+        // start background task
+        _ = BackgroundTasks(backgroundTasksCancellation.Token);
     }
 
     public event EventHandler<PrivateMessageReceivedEventArgs>? PrivateMessageReceived;

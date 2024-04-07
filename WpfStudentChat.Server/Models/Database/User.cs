@@ -5,7 +5,8 @@ namespace StudentChat.Server.Models.Database
     public class User
     {
         public int Id { get; set; }
-        public int AvatarId { get; set; }
+        public string AvatarHash { get; set; } = string.Empty;
+
         public string Nickname { get; set; } = string.Empty;
         public string Bio { get; set; } = string.Empty;
 
@@ -32,7 +33,7 @@ namespace StudentChat.Server.Models.Database
             return new CommonModels.User()
             {
                 Id = user.Id,
-                AvatarId = user.AvatarId,
+                AvatarHash = user.AvatarHash,
                 Nickname = user.Nickname,
                 Bio = user.Bio,
                 UserName = user.UserName,

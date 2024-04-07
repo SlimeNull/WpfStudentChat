@@ -21,8 +21,8 @@ namespace StudentChat.Models.Network
     public record class QueryGroupMessagesRequestData(int GroupId, DateTimeOffset? StartTime, DateTimeOffset? EndTime, int Count);
     public record class QueryGroupMessagesResultData(List<GroupMessage> Messages);
 
-    public record class SendPrivateMessageRequestData(PrivateMessage Message);
-    public record class SendGroupMessageRequestData(GroupMessage Message);
+    public record class SendPrivateMessageRequestData(int ReceiverId, string Content);
+    public record class SendGroupMessageRequestData(int GroupId, string Content);
 
 
 

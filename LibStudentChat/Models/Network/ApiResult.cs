@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace StudentChat.Server.Models
+namespace StudentChat.Models.Network
 {
+
     public class ApiResult
     {
         public bool Ok { get; set; }
