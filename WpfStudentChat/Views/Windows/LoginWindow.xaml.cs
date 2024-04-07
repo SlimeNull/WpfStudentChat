@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Logging;
-using Wpf.Ui.Controls;
+﻿using Wpf.Ui.Controls;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Windows;
 
@@ -40,7 +38,6 @@ public partial class LoginWindow : FluentWindow
         catch (Exception)
         {
             System.Windows.MessageBox.Show("登录失败");
-            DialogResult = false;
             return;
         }
     }

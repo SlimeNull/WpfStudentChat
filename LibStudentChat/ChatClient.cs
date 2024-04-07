@@ -15,7 +15,7 @@ public class ChatClient
     private string? token;
     private CancellationTokenSource? backgroundTasksCancellation;
 
-    private HttpClient _httpClient;
+    private readonly HttpClient _httpClient;
 
     public ChatClient(Uri baseUri)
     {
@@ -28,6 +28,30 @@ public class ChatClient
     }
 
     public Uri BaseUri => _httpClient.BaseAddress!;
+
+    private int? GetUserId()
+    {
+        const string UserIdKey = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+
+        if (token is null)
+            return null;
+
+        var index1 = token.IndexOf('.');
+        if (index1 == -1)
+            return null;
+        var index2 = token.IndexOf('.', index1 + 1);
+        if (index2 == -1)
+            return null;
+        
+        var payload = token[(index1 + 1)..index2];
+        var padLength = 4 - payload.Length % 4;
+        if (padLength == 4)
+            padLength = 0;
+        var payloadBytes = Convert.FromBase64String(payload.PadRight(payload.Length + padLength, '='));
+        var payloadText = Encoding.UTF8.GetString(payloadBytes);
+        var payloadJson = JsonSerializer.Deserialize<JsonElement>(payloadText);
+        return Convert.ToInt32(payloadJson.GetProperty(UserIdKey).GetString());
+    }
 
     private async Task BackgroundTasks(CancellationToken cancellationToken)
     {
@@ -263,6 +287,19 @@ public class ChatClient
         await PostAsync<AcceptRequestRequestData>(
             "api/Request/AcceptGroupRequest",
             new AcceptRequestRequestData(requestId));
+    }
+    
+    public async Task<Stream?> GetImageAsync(string hash)
+    {
+        try
+        {
+            var bytes = await _httpClient.GetStreamAsync($"/GetImage/{hash}");
+            return bytes;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     public async Task RejectFriendRequest(int requestId, string? reason)

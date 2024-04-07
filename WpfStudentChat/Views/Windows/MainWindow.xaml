@@ -32,7 +32,6 @@
         </ui:TitleBar>
 
         <ui:NavigationView x:Name="RootNavigation"
-                           Grid.Row="1"
                            Padding="42,0,42,0"
                            BreadcrumbBar="{Binding ElementName=BreadcrumbBar}"
                            FooterMenuItemsSource="{Binding ViewModel.FooterMenuItems, Mode=OneWay}"
@@ -42,15 +41,13 @@
                            MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
                            PaneDisplayMode="LeftFluent">
             <ui:NavigationView.PaneHeader>
-                <Grid>
-                    <Border BorderBrush="Gray"
-                            BorderThickness="1"
-                            CornerRadius="5"
-                            HorizontalAlignment="Center"
-                            Margin="0 0 0 14">
-                        <ui:Image x:Name="Avatar" Width="45" Height="45"/>
-                    </Border>
-                </Grid>
+                <Border BorderBrush="Gray"
+                        BorderThickness="1"
+                        CornerRadius="5"
+                        HorizontalAlignment="Center"
+                        Margin="0 0 0 14">
+                    <ui:Image x:Name="Avatar" Width="45" Height="45"/>
+                </Border>
             </ui:NavigationView.PaneHeader>
             <ui:NavigationView.Header>
                 <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,32,42,20" />

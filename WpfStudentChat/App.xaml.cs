@@ -62,6 +62,8 @@ public partial class App
             services.AddSingleton<DataViewModel>();
             services.AddSingleton<SettingsPage>();
             services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<ContactsPage>();
+            services.AddSingleton<ContactsPageViewModel>();
 
             // Windows
             services.AddSingleton<LoginWindow>();

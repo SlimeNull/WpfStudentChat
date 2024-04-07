@@ -9,6 +9,8 @@ client.PrivateMessageReceived += Client_PrivateMessageReceived;
 
 await client.LoginAsync("Test", "TestHash");
 Console.WriteLine("Login ok");
+
+
 await Task.Delay(-1);
 
 void Client_PrivateMessageReceived(object? sender, StudentChat.Models.Events.PrivateMessageReceivedEventArgs e)
