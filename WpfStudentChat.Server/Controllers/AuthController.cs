@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WpfStudentChat.Server.Models;
-using WpfStudentChat.Server.Models.Database;
 using WpfStudentChat.Server.Services;
 
 namespace WpfStudentChat.Server.Controllers

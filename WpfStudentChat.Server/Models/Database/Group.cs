@@ -1,4 +1,6 @@
-﻿namespace WpfStudentChat.Server.Models.Database
+﻿using CommonModels = LibStudentChat.Models;
+
+namespace WpfStudentChat.Server.Models.Database
 {
     public class Group
     {
@@ -15,5 +17,18 @@
         public List<User> Members { get; } = new();
         public List<GroupMessage> Messages { get; } = new();
         public List<GroupRequest> Requests { get; } = new();
+
+
+        public static explicit operator CommonModels.Group(Group group)
+        {
+            return new CommonModels.Group()
+            {
+                Id = group.Id,
+                AvatarId = group.AvatarId,
+                Name = group.Name,
+                Description = group.Description,
+                OwnerId = group.OwnerId,
+            };
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace WpfStudentChat.Server.Models.Database
+﻿using CommonModels = LibStudentChat.Models;
+
+namespace WpfStudentChat.Server.Models.Database
 {
     public class GroupRequest
     {
@@ -10,5 +12,17 @@
 
         public User Sender { get; set; } = null!;
         public Group Group { get; set; } = null!;
+
+
+        public static explicit operator CommonModels.GroupRequest(GroupRequest request)
+        {
+            return new CommonModels.GroupRequest()
+            {
+                Id = request.Id,
+                SenderId = request.SenderId,
+                GroupId = request.GroupId,
+                Message = request.Message,
+            };
+        }
     }
 }
