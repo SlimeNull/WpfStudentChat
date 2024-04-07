@@ -1,4 +1,5 @@
-﻿using LibStudentChat.Models.Events;
+﻿using System.Diagnostics.Tracing;
+using LibStudentChat.Models.Events;
 
 namespace LibStudentChat;
 

@@ -6,15 +6,15 @@ namespace WpfStudentChat.Server.Services
 {
     public class NotifyService
     {
-        public event AsyncEventHandler<PrivateMessageSentEventArgs>? PrivateMessageSent;
-        public event AsyncEventHandler<GroupMessageSentEventArgs>? GroupMessageSent;
-        public event AsyncEventHandler<FriendRequestSentEvnetArgs>? FriendRequestSent;
-        public event AsyncEventHandler<GroupRequestSentEvnetArgs>? GroupRequestSent;
+        public AsyncEventHandler<PrivateMessageSentEventArgs>? PrivateMessageSent { get; set; } = null;
+        public AsyncEventHandler<GroupMessageSentEventArgs>? GroupMessageSent { get; set; } = null;
+        public AsyncEventHandler<FriendRequestSentEvnetArgs>? FriendRequestSent { get; set; } = null;
+        public AsyncEventHandler<GroupRequestSentEvnetArgs>? GroupRequestSent { get; set; } = null;
 
-        public event AsyncEventHandler<FriendChangedEventArgs>? FriendIncreased;
-        public event AsyncEventHandler<FriendChangedEventArgs>? FriendDecreased;
-        public event AsyncEventHandler<GroupChangedEventArgs>? GroupIncreased;
-        public event AsyncEventHandler<GroupChangedEventArgs>? GroupDecreased;
+        public AsyncEventHandler<FriendChangedEventArgs>? FriendIncreased { get; set; } = null;
+        public AsyncEventHandler<FriendChangedEventArgs>? FriendDecreased { get; set; } = null;
+        public AsyncEventHandler<GroupChangedEventArgs>? GroupIncreased { get; set; } = null;
+        public AsyncEventHandler<GroupChangedEventArgs>? GroupDecreased { get; set; } = null;
 
 
         public async Task OnPrivateMessageSent(CommonModels.PrivateMessage message)
@@ -22,7 +22,7 @@ namespace WpfStudentChat.Server.Services
             if (PrivateMessageSent is null)
                 return;
 
-            await PrivateMessageSent.Invoke(this, new PrivateMessageSentEventArgs(message));
+            await PrivateMessageSent.InvokeAsync(this, new PrivateMessageSentEventArgs(message));
         }
 
         public async Task OnGroupMessageSent(CommonModels.GroupMessage message)
@@ -30,9 +30,56 @@ namespace WpfStudentChat.Server.Services
             if (GroupMessageSent is null)
                 return;
 
-            await GroupMessageSent.Invoke(this, new GroupMessageSentEventArgs(message));
+            await GroupMessageSent.InvokeAsync(this, new GroupMessageSentEventArgs(message));
         }
 
+        public async Task OnFriendRequestSent(CommonModels.FriendRequest request)
+        {
+            if (FriendRequestSent is null)
+                return;
+
+            await FriendRequestSent.InvokeAsync(this, new FriendRequestSentEvnetArgs(request));
+        }
+
+        public async Task OnGroupRequestSent(CommonModels.GroupRequest request)
+        {
+            if (GroupRequestSent is null)
+                return;
+
+            await GroupRequestSent.InvokeAsync(this, new GroupRequestSentEvnetArgs(request));
+        }
+
+        public async Task OnFriendIncreased(int userId, CommonModels.User friend)
+        {
+            if (FriendIncreased is null)
+                return;
+
+            await FriendIncreased.InvokeAsync(this, new FriendChangedEventArgs(userId, friend));
+        }
+
+        public async Task OnFriendDecreased(int userId, CommonModels.User friend)
+        {
+            if (FriendDecreased is null)
+                return;
+
+            await FriendDecreased.InvokeAsync(this, new FriendChangedEventArgs(userId, friend));
+        }
+
+        public async Task OnGroupIncreased(int userId, CommonModels.Group group)
+        {
+            if (GroupIncreased is null)
+                return;
+
+            await GroupIncreased.InvokeAsync(this, new GroupChangedEventArgs(userId, group));
+        }
+
+        public async Task OnGroupDecreased(int userId, CommonModels.Group group)
+        {
+            if (GroupDecreased is null)
+                return;
+
+            await GroupDecreased.InvokeAsync(this, new GroupChangedEventArgs(userId, group));
+        }
 
 
         public class PrivateMessageSentEventArgs(CommonModels.PrivateMessage message) : EventArgs

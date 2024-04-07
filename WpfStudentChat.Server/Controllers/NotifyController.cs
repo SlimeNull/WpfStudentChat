@@ -36,12 +36,25 @@ namespace WpfStudentChat.Server.Controllers
             {
                 _notifyService.PrivateMessageSent += MessageNotifyService_PrivateMessageSent;
                 _notifyService.GroupMessageSent += MessageNotifyService_GroupMessageSent;
+                _notifyService.FriendRequestSent += MessageNotifyService_FriendRequestSent;
+                _notifyService.GroupRequestSent += MessageNotifyService_GroupRequestSent;
+                _notifyService.FriendIncreased += MessageNotifyService_FriendIncreased;
+                _notifyService.FriendDecreased += MessageNotifyService_FriendDecreased;
+                _notifyService.GroupIncreased += MessageNotifyService_GroupIncreased;
+                _notifyService.GroupDecreased += MessageNotifyService_GroupDecreased;
+
                 await Task.Delay(-1);
             }
             finally
             {
                 _notifyService.PrivateMessageSent -= MessageNotifyService_PrivateMessageSent;
                 _notifyService.GroupMessageSent -= MessageNotifyService_GroupMessageSent;
+                _notifyService.FriendRequestSent -= MessageNotifyService_FriendRequestSent;
+                _notifyService.GroupRequestSent -= MessageNotifyService_GroupRequestSent;
+                _notifyService.FriendIncreased -= MessageNotifyService_FriendIncreased;
+                _notifyService.FriendDecreased -= MessageNotifyService_FriendDecreased;
+                _notifyService.GroupIncreased -= MessageNotifyService_GroupIncreased;
+                _notifyService.GroupDecreased -= MessageNotifyService_GroupDecreased;
             }
         }
 
@@ -49,8 +62,9 @@ namespace WpfStudentChat.Server.Controllers
         private async Task MessageNotifyService_PrivateMessageSent(object? sender, NotifyService.PrivateMessageSentEventArgs e)
         {
             var selfUserId = HttpContext.GetUserId();
+            var isRelated = e.Message.SenderId == selfUserId || e.Message.ReceiverId == selfUserId;
 
-            if (e.Message.SenderId != selfUserId && e.Message.ReceiverId != selfUserId)
+            if (!isRelated)
                 return;
 
             string text =
@@ -68,9 +82,9 @@ namespace WpfStudentChat.Server.Controllers
         private async Task MessageNotifyService_GroupMessageSent(object? sender, NotifyService.GroupMessageSentEventArgs e)
         {
             var selfUserId = HttpContext.GetUserId();
-            var selfJoinedGroup = _dbContext.GroupMembers.Any(gm => gm.UserId == selfUserId && e.Message.GroupId == e.Message.GroupId);
+            var isRelated = _dbContext.GroupMembers.Any(gm => gm.UserId == selfUserId && e.Message.GroupId == e.Message.GroupId);
 
-            if (!selfJoinedGroup)
+            if (!isRelated)
                 return;
 
             string text =
@@ -83,6 +97,71 @@ namespace WpfStudentChat.Server.Controllers
 
             await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
             await HttpContext.Response.Body.FlushAsync();
+        }
+
+        private async Task MessageNotifyService_FriendRequestSent(object? sender, NotifyService.FriendRequestSentEvnetArgs e)
+        {
+            var selfUserId = HttpContext.GetUserId();
+            var isRelated = _dbContext.FriendRequests.Any(r => r.SenderId == selfUserId || r.ReceiverId == selfUserId);
+
+            if (!isRelated)
+                return;
+
+            string text =
+                $"""
+                event: friendRequest
+                data: {JsonSerializer.Serialize(e.Request)}
+
+
+                """;
+
+            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
+            await HttpContext.Response.Body.FlushAsync();
+        }
+
+        private async Task MessageNotifyService_GroupRequestSent(object? sender, NotifyService.GroupRequestSentEvnetArgs e)
+        {
+            var selfUserId = HttpContext.GetUserId();
+            var isRelated1 = _dbContext.GroupRequests.Any(r => r.SenderId == selfUserId);
+            var isRelated2 = _dbContext.Users
+                .Where(user => user.Id == selfUserId)
+                .Include(entity => entity.OwnedGroups)
+                .SelectMany(user => user.OwnedGroups)
+                .Any(group => group.Id == e.Request.GroupId);
+
+            if (!isRelated1 && !isRelated2)
+                return;
+
+            string text =
+                $"""
+                event: groupRequest
+                data: {JsonSerializer.Serialize(e.Request)}
+
+
+                """;
+
+            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
+            await HttpContext.Response.Body.FlushAsync();
+        }
+
+        private async Task MessageNotifyService_FriendIncreased(object? sender, NotifyService.FriendChangedEventArgs e)
+        {
+
+        }
+
+        private async Task MessageNotifyService_FriendDecreased(object? sender, NotifyService.FriendChangedEventArgs e)
+        {
+
+        }
+
+        private async Task MessageNotifyService_GroupIncreased(object? sender, NotifyService.GroupChangedEventArgs e)
+        {
+
+        }
+
+        private async Task MessageNotifyService_GroupDecreased(object? sender, NotifyService.GroupChangedEventArgs e)
+        {
+
         }
     }
 }

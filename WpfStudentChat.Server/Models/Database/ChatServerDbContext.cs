@@ -13,6 +13,8 @@ namespace WpfStudentChat.Server.Models.Database
         public DbSet<FileBinary> Files { get; set; }
         public DbSet<PrivateMessage> PrivateMessages { get; set; }
         public DbSet<GroupMessage> GroupMessages { get; set; }
+        public DbSet<FriendRequest> FriendRequests { get; set; }
+        public DbSet<GroupRequest> GroupRequests { get; set; }
         public DbSet<PrivateMessageImageAttachment> PrivateMessageImageAttachments { get; set; }
         public DbSet<GroupMessageImageAttachment> GroupMessageImageAttachments { get; set; }
 
