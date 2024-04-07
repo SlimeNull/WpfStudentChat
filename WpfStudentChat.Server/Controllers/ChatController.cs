@@ -17,7 +17,7 @@ namespace WpfStudentChat.Server.Controllers
     public class ChatController : ControllerBase
     {
         private readonly ChatServerDbContext _dbContext;
-        private readonly MessageNotifyService _messageNotifyService;
+        private readonly NotifyService _messageNotifyService;
 
         public record class QueryPrivateMessagesRequestData(int UserId, DateTimeOffset? StartTime, DateTimeOffset? EndTime, int Count);
         public record class QueryPrivateMessagesResultData(List<CommonModels.PrivateMessage> Messages);
@@ -32,7 +32,7 @@ namespace WpfStudentChat.Server.Controllers
 
         public ChatController(
             ChatServerDbContext dbContext,
-            MessageNotifyService messageNotifyService)
+            NotifyService messageNotifyService)
         {
             _dbContext = dbContext;
             _messageNotifyService = messageNotifyService;
@@ -79,6 +79,7 @@ namespace WpfStudentChat.Server.Controllers
             return ApiResult.CreateOk();
         }
 
+
         [HttpPost("SendGroupMessage")]
         public async Task<ApiResult> SendGroupMessageAsync(SendGroupMessageRequestData request)
         {
@@ -103,78 +104,6 @@ namespace WpfStudentChat.Server.Controllers
             await _messageNotifyService.OnGroupMessageSent((CommonModels.GroupMessage)entry.Entity);
 
             return ApiResult.CreateOk();
-        }
-
-
-        [HttpGet("StreamPrivateMessages")]
-        public async Task StreamPrivateMessages()
-        {
-            HttpContext.Response.ContentType = "text/event-stream";
-
-            try
-            {
-                _messageNotifyService.PrivateMessageSent += MessageNotifyService_PrivateMessageSent;
-                await Task.Delay(-1);
-            }
-            finally
-            {
-                _messageNotifyService.PrivateMessageSent -= MessageNotifyService_PrivateMessageSent;
-            }
-        }
-
-        [HttpGet("StreamGroupMessages")]
-        public async Task StreamGroupMessages()
-        {
-            HttpContext.Response.ContentType = "text/event-stream";
-
-            try
-            {
-                _messageNotifyService.GroupMessageSent += MessageNotifyService_GroupMessageSent;
-                await Task.Delay(-1);
-            }
-            finally
-            {
-                _messageNotifyService.GroupMessageSent -= MessageNotifyService_GroupMessageSent;
-            }
-        }
-
-        private async Task MessageNotifyService_PrivateMessageSent(object? sender, MessageNotifyService.PrivateMessageSentEventArgs e)
-        {
-            var selfUserId = HttpContext.GetUserId();
-
-            if (e.Message.SenderId != selfUserId && e.Message.ReceiverId != selfUserId)
-                return;
-
-            string text =
-                $"""
-                event: privateMessage
-                data: {JsonSerializer.Serialize(e.Message)}
-
-
-                """;
-
-            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
-            await HttpContext.Response.Body.FlushAsync();
-        }
-
-        private async Task MessageNotifyService_GroupMessageSent(object? sender, MessageNotifyService.GroupMessageSentEventArgs e)
-        {
-            var selfUserId = HttpContext.GetUserId();
-            var selfJoinedGroup = _dbContext.GroupMembers.Any(gm => gm.UserId == selfUserId && e.Message.GroupId == e.Message.GroupId);
-
-            if (!selfJoinedGroup)
-                return;
-
-            string text =
-                $"""
-                event: groupMessage
-                data: {JsonSerializer.Serialize(e.Message)}
-
-
-                """;
-
-            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
-            await HttpContext.Response.Body.FlushAsync();
         }
     }
 }

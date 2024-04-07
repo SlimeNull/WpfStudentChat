@@ -15,7 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<MessageNotifyService>();
+builder.Services.AddSingleton<NotifyService>();
 builder.Services.AddScoped<AuthService>();
 
 #if DEBUG
