@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentChat.Models.Network;
 using StudentChat.Server.Extensions;
 using StudentChat.Server.Models;
@@ -32,16 +33,122 @@ namespace StudentChat.Server.Controllers
 
 
         [HttpPost("QueryPrivateMessages")]
-        public ApiResult<QueryPrivateMessagesResultData> QueryPrivateMessages(QueryPrivateMessagesRequestData request)
+        public async Task<ApiResult<QueryPrivateMessagesResultData>> QueryPrivateMessagesAsync(QueryPrivateMessagesRequestData request)
         {
-            throw new NotImplementedException();
+            var selfUserId = HttpContext.GetUserId();
+            var query = _dbContext.PrivateMessages
+                .Where(msg => (msg.SenderId == selfUserId && msg.ReceiverId == request.UserId) || (msg.SenderId == request.UserId && msg.ReceiverId == selfUserId));
+
+            if (request.Count > 100)
+            {
+                return ApiResult<QueryPrivateMessagesResultData>.CreateErr("Invalid query, count is too large");
+            }
+
+            if (request.StartTime.HasValue)
+            {
+                query = query
+                    .Where(msg => msg.SentTime >= request.StartTime.Value);
+
+                if (request.EndTime.HasValue)
+                {
+                    query = query
+                        .Where(msg => msg.SentTime <= request.EndTime.Value);
+                }
+
+                query = query.OrderBy(msg => msg.SentTime);
+
+                if (request.Count > 0)
+                {
+                    query = query.Take(request.Count);
+                }
+            }
+            else
+            {
+                if (request.EndTime.HasValue)
+                {
+                    query = query
+                        .Where(msg => msg.SentTime <= request.EndTime.Value);
+                }
+
+                if (request.Count > 0)
+                {
+                    query = query
+                        .OrderByDescending(msg => msg.SentTime)
+                        .Take(request.Count)
+                        .Reverse();
+                }
+                else
+                {
+                    query = query
+                        .OrderBy(msg => msg.SentTime);
+                }
+            }
+
+            var messages = await query
+                .Select(msg => (CommonModels.PrivateMessage)msg)
+                .ToListAsync();
+
+            return ApiResult<QueryPrivateMessagesResultData>.CreateOk(new QueryPrivateMessagesResultData(messages));
         }
 
 
         [HttpPost("QueryGroupMessages")]
-        public ApiResult<QueryGroupMessagesResultData> QueryGroupMessages(QueryGroupMessagesRequestData request)
+        public async Task<ApiResult<QueryGroupMessagesResultData>> QueryGroupMessagesAsync(QueryGroupMessagesRequestData request)
         {
-            throw new NotImplementedException();
+            var selfUserId = HttpContext.GetUserId();
+            var query = _dbContext.GroupMessages
+                .Where(msg => msg.GroupId == request.GroupId);
+
+            if (request.Count > 100)
+            {
+                return ApiResult<QueryGroupMessagesResultData>.CreateErr("Invalid query, count is too large");
+            }
+
+            if (request.StartTime.HasValue)
+            {
+                query = query
+                    .Where(msg => msg.SentTime >= request.StartTime.Value);
+
+                if (request.EndTime.HasValue)
+                {
+                    query = query
+                        .Where(msg => msg.SentTime <= request.EndTime.Value);
+                }
+
+                query = query.OrderBy(msg => msg.SentTime);
+
+                if (request.Count > 0)
+                {
+                    query = query.Take(request.Count);
+                }
+            }
+            else
+            {
+                if (request.EndTime.HasValue)
+                {
+                    query = query
+                        .Where(msg => msg.SentTime <= request.EndTime.Value);
+                }
+
+                if (request.Count > 0)
+                {
+                    query = query
+                        .OrderByDescending(msg => msg.SentTime)
+                        .Take(request.Count)
+                        .Reverse();
+                }
+                else
+                {
+                    query = query
+                        .OrderBy(msg => msg.SentTime);
+                }
+            }
+
+            var messages = await query
+                .Select(msg => (CommonModels.GroupMessage)msg)
+                .ToListAsync();
+
+            return ApiResult<QueryGroupMessagesResultData>.CreateOk(new QueryGroupMessagesResultData(messages));
         }
 
 
