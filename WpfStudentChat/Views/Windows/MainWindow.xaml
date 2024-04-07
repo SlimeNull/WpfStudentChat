@@ -41,6 +41,17 @@
                            IsPaneToggleVisible="True"
                            MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
                            PaneDisplayMode="LeftFluent">
+            <ui:NavigationView.PaneHeader>
+                <Grid>
+                    <Border BorderBrush="Gray"
+                            BorderThickness="1"
+                            CornerRadius="5"
+                            HorizontalAlignment="Center"
+                            Margin="0 0 0 14">
+                        <ui:Image x:Name="Avatar" Width="45" Height="45"/>
+                    </Border>
+                </Grid>
+            </ui:NavigationView.PaneHeader>
             <ui:NavigationView.Header>
                 <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,32,42,20" />
             </ui:NavigationView.Header>
