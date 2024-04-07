@@ -1,4 +1,5 @@
 ﻿using System.Windows.Threading;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +28,7 @@ public partial class App
         .ConfigureServices((context, services) =>
         {
             services.AddHostedService<ApplicationHostService>();
+            services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
 
             // Page resolver service
             services.AddSingleton<IPageService, PageService>();
@@ -50,6 +52,9 @@ public partial class App
             services.AddSingleton<DataViewModel>();
             services.AddSingleton<SettingsPage>();
             services.AddSingleton<SettingsViewModel>();
+
+            services.AddSingleton<LoginWindow>();
+            services.AddSingleton<LoginWindowViewModel>();
         }).Build();
 
     /// <summary>
