@@ -1,22 +1,29 @@
 ﻿using LibStudentChat.Models;
+using WpfStudentChat.Server.Utilities;
 using CommonModels = LibStudentChat.Models;
 
 namespace WpfStudentChat.Server.Services
 {
     public class MessageNotifyService
     {
-        public void OnPrivateMessageSent(CommonModels.PrivateMessage message)
+        public async Task OnPrivateMessageSent(CommonModels.PrivateMessage message)
         {
-            PrivateMessageSent?.Invoke(this, new PrivateMessageSentEventArgs(message));
+            if (PrivateMessageSent is null)
+                return;
+
+            await PrivateMessageSent.Invoke(this, new PrivateMessageSentEventArgs(message));
         }
 
-        public void OnGroupMessageSent(CommonModels.GroupMessage message)
+        public async Task OnGroupMessageSent(CommonModels.GroupMessage message)
         {
-            GroupMessageSent?.Invoke(this, new GroupMessageSentEventArgs(message));
+            if (GroupMessageSent is null)
+                return;
+
+            await GroupMessageSent.Invoke(this, new GroupMessageSentEventArgs(message));
         }
 
-        public event EventHandler<PrivateMessageSentEventArgs>? PrivateMessageSent;
-        public event EventHandler<GroupMessageSentEventArgs>? GroupMessageSent;
+        public event AsyncEventHandler<PrivateMessageSentEventArgs>? PrivateMessageSent;
+        public event AsyncEventHandler<GroupMessageSentEventArgs>? GroupMessageSent;
 
         public class PrivateMessageSentEventArgs : EventArgs
         {

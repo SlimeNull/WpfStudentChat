@@ -14,5 +14,6 @@
         public User Owner { get; set; } = null!;
         public List<User> Members { get; } = new();
         public List<GroupMessage> Messages { get; } = new();
+        public List<GroupRequest> Requests { get; } = new();
     }
 }

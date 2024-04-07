@@ -2,6 +2,29 @@
 
 namespace WpfStudentChat.Server.Models
 {
+    public class ApiResult
+    {
+        public bool Ok { get; set; }
+        public string? Message { get; set; }
+
+        public static ApiResult CreateErr(string? message = null)
+        {
+            return new ApiResult()
+            {
+                Ok = false,
+                Message = message
+            };
+        }
+
+        public static ApiResult CreateOk()
+        {
+            return new ApiResult()
+            {
+                Ok = true,
+            };
+        }
+    }
+
     public class ApiResult<T>
     {
         [MemberNotNullWhen(true, nameof(Data))]
@@ -10,11 +33,12 @@ namespace WpfStudentChat.Server.Models
 
         public T? Data { get; set; }
 
-        public static ApiResult<T> CreateErr()
+        public static ApiResult<T> CreateErr(string? message = null)
         {
             return new ApiResult<T>()
             {
                 Ok = false,
+                Message = message,
                 Data = default,
             };
         }

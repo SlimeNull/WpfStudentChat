@@ -18,7 +18,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<MessageNotifyService>();
 builder.Services.AddScoped<AuthService>();
 
+#if DEBUG
+builder.Services.AddSqlite<ChatServerDbContext>("Data Source=bin/ChatServer.db");
+#else
 builder.Services.AddSqlite<ChatServerDbContext>("Data Source=ChatServer.db");
+#endif
+
 builder.Services.Configure<AppConfig>(builder.Configuration.GetSection("AppConfig"));
 
 // ¼øÈ¨
@@ -69,9 +74,18 @@ using (var scope = app.Services.CreateScope())
             UserName = "Test",
             PasswordHash = "TestHash"
         });
-
-        await dbContext.SaveChangesAsync();
     }
+
+    if (!dbContext.Users.Any(u => u.UserName == "Test2"))
+    {
+        dbContext.Users.Add(new User()
+        {
+            UserName = "Test2",
+            PasswordHash = "TestHash"
+        });
+    }
+
+    await dbContext.SaveChangesAsync();
 }
 
 await app.WaitForShutdownAsync();

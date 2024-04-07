@@ -1,4 +1,6 @@
-﻿namespace WpfStudentChat.Server.Models.Database
+﻿using CommonModels = LibStudentChat.Models;
+
+namespace WpfStudentChat.Server.Models.Database
 {
     public class GroupMessage
     {
@@ -14,5 +16,17 @@
 
         public List<GroupMessageImageAttachment> ImageAttachments { get; } = new();
         public List<GroupMessageFileAttachment> FileAttachments { get; } = new();
+
+        public static explicit operator CommonModels.GroupMessage(GroupMessage message)
+        {
+            return new CommonModels.GroupMessage()
+            {
+                Id = message.Id,
+                SenderId = message.SenderId,
+                GroupId = message.GroupId,
+                Content = message.Content,
+                SentTime = message.SentTime,
+            };
+        }
     }
 }

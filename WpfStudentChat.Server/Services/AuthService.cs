@@ -66,8 +66,8 @@ namespace WpfStudentChat.Server.Services
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, "admin"),
-                new Claim(ClaimTypes.Role, "admin"),
+                new Claim(ClaimTypes.Name, "Admin"),
+                new Claim(ClaimTypes.Role, "Admin"),
             };
 
             return CreateToken(claims);
@@ -79,7 +79,7 @@ namespace WpfStudentChat.Server.Services
             {
                 new Claim(ClaimTypes.Name, userName),
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                new Claim(ClaimTypes.Role, "user"),
+                new Claim(ClaimTypes.Role, "User"),
             };
 
             return CreateToken(claims);

@@ -15,6 +15,9 @@ namespace LibStudentChat
 
         public Uri BaseUri { get; }
 
-        
+        public void LoginAsync(string userName, string password)
+        {
+
+        }
     }
 }
