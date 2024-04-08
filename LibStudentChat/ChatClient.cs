@@ -178,6 +178,32 @@ public class ChatClient
         }
     }
 
+    private async Task<TResultData> PostAsync<TResultData>(string path)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, path);;
+
+        if (token is not null)
+        {
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+
+        var response = await _httpClient.SendAsync(request);
+
+        var apiResult = await response.Content.ReadFromJsonAsync<ApiResult<TResultData>>();
+
+        if (apiResult is null)
+        {
+            throw new Exception("Server returns empty result");
+        }
+
+        if (!apiResult.Ok || apiResult.Data is null)
+        {
+            throw new Exception(apiResult.Message);
+        }
+
+        return apiResult.Data;
+    }
+
     private async Task<BinaryUploadResultData> UploadBinary(string path, string parameterName, byte[] fileContent, int offset, int count, string contentType)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, path);
@@ -206,6 +232,32 @@ public class ChatClient
 
         return apiResult.Data;
     }
+
+    private async Task<Stream?> DownloadBinary(string path)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, path);
+            if (token is not null)
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+            return await response.Content.ReadAsStreamAsync();
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public Task<Stream?> GetImageAsync(string hash)
+        => DownloadBinary($"/GetImage/{hash}");
+
+    public Task<Stream?> GetFileAsync(string hash)
+        => DownloadBinary($"/GetFile/{hash}");
 
     public async Task LoginAsync(string username, string password)
     {
@@ -288,19 +340,6 @@ public class ChatClient
             "api/Request/AcceptGroupRequest",
             new AcceptRequestRequestData(requestId));
     }
-    
-    public async Task<Stream?> GetImageAsync(string hash)
-    {
-        try
-        {
-            var bytes = await _httpClient.GetStreamAsync($"/GetImage/{hash}");
-            return bytes;
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-    }
 
     public async Task RejectFriendRequest(int requestId, string? reason)
     {
@@ -315,6 +354,109 @@ public class ChatClient
             "api/Request/RejectGroupRequest",
             new RejectRequestRequestData(requestId, reason));
     }
+
+    public async Task<User> GetSelf()
+    {
+        var result = await PostAsync<GetUserResultData>(
+            "api/Info/GetSelf");
+
+        return result.User;
+    }
+
+    public async Task SetSelf(User profile)
+    {
+        await PostAsync<SetUserRequestData>(
+            "api/Info/SetSelf",
+            new SetUserRequestData(profile));
+    }
+
+    public async Task SetSelfPassword(string password)
+    {
+        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+        byte[] passwordHash = SHA256.HashData(passwordBytes);
+        string passwordHashText = Convert.ToHexString(passwordHash);
+
+        await PostAsync<SetPasswordRequestData>(
+            "api/Info/SetSelfPassword",
+            new SetPasswordRequestData(passwordHashText));
+    }
+
+    public async Task<User> GetUser(int userId)
+    {
+        var result = await PostAsync<GetUserRequestData, GetUserResultData>(
+            "api/Info/GetUser",
+            new GetUserRequestData(userId));
+
+        return result.User;
+    }
+
+    public async Task<Group> GetGroup(int groupId)
+    {
+        var result = await PostAsync<GetGroupRequestData, GetGroupResultData>(
+            "api/Info/GetGroup",
+            new GetGroupRequestData(groupId));
+
+        return result.Group;
+    }
+
+    public async Task SetGroup(Group group)
+    {
+        await PostAsync<SetGroupRequestData>(
+            "api/Info/SetGroup",
+            new SetGroupRequestData(group));
+    }
+
+    public async Task<Group> CreateGroup(Group group)
+    {
+        var result = await PostAsync<CreateGroupRequestData, CreateGroupResultData>(
+            "api/Info/CreateGroup",
+            new CreateGroupRequestData(group));
+
+        return result.Group;
+    }
+
+    public async Task DeleteGroup(int groupId)
+    {
+        await PostAsync<DeleteGroupRequestData>(
+            "api/Info/DeleteGroup",
+            new DeleteGroupRequestData(groupId));
+    }
+
+    public async Task<List<User>> SearchUser(string keyword, int skip, int count = 30)
+    {
+        var result = await PostAsync<SearchUserRequestData, SearchUserResultData>(
+            "api/Info/SearchUser",
+            new SearchUserRequestData(keyword, skip, count));
+
+        return result.Users;
+    }
+
+    public async Task<List<Group>> SearchGroup(string keyword, int skip, int count = 30)
+    {
+        var result = await PostAsync<SearchGroupRequestData, SearchGroupResultData>(
+            "api/Info/SearchGroup",
+            new SearchGroupRequestData(keyword, skip, count));
+
+        return result.Groups;
+    }
+
+    public async Task<List<User>> GetFriends()
+    {
+        var result = await PostAsync<GetFriendsResultData>(
+            "api/Info/GetFriends");
+
+        return result.Friends;
+    }
+
+    public async Task<List<Group>> GetGroups()
+    {
+        var result = await PostAsync<GetGroupsResultData>(
+            "api/Info/GetGroups");
+
+        return result.Groups;
+    }
+
+
 
     public event EventHandler<PrivateMessageReceivedEventArgs>? PrivateMessageReceived;
     public event EventHandler<GroupMessageReceivedEventArgs>? GroupMessageReceived;
