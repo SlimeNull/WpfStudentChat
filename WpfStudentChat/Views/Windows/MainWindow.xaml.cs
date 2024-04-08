@@ -2,25 +2,30 @@
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Windows;
 
 namespace WpfStudentChat.Views.Windows;
 
 public partial class MainWindow : FluentWindow, INavigationWindow
 {
+    private readonly ChatClientService _chatClientService;
     private readonly IServiceProvider _serviceProvider;
 
     public MainWindowViewModel ViewModel { get; }
 
     public MainWindow(
         MainWindowViewModel viewModel,
+        ChatClientService chatClientService,
         IPageService pageService,
         INavigationService navigationService,
         IServiceProvider serviceProvider
     )
     {
-        ViewModel = viewModel;
+        _chatClientService = chatClientService;
         _serviceProvider = serviceProvider;
+
+        ViewModel = viewModel;
         DataContext = this;
 
         SystemThemeWatcher.Watch(this);
@@ -44,6 +49,8 @@ public partial class MainWindow : FluentWindow, INavigationWindow
 
     public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
 
+    public void SetServiceProvider(IServiceProvider serviceProvider) { }
+
     public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
 
     public void ShowWindow() => Show();
@@ -63,13 +70,26 @@ public partial class MainWindow : FluentWindow, INavigationWindow
         Application.Current.Shutdown();
     }
 
-    INavigationView INavigationWindow.GetNavigation()
+    [RelayCommand]
+    public async Task LoadProfile()
     {
-        throw new NotImplementedException();
+        try
+        {
+            ViewModel.Profile = await _chatClientService.Client.GetSelf();
+        }
+        catch
+        {
+            System.Windows.MessageBox.Show(this, "Failed to load profile", "Error");
+        }
     }
 
-    public void SetServiceProvider(IServiceProvider serviceProvider)
+    [RelayCommand]
+    public void ShowSetProfileWindow()
     {
-        throw new NotImplementedException();
+        var window = _serviceProvider.GetRequiredService<SetProfileWindow>();
+        window.Owner = this;
+        window.ShowDialog();
+
+        _ = LoadProfileCommand.ExecuteAsync(null);
     }
 }

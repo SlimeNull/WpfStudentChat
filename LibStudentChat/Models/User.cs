@@ -1,6 +1,8 @@
-﻿namespace StudentChat.Models;
+﻿using System.Text.Json.Serialization;
 
-public class User : IIdentifiable
+namespace StudentChat.Models;
+
+public record class User : IIdentifiable
 {
     public int Id { get; set; }
     public string AvatarHash { get; set; } = string.Empty;
@@ -8,5 +10,6 @@ public class User : IIdentifiable
     public string Bio { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;
 
-    string IIdentifiable.Name => Nickname;
+    [JsonIgnore]
+    public string Name => Nickname;
 }

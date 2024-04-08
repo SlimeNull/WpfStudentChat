@@ -88,7 +88,7 @@ namespace StudentChat.Server.Controllers
         [HttpPost("GetUser")]
         public async Task<ApiResult<GetUserResultData>> GetUserAsync(GetUserRequestData request)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync();
+            var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == request.UserId);
 
             if (user is null)
             {
@@ -101,7 +101,7 @@ namespace StudentChat.Server.Controllers
         [HttpPost("GetGroup")]
         public async Task<ApiResult<GetGroupResultData>> GetGroupAsync(GetGroupRequestData request)
         {
-            var group = await _dbContext.Groups.FirstOrDefaultAsync();
+            var group = await _dbContext.Groups.FirstOrDefaultAsync(group => group.Id == request.GroupId);
 
             if (group is null)
             {

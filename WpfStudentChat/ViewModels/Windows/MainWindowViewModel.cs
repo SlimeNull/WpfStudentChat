@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using StudentChat.Models;
 using Wpf.Ui.Controls;
 
 namespace WpfStudentChat.ViewModels.Windows;
@@ -13,9 +14,9 @@ public partial class MainWindowViewModel : ObservableObject
     {
         new NavigationViewItem()
         {
-            Content = "Home",
+            Content = "消息",
             Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
-            TargetPageType = typeof(Views.Pages.DashboardPage)
+            TargetPageType = typeof(Views.Pages.ChatPage)
         },
         new NavigationViewItem()
         {
@@ -36,7 +37,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         new NavigationViewItem()
         {
-            Content = "Settings",
+            Content = "设置",
             Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
             TargetPageType = typeof(Views.Pages.SettingsPage)
         }
@@ -47,4 +48,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         new MenuItem { Header = "Home", Tag = "tray_home" }
     };
+
+    [ObservableProperty]
+    private User? _profile;
 }

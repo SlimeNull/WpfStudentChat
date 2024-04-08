@@ -6,6 +6,8 @@
     xmlns:local="clr-namespace:WpfStudentChat.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
     Title="SimpleChat"
     Width="1100"
     Height="650"
@@ -21,6 +23,12 @@
     ExtendsContentIntoTitleBar="True"
     mc:Ignorable="d">
 
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding LoadProfileCommand}"/>
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+
     <DockPanel>
         <ui:TitleBar
             DockPanel.Dock="Top"
@@ -32,7 +40,6 @@
         </ui:TitleBar>
 
         <ui:NavigationView x:Name="RootNavigation"
-                           Padding="42,0,42,0"
                            BreadcrumbBar="{Binding ElementName=BreadcrumbBar}"
                            FooterMenuItemsSource="{Binding ViewModel.FooterMenuItems, Mode=OneWay}"
                            FrameMargin="0"
@@ -41,22 +48,26 @@
                            MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
                            PaneDisplayMode="LeftFluent">
             <ui:NavigationView.PaneHeader>
-                <Border BorderBrush="Gray"
-                        BorderThickness="1"
-                        CornerRadius="5"
-                        HorizontalAlignment="Center"
-                        Margin="0 0 0 14">
-                    <ui:Image x:Name="Avatar" Width="45" Height="45"/>
+                <Border Background="Transparent">
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="PreviewMouseDown">
+                            <b:InvokeCommandAction Command="{Binding ShowSetProfileWindowCommand}"/>
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="1" Opacity=".5"/>
+                    </Border.Effect>
+                    <Border Width="50"
+                            Height="50"
+                            CornerRadius="5"
+                            HorizontalAlignment="Center"
+                            Margin="0 0 0 14">
+                        <b:Interaction.Behaviors>
+                            <mb:BackgroundImageLoadBehavior ImageHash="{Binding ViewModel.Profile.AvatarHash}"/>
+                        </b:Interaction.Behaviors>
+                    </Border>
                 </Border>
             </ui:NavigationView.PaneHeader>
-            <ui:NavigationView.Header>
-                <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,32,42,20" />
-            </ui:NavigationView.Header>
-            <ui:NavigationView.ContentOverlay>
-                <Grid>
-                    <ui:SnackbarPresenter x:Name="SnackbarPresenter" />
-                </Grid>
-            </ui:NavigationView.ContentOverlay>
         </ui:NavigationView>
     </DockPanel>
 </ui:FluentWindow>

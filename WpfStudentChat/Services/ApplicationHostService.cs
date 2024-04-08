@@ -49,7 +49,7 @@ public class ApplicationHostService : IHostedService
         if (loginWindow.ShowDialog() ?? false)
         {
             _navigationWindow.ShowWindow();
-            _navigationWindow.Navigate(typeof(Views.Pages.DashboardPage));
+            _navigationWindow.Navigate(typeof(Views.Pages.ChatPage));
         }
         else
         {

@@ -11,10 +11,10 @@ public partial class LoginWindow : FluentWindow
 {
     private readonly ChatClientService _chatClientService;
 
-    public LoginWindowViewModel ViewModel { get; }
+    public LoginViewModel ViewModel { get; }
 
     public LoginWindow(
-        LoginWindowViewModel viewModel,
+        LoginViewModel viewModel,
         ChatClientService chatClientService)
     {
 

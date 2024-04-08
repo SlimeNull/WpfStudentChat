@@ -1,5 +1,6 @@
 ﻿using System.IO;
-using System.Runtime.Intrinsics.Arm;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xaml.Behaviors;
@@ -7,7 +8,7 @@ using WpfStudentChat.Services;
 
 namespace WpfStudentChat.Behaviors;
 
-public class ImageLoadBehavior : Behavior<BitmapImage>
+public class BackgroundImageLoadBehavior : Behavior<Border>
 {
     public string ImageHash
     {
@@ -17,11 +18,11 @@ public class ImageLoadBehavior : Behavior<BitmapImage>
 
     // Using a DependencyProperty as the backing store for ImageHash.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty ImageHashProperty =
-        DependencyProperty.Register("ImageHash", typeof(string), typeof(ImageLoadBehavior), new PropertyMetadata(string.Empty, ImageHashChangedCallback));
+        DependencyProperty.Register("ImageHash", typeof(string), typeof(BackgroundImageLoadBehavior), new PropertyMetadata(string.Empty, ImageHashChangedCallback));
 
     private static async void ImageHashChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is not ImageLoadBehavior imageLoadBehavior)
+        if (d is not BackgroundImageLoadBehavior imageLoadBehavior)
             return;
 
         var client = App.Host.Services.GetRequiredService<ChatClientService>();
@@ -43,10 +44,17 @@ public class ImageLoadBehavior : Behavior<BitmapImage>
                 return;
             }
 
+
             bufferStream.Seek(0, SeekOrigin.Begin);
-            imageLoadBehavior.AssociatedObject.BeginInit();
-            imageLoadBehavior.AssociatedObject.StreamSource = bufferStream;
-            imageLoadBehavior.AssociatedObject.EndInit();
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.StreamSource = bufferStream;
+            image.EndInit();
+
+            imageLoadBehavior.AssociatedObject.Background = new ImageBrush()
+            {
+                ImageSource = image
+            };
         }
         catch { }
     }

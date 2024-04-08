@@ -39,6 +39,11 @@ namespace StudentChat.Server.Controllers
             var hash = SHA256.HashData(bytes);
             var hashText = Convert.ToHexString(hash);
 
+            if (await _dbContext.Images.AnyAsync(image => image.Hash == hashText))
+            {
+                return ApiResult<BinaryUploadResultData>.CreateOk(new BinaryUploadResultData(hashText));
+            }
+
             await _dbContext.Images.AddAsync(
                 new ImageBinary()
                 {
@@ -70,8 +75,13 @@ namespace StudentChat.Server.Controllers
             var hash = SHA256.HashData(bytes);
             var hashText = Convert.ToHexString(hash);
 
+            if (await _dbContext.Files.AnyAsync(file => file.Hash == hashText))
+            {
+                return ApiResult<BinaryUploadResultData>.CreateOk(new BinaryUploadResultData(hashText));
+            }
+
             await _dbContext.Files.AddAsync(
-                new FileBinary()
+                new FileBinary()    
                 {
                     Hash = hashText,
                     ContentType = file.ContentType,
@@ -93,7 +103,11 @@ namespace StudentChat.Server.Controllers
                 return NotFound();
             }
 
-            return File(image.Data, image.ContentType);
+            var contentType = image.ContentType;
+            if (string.IsNullOrWhiteSpace(contentType))
+                contentType = "image/jpeg";
+
+            return File(image.Data, contentType);
         }
 
         [HttpGet("GetFile/{hash}")]

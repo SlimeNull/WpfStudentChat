@@ -1,14 +1,46 @@
 ﻿<Page x:Class="WpfStudentChat.Views.Pages.ChatPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:WpfStudentChat.Views.Pages"
-      mc:Ignorable="d" 
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+      mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ChatPage">
+      d:DataContext="{d:DesignInstance Type=local:ChatPage,IsDesignTimeCreatable=False}">
 
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <ui:ListView ItemsSource="{Binding ViewModel.Sessions}"
+                     SelectedItem="{Binding ViewModel.SelectedSession}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+            <ui:ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="3" Orientation="Horizontal">
+                        <Border Width="32" Height="32" CornerRadius="3">
+                            <b:Interaction.Behaviors>
+                                <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                            </b:Interaction.Behaviors>
+                        </Border>
+                        <StackPanel Margin="8 0 0 0">
+                            <TextBlock Text="{Binding Name}"/>
+                            <TextBlock TextWrapping="NoWrap"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ui:ListView.ItemTemplate>
+        </ui:ListView>
+
+        <Border Grid.Column="1" Background="#33000000" Width="1"/>
+        <GridSplitter Grid.Column="1" Background="Transparent" HorizontalAlignment="Stretch"/>
+
+        <Frame Grid.Column="2" Content="{Binding ViewModel.MessagesPage}"/>
     </Grid>
 </Page>

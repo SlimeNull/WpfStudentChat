@@ -1,6 +1,6 @@
 ﻿namespace StudentChat.Models
 {
-    public class GroupRequest
+    public record class GroupRequest
     {
         public int Id { get; set; }
         public int SenderId { get; set; }

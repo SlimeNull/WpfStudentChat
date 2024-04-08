@@ -29,19 +29,19 @@ public class ChatClient
 
     public Uri BaseUri => _httpClient.BaseAddress!;
 
-    private int? GetUserId()
+    public int GetUserId()
     {
         const string UserIdKey = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
         if (token is null)
-            return null;
+            return -1;
 
         var index1 = token.IndexOf('.');
         if (index1 == -1)
-            return null;
+            return -1;
         var index2 = token.IndexOf('.', index1 + 1);
         if (index2 == -1)
-            return null;
+            return -1;
         
         var payload = token[(index1 + 1)..index2];
         var padLength = 4 - payload.Length % 4;
@@ -204,13 +204,13 @@ public class ChatClient
         return apiResult.Data;
     }
 
-    private async Task<BinaryUploadResultData> UploadBinary(string path, string parameterName, byte[] fileContent, int offset, int count, string contentType)
+    private async Task<BinaryUploadResultData> UploadBinary(string path, string parameterName, string fileName, byte[] fileContent, int offset, int count, string contentType)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, path);
         var requestContent = new MultipartFormDataContent();
         request.Content = requestContent;
 
-        requestContent.Add(new ByteArrayContent(fileContent, offset, count), parameterName);
+        requestContent.Add(new ByteArrayContent(fileContent, offset, count), parameterName, fileName);
 
         if (token is not null)
         {
@@ -253,11 +253,29 @@ public class ChatClient
         }
     }
 
+    public async Task<string> UploadImageAsync(Stream fileStream, string fileName)
+    {
+        var ms = new MemoryStream();
+        await fileStream.CopyToAsync(ms);
+        var result = await UploadBinary("/api/Binary/UploadImage", "file", fileName, ms.ToArray(), 0, (int)ms.Length, "image/jpeg");
+
+        return result.Hash;
+    }
+
+    public async Task<string> UploadFileAsync(Stream fileStream, string fileName)
+    {
+        var ms = new MemoryStream();
+        await fileStream.CopyToAsync(ms);
+        var result = await UploadBinary("/api/Binary/UploadFile", "file", fileName, ms.ToArray(), 0, (int)ms.Length, "image/jpeg");
+
+        return result.Hash;
+    }
+
     public Task<Stream?> GetImageAsync(string hash)
-        => DownloadBinary($"/GetImage/{hash}");
+        => DownloadBinary($"api/Binary/GetImage/{hash}");
 
     public Task<Stream?> GetFileAsync(string hash)
-        => DownloadBinary($"/GetFile/{hash}");
+        => DownloadBinary($"api/Binary/GetFile/{hash}");
 
     public async Task LoginAsync(string username, string password)
     {

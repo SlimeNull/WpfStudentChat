@@ -1,6 +1,6 @@
 ﻿namespace StudentChat.Models;
 
-public abstract class Message
+public abstract record class Message
 {
     public int Id { get; set; }
     public int SenderId { get; set; }

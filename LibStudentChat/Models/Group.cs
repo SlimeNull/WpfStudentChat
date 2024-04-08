@@ -1,6 +1,6 @@
 ﻿namespace StudentChat.Models;
 
-public class Group : IIdentifiable
+public record class Group : IIdentifiable
 {
     public int Id { get; set; }
     public string AvatarHash { get; set; } = string.Empty;

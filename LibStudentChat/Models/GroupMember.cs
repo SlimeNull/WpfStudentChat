@@ -1,6 +1,6 @@
 ﻿namespace StudentChat.Models;
 
-public class GroupMember
+public record class GroupMember
 {
     public int Id { get; set; }
 

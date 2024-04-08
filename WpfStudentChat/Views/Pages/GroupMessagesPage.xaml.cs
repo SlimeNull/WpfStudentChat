@@ -12,17 +12,35 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.Messaging;
+using WpfStudentChat.Models.Messages;
+using WpfStudentChat.ViewModels.Pages;
 
 namespace WpfStudentChat.Views.Pages
 {
     /// <summary>
     /// GroupMessagesPage.xaml 的交互逻辑
     /// </summary>
-    public partial class GroupMessagesPage : Page
+    public partial class GroupMessagesPage : Page, IRecipient<GroupMessageReceivedMessage>
     {
-        public GroupMessagesPage()
+        public GroupMessagesPage(
+            GroupMessagesViewModel viewModel,
+            IMessenger messenger)
         {
+
+            ViewModel = viewModel;
+            DataContext = this;
+
             InitializeComponent();
+
+            messenger.Register<GroupMessageReceivedMessage>(this);
+        }
+
+        public GroupMessagesViewModel ViewModel { get; }
+
+        void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
+        {
+            ViewModel.Messages.Add(message.Message);
         }
     }
 }

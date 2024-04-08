@@ -56,18 +56,26 @@ public partial class App
             services.AddSingleton<ChatClientService>();
 
             // Pages
-            services.AddSingleton<DashboardPage>();
-            services.AddSingleton<DashboardViewModel>();
+            services.AddSingleton<ChatPage>();
+            services.AddSingleton<ChatViewModel>();
             services.AddSingleton<DataPage>();
             services.AddSingleton<DataViewModel>();
             services.AddSingleton<SettingsPage>();
             services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<ContactsPage>();
-            services.AddSingleton<ContactsPageViewModel>();
+            services.AddSingleton<ContactsViewModel>();
+
+            // Scoped Pages
+            services.AddScoped<PrivateMessagesPage>();
+            services.AddScoped<PrivateMessagesViewModel>();
+            services.AddScoped<GroupMessagesPage>();
+            services.AddScoped<GroupMessagesViewModel>();
 
             // Windows
             services.AddSingleton<LoginWindow>();
-            services.AddSingleton<LoginWindowViewModel>();
+            services.AddSingleton<LoginViewModel>();
+            services.AddSingleton<SetProfileWindow>();
+            services.AddSingleton<SetProfileViewModel>();
         }).Build();
 
     protected override void OnStartup(StartupEventArgs e)
