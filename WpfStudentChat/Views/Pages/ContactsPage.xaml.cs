@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using StudentChat.Models;
 using Wpf.Ui;
+using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Mvvm.Contracts;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
 

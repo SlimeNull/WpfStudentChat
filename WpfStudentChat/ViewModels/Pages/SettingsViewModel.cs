@@ -1,4 +1,5 @@
 ﻿using Wpf.Ui.Appearance;
+using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Controls;
 
 namespace WpfStudentChat.ViewModels.Pages
@@ -11,7 +12,7 @@ namespace WpfStudentChat.ViewModels.Pages
         private string _appVersion = String.Empty;
 
         [ObservableProperty]
-        private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
+        private ThemeType _currentTheme = ThemeType.Unknown;
 
         public void OnNavigatedTo()
         {
@@ -23,7 +24,7 @@ namespace WpfStudentChat.ViewModels.Pages
 
         private void InitializeViewModel()
         {
-            CurrentTheme = ApplicationThemeManager.GetAppTheme();
+            CurrentTheme = Theme.GetAppTheme();
             AppVersion = $"UiDesktopApp1 - {GetAssemblyVersion()}";
 
             _isInitialized = true;
@@ -41,20 +42,20 @@ namespace WpfStudentChat.ViewModels.Pages
             switch (parameter)
             {
                 case "theme_light":
-                    if (CurrentTheme == ApplicationTheme.Light)
+                    if (CurrentTheme == ThemeType.Light)
                         break;
 
-                    ApplicationThemeManager.Apply(ApplicationTheme.Light);
-                    CurrentTheme = ApplicationTheme.Light;
+                    Theme.Apply(ThemeType.Light);
+                    CurrentTheme = ThemeType.Light;
 
                     break;
 
                 default:
-                    if (CurrentTheme == ApplicationTheme.Dark)
+                    if (CurrentTheme == ThemeType.Dark)
                         break;
 
-                    ApplicationThemeManager.Apply(ApplicationTheme.Dark);
-                    CurrentTheme = ApplicationTheme.Dark;
+                    Theme.Apply(ThemeType.Dark);
+                    CurrentTheme = ThemeType.Dark;
 
                     break;
             }

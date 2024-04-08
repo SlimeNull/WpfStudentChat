@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wpf.Ui;
+using Wpf.Ui.Mvvm.Contracts;
+using Wpf.Ui.Mvvm.Services;
 using WpfStudentChat.Models;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;

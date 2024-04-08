@@ -30,17 +30,19 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0">
+        <Border Grid.Column="0"
+                Background="#33FFFFFF"
+                Padding="8">
             <ScrollViewer>
                 <StackPanel Orientation="Vertical">
-                    <ui:ListView SelectionChanged="ListView_SelectionChanged">
-                        <ui:ListViewItem Padding="5">
+                    <ListView SelectionChanged="ListView_SelectionChanged">
+                        <ListViewItem Padding="5">
                             <TextBlock Text="Friend requests" />
-                        </ui:ListViewItem>
-                        <ui:ListViewItem Padding="5">
+                        </ListViewItem>
+                        <ListViewItem Padding="5">
                             <TextBlock Text="Group requests" />
-                        </ui:ListViewItem>
-                    </ui:ListView>
+                        </ListViewItem>
+                    </ListView>
 
                     <Border Height=".8"
                             Opacity=".5"
@@ -49,8 +51,8 @@
                             Margin="3 10 3 0"/>
 
                     <TextBlock Text="Groups:" Margin="3 10 0 0"/>
-                    <ui:ListView ItemsSource="{Binding ViewModel.Groups}">
-                        <ui:ListView.ItemTemplate>
+                    <ListView ItemsSource="{Binding ViewModel.Groups}">
+                        <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Padding="5 0 0 0" Background="Transparent">
                                     <Border.InputBindings>
@@ -68,8 +70,8 @@
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
-                        </ui:ListView.ItemTemplate>
-                    </ui:ListView>
+                        </ListView.ItemTemplate>
+                    </ListView>
 
                     <Border Height=".8"
                             Opacity=".5"
@@ -78,8 +80,8 @@
                             Margin="3 10 3 0"/>
 
                     <TextBlock Text="Friends:" Margin="3 10 0 0"/>
-                    <ui:ListView ItemsSource="{Binding ViewModel.Friends}">
-                        <ui:ListView.ItemTemplate>
+                    <ListView ItemsSource="{Binding ViewModel.Friends}">
+                        <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Padding="2 0 0 0" Background="Transparent">
                                     <Border.InputBindings>
@@ -97,8 +99,8 @@
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
-                        </ui:ListView.ItemTemplate>
-                    </ui:ListView>
+                        </ListView.ItemTemplate>
+                    </ListView>
 
                 </StackPanel>
             </ScrollViewer>

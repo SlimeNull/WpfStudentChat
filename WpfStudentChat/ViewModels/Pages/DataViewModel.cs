@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Controls;
 using WpfStudentChat.Models;
 

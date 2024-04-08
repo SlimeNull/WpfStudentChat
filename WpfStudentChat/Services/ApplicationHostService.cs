@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wpf.Ui;
+using Wpf.Ui.Mvvm.Contracts;
 using WpfStudentChat.Views.Windows;
 
 namespace WpfStudentChat.Services;

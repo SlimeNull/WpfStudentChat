@@ -22,7 +22,7 @@ namespace WpfStudentChat.Views.Windows
     /// <summary>
     /// SetProfileWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class SetProfileWindow : FluentWindow
+    public partial class SetProfileWindow : UiWindow
     {
         private readonly ChatClientService _chatClientService;
 
@@ -47,9 +47,9 @@ namespace WpfStudentChat.Views.Windows
             {
                 ViewModel.Profile = await _chatClientService.Client.GetSelf();
             }
-            catch
+            catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(this, "Failed to load profile", "Error");
+                System.Windows.MessageBox.Show(this, $"Failed to load profile. {ex.Message}", "Error");
             }
         }
 
@@ -84,9 +84,9 @@ namespace WpfStudentChat.Views.Windows
                     AvatarHash = hash
                 };
             }
-            catch
+            catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(this, "Failed to upload image", "Error");
+                System.Windows.MessageBox.Show(this, $"Failed to upload image. {ex.Message}", "Error");
             }
         }
 
@@ -98,9 +98,9 @@ namespace WpfStudentChat.Views.Windows
                 await _chatClientService.Client.SetSelf(ViewModel.Profile);
                 Hide();
             }
-            catch
+            catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(this, "Failed to save profile", "Error");
+                System.Windows.MessageBox.Show(this, $"Failed to save profile. {ex.Message}", "Error");
             }
         }
 

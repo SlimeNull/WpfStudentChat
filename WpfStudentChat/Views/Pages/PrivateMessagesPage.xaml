@@ -6,6 +6,10 @@
       xmlns:local="clr-namespace:WpfStudentChat.Views.Pages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:cvt="clr-namespace:WpfStudentChat.Converters"
+      xmlns:comm="clr-namespace:StudentChat.Models;assembly=LibStudentChat"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+      xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PrivateMessagesPage"
@@ -13,38 +17,106 @@
       d:Background="White">
 
     <Page.Resources>
-        <cvt:UserIdIsSelfConverter x:Key="UserIdIsSelf" SelfUserId="{Binding SelfUserId}"/>
+        <cvt:UserIdIsSelfConverter x:Key="UserIdIsSelf"/>
+        <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
     </Page.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="3"/>
-            <RowDefinition Height="120" MinHeight="60" MaxHeight="500"/>
-        </Grid.RowDefinitions>
+    <DockPanel>
+        <Border DockPanel.Dock="Top"
+                Background="#55FFFFFF"
+                Padding="8 12"
+                BorderBrush="#55808080"
+                BorderThickness="0 0 0 1">
+            <TextBox IsReadOnly="True"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     FontSize="16"
+                     Text="{Binding ViewModel.Target.Name,Mode=OneWay}"
+                     Style="{x:Null}"/>
+        </Border>
 
         <Grid>
-            <ItemsControl ItemsSource="{Binding ViewModel.Messages}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="200"/>
+                <RowDefinition Height="3"/>
+                <RowDefinition Height="120" MinHeight="60" MaxHeight="500"/>
+            </Grid.RowDefinitions>
 
-        <GridSplitter Grid.Row="1"
-                      Background="Transparent"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"/>
+            <Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Visible"
+                              CanContentScroll="True">
+                    <ItemsControl ItemsSource="{Binding ViewModel.Messages}"
+                                  Margin="12 0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="comm:PrivateMessage">
+                                <Grid x:Name="MessageBox"
+                                      HorizontalAlignment="Stretch"
+                                      Margin="0 12 0 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="35"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="35"/>
+                                    </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="2">
-            <ui:TextBox AcceptsReturn="True"
-                        Text="{Binding ViewModel.TextInput,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-            <ui:Button VerticalAlignment="Bottom"
-                       HorizontalAlignment="Right"
-                       Margin="12"
-                       Content="Send"
-                       Command="{Binding SendMessageCommand}"/>
+                                    <Border x:Name="Avatar"
+                                            Grid.Column="0"
+                                            Width="35"
+                                            Height="35"
+                                            CornerRadius="5"
+                                            VerticalAlignment="Top">
+                                        <b:Interaction.Behaviors>
+                                            <mb:BackgroundImageLoadBehavior UserId="{Binding SenderId}"/>
+                                        </b:Interaction.Behaviors>
+                                    </Border>
+
+                                    <StackPanel x:Name="MessageContents"
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Left">
+                                        <ui:Card Padding="10">
+                                            <TextBox IsReadOnly="True"
+                                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                     Background="Transparent"
+                                                     BorderThickness="0"
+                                                     TextWrapping="Wrap"
+                                                     Text="{Binding Content}"
+                                                     Style="{x:Null}"/>
+                                        </ui:Card>
+                                    </StackPanel>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding SenderId,Converter={StaticResource UserIdIsSelf}}"
+                                                 Value="True">
+                                        <Setter TargetName="Avatar" Property="Grid.Column" Value="4"/>
+                                        <Setter TargetName="MessageContents" Property="HorizontalAlignment" Value="Right"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <GridSplitter Grid.Row="1"
+                          Background="Transparent"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"/>
+
+            <Grid Grid.Row="2">
+                <ui:TextBox AcceptsReturn="True"
+                            TextWrapping="Wrap"
+                            Text="{Binding ViewModel.TextInput,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <ui:TextBox.InputBindings>
+                        <KeyBinding Gesture="Control+Enter" Command="{Binding SendMessageCommand}"/>
+                    </ui:TextBox.InputBindings>
+                </ui:TextBox>
+                <ui:Button VerticalAlignment="Bottom"
+                           HorizontalAlignment="Right"
+                           Margin="12"
+                           Content="Send"
+                           Command="{Binding SendMessageCommand}"/>
+            </Grid>
         </Grid>
-    </Grid>
+    </DockPanel>
 </Page>

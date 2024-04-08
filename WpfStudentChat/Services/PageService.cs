@@ -1,4 +1,5 @@
 using Wpf.Ui;
+using Wpf.Ui.Mvvm.Contracts;
 
 namespace WpfStudentChat.Services
 {

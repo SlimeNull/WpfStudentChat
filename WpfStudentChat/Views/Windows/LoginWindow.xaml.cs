@@ -7,7 +7,7 @@ namespace WpfStudentChat.Views.Windows;
 /// <summary>
 /// Interaction logic for LoginWindow.xaml
 /// </summary>
-public partial class LoginWindow : FluentWindow
+public partial class LoginWindow : UiWindow
 {
     private readonly ChatClientService _chatClientService;
 

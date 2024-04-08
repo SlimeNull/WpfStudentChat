@@ -1,4 +1,5 @@
-﻿using Wpf.Ui.Controls;
+﻿using Wpf.Ui.Common.Interfaces;
+using Wpf.Ui.Controls;
 using WpfStudentChat.ViewModels.Pages;
 
 namespace WpfStudentChat.Views.Pages

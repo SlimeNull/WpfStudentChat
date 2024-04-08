@@ -18,25 +18,27 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <ui:ListView ItemsSource="{Binding ViewModel.Sessions}"
-                     SelectedItem="{Binding ViewModel.SelectedSession}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-            <ui:ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="3" Orientation="Horizontal">
-                        <Border Width="32" Height="32" CornerRadius="3">
-                            <b:Interaction.Behaviors>
-                                <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
-                            </b:Interaction.Behaviors>
-                        </Border>
-                        <StackPanel Margin="8 0 0 0">
-                            <TextBlock Text="{Binding Name}"/>
-                            <TextBlock TextWrapping="NoWrap"/>
+        <Border Background="#33FFFFFF">
+            <ListView ItemsSource="{Binding ViewModel.Sessions}"
+                      SelectedItem="{Binding ViewModel.SelectedSession}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="3" Orientation="Horizontal">
+                            <Border Width="32" Height="32" CornerRadius="3">
+                                <b:Interaction.Behaviors>
+                                    <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                </b:Interaction.Behaviors>
+                            </Border>
+                            <StackPanel Margin="8 0 0 0">
+                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock TextWrapping="NoWrap"/>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </DataTemplate>
-            </ui:ListView.ItemTemplate>
-        </ui:ListView>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
 
         <Border Grid.Column="1" Background="#33000000" Width="1"/>
         <GridSplitter Grid.Column="1" Background="Transparent" HorizontalAlignment="Stretch"/>

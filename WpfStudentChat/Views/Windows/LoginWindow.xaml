@@ -1,30 +1,30 @@
-﻿<ui:FluentWindow x:Class="WpfStudentChat.Views.Windows.LoginWindow"
-                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:local="clr-namespace:WpfStudentChat.Views.Windows"
-                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-                 xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                 xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
-                 mc:Ignorable="d"
-                 Title="SimpleChat - Login"
-                 Height="300" Width="400"
-                 ResizeMode="NoResize"
-                 WindowBackdropType="Mica"
-                 ExtendsContentIntoTitleBar="True"
-                 WindowCornerPreference="Round"
-                 WindowStartupLocation="CenterScreen"
-                 d:DataContext="{d:DesignInstance Type=local:LoginWindow}">
+﻿<ui:UiWindow x:Class="WpfStudentChat.Views.Windows.LoginWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:WpfStudentChat.Views.Windows"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+             mc:Ignorable="d"
+             Title="SimpleChat - Login"
+             Height="300" Width="400"
+             ResizeMode="NoResize"
+             ExtendsContentIntoTitleBar="True"
+             WindowBackdropType="Mica"
+             WindowCornerPreference="Round"
+             WindowStartupLocation="CenterScreen"
+             d:DataContext="{d:DesignInstance Type=local:LoginWindow}">
 
-    <ui:FluentWindow.Resources>
-        <Style TargetType="ui:TextBlock" BasedOn="{StaticResource ResourceKey={x:Type TextBlock}}">
+    <ui:UiWindow.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey={x:Type TextBlock}}">
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="ui:TextBox" BasedOn="{StaticResource ResourceKey={x:Type TextBox}}">
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
-    </ui:FluentWindow.Resources>
+    </ui:UiWindow.Resources>
 
     <DockPanel>
         <ui:TitleBar DockPanel.Dock="Top" ShowMaximize="False" ShowMinimize="False"/>
@@ -38,11 +38,11 @@
                        Text="SimpleChat"/>
 
             <StackPanel Orientation="Horizontal" Margin="0 36 0 0">
-                <ui:TextBlock Text="用户名: " Width="60" />
+                <TextBlock Text="用户名: " Width="60" />
                 <ui:TextBox Width="200" Text="{Binding ViewModel.Username}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0 10 0 0" ClipToBounds="False">
-                <ui:TextBlock Text="密码: " Width="60" />
+                <TextBlock Text="密码: " Width="60" />
                 <ui:PasswordBox Width="200">
                     <b:Interaction.Behaviors>
                         <mb:PasswordBoxBehavior Password="{Binding ViewModel.Password,Mode=TwoWay}" />
@@ -54,4 +54,4 @@
             </Border>
         </StackPanel>
     </DockPanel>
-</ui:FluentWindow>
+</ui:UiWindow>

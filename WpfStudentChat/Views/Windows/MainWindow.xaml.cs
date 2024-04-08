@@ -1,13 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Printing;
+using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Controls.Interfaces;
+using Wpf.Ui.Mvvm.Contracts;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Windows;
 
 namespace WpfStudentChat.Views.Windows;
 
-public partial class MainWindow : FluentWindow, INavigationWindow
+public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
 {
     private readonly ChatClientService _chatClientService;
     private readonly IServiceProvider _serviceProvider;
@@ -28,11 +32,10 @@ public partial class MainWindow : FluentWindow, INavigationWindow
         ViewModel = viewModel;
         DataContext = this;
 
-        SystemThemeWatcher.Watch(this);
+        Wpf.Ui.Appearance.Watcher.Watch(this);
 
         InitializeComponent();
         SetPageService(pageService);
-
         navigationService.SetNavigationControl(RootNavigation);
 
         Loaded += MainWindow_Loaded;
@@ -45,16 +48,13 @@ public partial class MainWindow : FluentWindow, INavigationWindow
 
     #region INavigationWindow methods
 
-    public INavigationView GetNavigation() => RootNavigation;
 
+    public INavigation GetNavigation() => RootNavigation;
+
+    public Frame GetFrame() => RootFrame;
     public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
-
-    public void SetServiceProvider(IServiceProvider serviceProvider) { }
-
-    public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
-
+    public void SetPageService(IPageService pageService) => RootNavigation.PageService = pageService;
     public void ShowWindow() => Show();
-
     public void CloseWindow() => Close();
 
     #endregion INavigationWindow methods

@@ -9,11 +9,9 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DataPage"
     d:DataContext="{d:DesignInstance local:DataPage,
-                                     IsDesignTimeCreatable=False}"
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
-    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">

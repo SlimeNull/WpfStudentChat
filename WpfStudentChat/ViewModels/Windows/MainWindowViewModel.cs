@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using StudentChat.Models;
+using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Controls.Interfaces;
 
 namespace WpfStudentChat.ViewModels.Windows;
 
@@ -10,36 +12,36 @@ public partial class MainWindowViewModel : ObservableObject
     private string _applicationTitle = "WPF UI - WpfStudentChat";
 
     [ObservableProperty]
-    private ObservableCollection<object> _menuItems = new()
+    private ObservableCollection<INavigationControl> _menuItems = new()
     {
-        new NavigationViewItem()
+        new NavigationItem()
         {
             Content = "消息",
-            Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
-            TargetPageType = typeof(Views.Pages.ChatPage)
+            Icon = SymbolRegular.Home24,
+            PageType = typeof(Views.Pages.ChatPage)
         },
-        new NavigationViewItem()
+        new NavigationItem()
         {
             Content = "联系人",
-            Icon = new SymbolIcon { Symbol = SymbolRegular.ContactCard24 },
-            TargetPageType = typeof(Views.Pages.ContactsPage)
+            Icon = SymbolRegular.ContactCard24,
+            PageType = typeof(Views.Pages.ContactsPage)
         },
-        new NavigationViewItem()
+        new NavigationItem()
         {
             Content = "Data",
-            Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
-            TargetPageType = typeof(Views.Pages.DataPage)
+            Icon = SymbolRegular.DataHistogram24,
+            PageType = typeof(Views.Pages.DataPage)
         },
     };
 
     [ObservableProperty]
-    private ObservableCollection<object> _footerMenuItems = new()
+    private ObservableCollection<INavigationControl> _footerMenuItems = new()
     {
-        new NavigationViewItem()
+        new NavigationItem()
         {
             Content = "设置",
-            Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
-            TargetPageType = typeof(Views.Pages.SettingsPage)
+            Icon = SymbolRegular.Settings24,
+            PageType = typeof(Views.Pages.SettingsPage)
         }
     };
 
