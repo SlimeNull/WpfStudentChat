@@ -73,11 +73,15 @@ public partial class App
             services.AddScoped<GroupMessagesPage>();
             services.AddScoped<GroupMessagesViewModel>();
 
+            // Scoped Windows
+            services.AddScoped<SearchWindow>();
+            services.AddScoped<SearchViewModel>();
+            services.AddScoped<SetProfileWindow>();
+            services.AddScoped<SetProfileViewModel>();
+
             // Windows
             services.AddSingleton<LoginWindow>();
             services.AddSingleton<LoginViewModel>();
-            services.AddSingleton<SetProfileWindow>();
-            services.AddSingleton<SetProfileViewModel>();
         }).Build();
 
     protected override void OnStartup(StartupEventArgs e)

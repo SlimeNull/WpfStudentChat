@@ -96,18 +96,12 @@ namespace WpfStudentChat.Views.Windows
             try
             {
                 await _chatClientService.Client.SetSelf(ViewModel.Profile);
-                Hide();
+                Close();
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(this, $"Failed to save profile. {ex.Message}", "Error");
             }
-        }
-
-        private void FluentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true;
-            Hide();
         }
     }
 }

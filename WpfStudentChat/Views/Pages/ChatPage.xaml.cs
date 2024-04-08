@@ -12,7 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.Messaging;
 using StudentChat.Models;
+using WpfStudentChat.Models.Messages;
 using WpfStudentChat.ViewModels.Pages;
 
 namespace WpfStudentChat.Views.Pages
@@ -20,15 +22,21 @@ namespace WpfStudentChat.Views.Pages
     /// <summary>
     /// ChatPage.xaml 的交互逻辑
     /// </summary>
-    public partial class ChatPage : Page
+    public partial class ChatPage : Page,
+        IRecipient<PrivateMessageReceivedMessage>,
+        IRecipient<GroupMessageReceivedMessage>
     {
         public ChatPage(
-            ChatViewModel viewModel)
+            ChatViewModel viewModel,
+            IMessenger messenger)
         {
             ViewModel = viewModel;
             DataContext = this;
 
             InitializeComponent();
+
+            messenger.Register<PrivateMessageReceivedMessage>(this);
+            messenger.Register<GroupMessageReceivedMessage>(this);
         }
 
         public ChatViewModel ViewModel { get; }
@@ -54,6 +62,16 @@ namespace WpfStudentChat.Views.Pages
         public void SelectSession(IIdentifiable identifiable)
         {
             ViewModel.SelectedSession = identifiable;
+        }
+
+        void IRecipient<PrivateMessageReceivedMessage>.Receive(PrivateMessageReceivedMessage message)
+        {
+            
+        }
+
+        void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

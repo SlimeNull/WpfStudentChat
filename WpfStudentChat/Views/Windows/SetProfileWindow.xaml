@@ -15,7 +15,6 @@
              Height="450" Width="280"
              ResizeMode="NoResize"
              WindowStartupLocation="CenterOwner"
-             Closing="FluentWindow_Closing"
              d:DataContext="{d:DesignInstance Type=local:SetProfileWindow,IsDesignTimeCreatable=False}">
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Loaded">

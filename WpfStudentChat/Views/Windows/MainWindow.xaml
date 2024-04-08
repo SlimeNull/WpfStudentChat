@@ -63,6 +63,7 @@
                                     ScrollViewer.CanContentScroll="False"
                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                     Items="{Binding ViewModel.MenuItems}"
+                                    Footer="{Binding ViewModel.FooterMenuItems}"
                                     Frame="{Binding ElementName=RootFrame}">
 
                 </ui:NavigationStore>

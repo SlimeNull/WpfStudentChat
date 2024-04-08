@@ -1,11 +1,13 @@
 ﻿using System.Printing;
 using System.Windows.Controls;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Controls.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
+using WpfStudentChat.Models.Messages;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Windows;
 
@@ -86,7 +88,8 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
     [RelayCommand]
     public void ShowSetProfileWindow()
     {
-        var window = _serviceProvider.GetRequiredService<SetProfileWindow>();
+        using var scope = _serviceProvider.CreateScope();
+        var window = scope.ServiceProvider.GetRequiredService<SetProfileWindow>();
         window.Owner = this;
         window.ShowDialog();
 

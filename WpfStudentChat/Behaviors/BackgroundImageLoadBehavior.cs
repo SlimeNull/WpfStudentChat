@@ -10,8 +10,6 @@ namespace WpfStudentChat.Behaviors;
 
 public class BackgroundImageLoadBehavior : Behavior<Border>
 {
-
-
     public int UserId
     {
         get { return (int)GetValue(UserIdProperty); }

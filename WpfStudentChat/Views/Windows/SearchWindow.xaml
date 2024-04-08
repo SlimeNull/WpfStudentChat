@@ -1,0 +1,71 @@
+﻿<ui:UiWindow x:Class="WpfStudentChat.Views.Windows.SearchWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:WpfStudentChat.Views.Windows"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d"
+             Title="SearchWindow" Height="450" Width="600"
+             d:DataContext="{d:DesignInstance Type=local:SearchWindow}">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Users">
+                <StackPanel>
+                    <Grid Margin="24 24 24 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
+                                    PlaceholderText="Search users"/>
+                        <Button Grid.Column="2" Content="Search" Height="34"/>
+                    </Grid>
+
+                    <ScrollViewer Margin="0 24 0 0">
+                        <StackPanel>
+                            <ItemsControl Margin="24 0"
+                                          ItemsSource="{Binding ViewModel.SearchUserResults}">
+
+                            </ItemsControl>
+
+                            <Button Content="Load More" HorizontalAlignment="Center"
+                                    BorderThickness="0"
+                                    Background="Transparent"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Groups">
+                <StackPanel>
+                    <Grid Margin="24 24 24 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
+                                    PlaceholderText="Search groups"/>
+                        <Button Grid.Column="2" Content="Search" Height="34"/>
+                    </Grid>
+
+                    <ScrollViewer Margin="0 24 0 0">
+                        <StackPanel>
+                            <ItemsControl Margin="24 0"
+                                          ItemsSource="{Binding ViewModel.SearchUserResults}">
+
+                            </ItemsControl>
+
+                            <Button Content="Load More" HorizontalAlignment="Center"
+                                    BorderThickness="0"
+                                    Background="Transparent"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</ui:UiWindow>
