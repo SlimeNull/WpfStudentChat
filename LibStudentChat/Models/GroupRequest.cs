@@ -6,6 +6,9 @@
         public int SenderId { get; set; }
         public int GroupId { get; set; }
 
+        public string SenderName { get; set; } = string.Empty;
+        public string GroupName { get; set; } = string.Empty;
+
         public string? Message { get; set; }
         public string? RejectReason { get; set; }
 

@@ -41,18 +41,20 @@
                                 Padding="0 3"
                                 Command="{Binding ShowSearchWindowCommand}"/>
                         <Button HorizontalAlignment="Stretch"
-                                Content="创建群了"
+                                Content="创建群聊"
                                 Padding="0 3"
                                 Margin="0 3 0 0"
                                 Command="{Binding ShowCreateGroupWindowCommand}"/>
                         <Button HorizontalAlignment="Stretch"
                                 Content="好友请求"
                                 Padding="0 3"
-                                Margin="0 3 0 0"/>
+                                Margin="0 3 0 0"
+                                Command="{Binding ShowFriendRequestsPageCommand}"/>
                         <Button HorizontalAlignment="Stretch"
                                 Content="群聊请求"
                                 Padding="0 3"
-                                Margin="0 3 0 0"/>
+                                Margin="0 3 0 0"
+                                Command="{Binding ShowGroupRequestsPageCommand}"/>
                     </StackPanel>
 
                     <Border Height=".8"

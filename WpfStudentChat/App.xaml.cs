@@ -66,6 +66,10 @@ public partial class App
             services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<ContactsPage>();
             services.AddSingleton<ContactsViewModel>();
+            services.AddSingleton<FriendRequestsPage>();
+            services.AddSingleton<FriendRequestsViewModel>();
+            services.AddSingleton<GroupRequestsPage>();
+            services.AddSingleton<GroupRequestsViewModel>();
 
             // Scoped Pages
             services.AddScoped<PrivateMessagesPage>();

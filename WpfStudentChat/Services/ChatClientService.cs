@@ -28,6 +28,30 @@ namespace WpfStudentChat.Services
             Client.GroupMessageReceived += Client_GroupMessageReceived;
             Client.GroupIncreased += Client_GroupIncreased;
             Client.GroupDecreased += Client_GroupDecreased;
+            Client.FriendIncreased += Client_FriendIncreased;
+            Client.FriendDecreased += Client_FriendDecreased;
+            Client.FriendRequestReceived += Client_FriendRequestReceived;
+            Client.GroupRequestReceived += Client_GroupRequestReceived;
+        }
+
+        private void Client_GroupRequestReceived(object? sender, StudentChat.Models.Events.GroupRequestReceivedEventArgs e)
+        {
+            _messenger.Send(new GroupRequestReceivedMessage(e.Request));
+        }
+
+        private void Client_FriendRequestReceived(object? sender, StudentChat.Models.Events.FriendRequestReceivedEventArgs e)
+        {
+            _messenger.Send(new FriendRequestReceivedMessage(e.Request));
+        }
+
+        private void Client_FriendDecreased(object? sender, StudentChat.Models.Events.FriendChangedEventArgs e)
+        {
+            _messenger.Send(new FriendDecreasedMessage(e.Friend));
+        }
+
+        private void Client_FriendIncreased(object? sender, StudentChat.Models.Events.FriendChangedEventArgs e)
+        {
+            _messenger.Send(new FriendIncreasedMessage(e.Friend));
         }
 
         private void Client_GroupDecreased(object? sender, StudentChat.Models.Events.GroupChangedEventArgs e)

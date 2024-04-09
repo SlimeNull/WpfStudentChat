@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.Messaging;
 using StudentChat.Models;
+using WpfStudentChat.Extensions;
 using WpfStudentChat.Models.Messages;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
@@ -21,33 +22,38 @@ using WpfStudentChat.ViewModels.Pages;
 namespace WpfStudentChat.Views.Pages
 {
     /// <summary>
-    /// FriendRequestsPage.xaml 的交互逻辑
+    /// Interaction logic for GroupRequestsPage.xaml
     /// </summary>
-    public partial class FriendRequestsPage : Page,
-        IRecipient<FriendRequestReceivedMessage>
+    public partial class GroupRequestsPage : Page, 
+        IRecipient<GroupRequestReceivedMessage>
     {
+        private readonly ChatClientService _chatClientService;
+        public GroupRequestsViewModel ViewModel { get; }
+
         const int LoadCount = 20;
 
-        private readonly ChatClientService _chatClientService;
-
-        public FriendRequestsPage(
-            FriendRequestsViewModel viewModel,
-            ChatClientService chatClientService)
+        public GroupRequestsPage(
+            GroupRequestsViewModel viewModel, 
+            ChatClientService chatClientService,
+            IMessenger messenger)
         {
             _chatClientService = chatClientService;
+
             ViewModel = viewModel;
             DataContext = this;
+
             InitializeComponent();
+
+            messenger.Register(this);
         }
 
-        public FriendRequestsViewModel ViewModel { get; }
 
         [RelayCommand]
         public async Task LoadRequests()
         {
             try
             {
-                var requests = await _chatClientService.Client.GetFriendRequestsAsync(0, LoadCount);
+                var requests = await _chatClientService.Client.GetGroupRequestsAsync(0, LoadCount);
                 ViewModel.Requests.Clear();
                 foreach (var request in requests)
                     ViewModel.Requests.Add(request);
@@ -63,7 +69,7 @@ namespace WpfStudentChat.Views.Pages
         {
             try
             {
-                var requests = await _chatClientService.Client.GetFriendRequestsAsync(ViewModel.Requests.Count, LoadCount);
+                var requests = await _chatClientService.Client.GetGroupRequestsAsync(ViewModel.Requests.Count, LoadCount);
                 foreach (var request in requests)
                     ViewModel.Requests.Add(request);
             }
@@ -74,11 +80,11 @@ namespace WpfStudentChat.Views.Pages
         }
 
         [RelayCommand]
-        public async Task AcceptRequest(FriendRequest request)
+        public async Task AcceptRequest(GroupRequest request)
         {
             try
             {
-                await _chatClientService.Client.AcceptFriendRequestAsync(request.Id);
+                await _chatClientService.Client.AcceptGroupRequestAsync(request.Id);
                 var index = ViewModel.Requests.IndexOf(request);
                 if (index != -1)
                 {
@@ -87,16 +93,16 @@ namespace WpfStudentChat.Views.Pages
             }
             catch (Exception ex)
             {
-                MessageBox.Show(App.Current.MainWindow, $"Failed to accept friend request. {ex.Message}", "Error");
+                MessageBox.Show(App.Current.MainWindow, $"Failed to accept group request. {ex.Message}", "Error");
             }
         }
 
         [RelayCommand]
-        public async Task RejectRequest(FriendRequest request)
+        public async Task RejectRequest(GroupRequest request)
         {
             try
             {
-                await _chatClientService.Client.RejectFriendRequestAsync(request.Id, null);
+                await _chatClientService.Client.RejectGroupRequestAsync(request.Id, null);
                 var index = ViewModel.Requests.IndexOf(request);
                 if (index != -1)
                 {
@@ -105,12 +111,12 @@ namespace WpfStudentChat.Views.Pages
             }
             catch (Exception ex)
             {
-                MessageBox.Show(App.Current.MainWindow, $"Failed to reject friend request. {ex.Message}", "Error");
+                MessageBox.Show(App.Current.MainWindow, $"Failed to reject group request. {ex.Message}", "Error");
             }
         }
 
 
-        void IRecipient<FriendRequestReceivedMessage>.Receive(FriendRequestReceivedMessage message)
+        void IRecipient<GroupRequestReceivedMessage>.Receive(GroupRequestReceivedMessage message)
         {
             ViewModel.Requests.Insert(0, message.Request);
         }

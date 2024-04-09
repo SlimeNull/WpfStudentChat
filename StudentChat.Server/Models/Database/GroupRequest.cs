@@ -18,6 +18,17 @@ namespace StudentChat.Server.Models.Database
         public User Sender { get; set; } = null!;
         public Group Group { get; set; } = null!;
 
+        public async Task LoadAllPropertiesAsync(ChatServerDbContext dbContext)
+        {
+            await dbContext.Entry(this)
+                .Reference(v => v.Sender)
+                .LoadAsync();
+
+            await dbContext.Entry(this)
+                .Reference(v => v.Group)
+                .LoadAsync();
+        }
+
 
         public static explicit operator CommonModels.GroupRequest(GroupRequest request)
         {
@@ -29,7 +40,9 @@ namespace StudentChat.Server.Models.Database
                 Message = request.Message,
                 RejectReason = request.RejectReason,
                 IsDone = request.IsDone,
-                SentTime = request.SentTime
+                SentTime = request.SentTime,
+                SenderName = request.Sender.Nickname,
+                GroupName = request.Group.Name,
             };
         }
     }

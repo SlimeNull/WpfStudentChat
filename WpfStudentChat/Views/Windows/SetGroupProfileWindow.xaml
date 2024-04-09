@@ -26,7 +26,7 @@
         <ui:TitleBar DockPanel.Dock="Top" ShowMinimize="False" ShowMaximize="False"/>
 
         <StackPanel Margin="15">
-            <Border CornerRadius="100"
+            <Border CornerRadius="15"
                     HorizontalAlignment="Center"
                     Background="#33FFFFFF">
                 <b:Interaction.Triggers>
@@ -48,12 +48,12 @@
 
             <StackPanel Width="260" Margin="0 24 0 0">
                 <TextBlock Text="名称"/>
-                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Name,Mode=TwoWay}"/>
+                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
 
             <StackPanel Width="260" Margin="0 12 0 0">
                 <TextBlock Text="描述"/>
-                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Description,Mode=TwoWay}"/>
+                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Description,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
 
             <StackPanel Width="260" Margin="0 48 0 0">

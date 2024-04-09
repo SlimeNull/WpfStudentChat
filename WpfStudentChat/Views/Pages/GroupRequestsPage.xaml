@@ -1,4 +1,4 @@
-﻿<Page x:Class="WpfStudentChat.Views.Pages.FriendRequestsPage"
+﻿<Page x:Class="WpfStudentChat.Views.Pages.GroupRequestsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,14 +11,14 @@
       xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="FriendRequestsPage"
-      d:Background="White"
-      d:DataContext="{d:DesignInstance Type=local:FriendRequestsPage,IsDesignTimeCreatable=False}">
+      Title="GroupRequestsPage"
+      d:DataContext="{d:DesignInstance Type=local:GroupRequestsPage,IsDesignTimeCreatable=False}">
 
     <Page.Resources>
         <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
         <cvt:UserIdIsSelfConverter x:Key="UserIdIsSelfConverter"/>
-        <vc:ValueConverterGroup x:Key="InvertBooleanToVisibility">
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <vc:ValueConverterGroup x:Key="InvertBooleanToVisibilityConverter">
             <vc:BoolInverter/>
             <vc:BoolToVisibilityConverter/>
         </vc:ValueConverterGroup>
@@ -62,9 +62,8 @@
                                 <StackPanel Orientation="Vertical" Margin="8 0 0 0">
                                     <TextBlock>
                                         <Run Text="{Binding SenderName}"/>
-                                        <Run Text="请求加"/>
-                                        <Run Text="{Binding ReceiverName}"/>
-                                        <Run Text="为好友"/>
+                                        <Run Text="请求加入"/>
+                                        <Run Text="{Binding GroupName}"/>
                                     </TextBlock>
                                     <TextBlock Text="{Binding Message}"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
@@ -74,7 +73,7 @@
                             <Grid Grid.Column="1"
                                   Name="HandleButtonContainer">
                                 <StackPanel Orientation="Horizontal">
-                                    <StackPanel Visibility="{Binding IsDone,Converter={StaticResource InvertBooleanToVisibility}}"
+                                    <StackPanel Visibility="{Binding IsDone,Converter={StaticResource InvertBooleanToVisibilityConverter}}"
                                                 Orientation="Horizontal">
                                         <Button
                                             Content="接受"
@@ -90,7 +89,7 @@
                                     </StackPanel>
                                     <TextBlock Text="已处理"
                                                VerticalAlignment="Center"
-                                               Visibility="{Binding IsDone,Converter={x:Static vc:BoolToVisibilityConverter.Instance}}"
+                                               Visibility="{Binding IsDone,Converter={StaticResource BooleanToVisibilityConverter},Mode=OneWay}"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                 </StackPanel>
                             </Grid>

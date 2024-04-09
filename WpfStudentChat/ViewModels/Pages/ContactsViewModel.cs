@@ -12,4 +12,5 @@ public partial class ContactsViewModel : ObservableObject
 
     public ObservableCollection<User> Friends { get; } = new();
     public ObservableCollection<Group> Groups { get; } = new();
+
 }

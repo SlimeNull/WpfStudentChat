@@ -110,6 +110,20 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         window.ShowDialog();
     }
 
+    [RelayCommand]
+    public void ShowFriendRequestsPage()
+    {
+        var page = _serviceProvider.GetRequiredService<FriendRequestsPage>();
+        ContentFrame.Content = page;
+    }
+
+    [RelayCommand]
+    public void ShowGroupRequestsPage()
+    {
+        var page = _serviceProvider.GetRequiredService<GroupRequestsPage>();
+        ContentFrame.Content = page;
+    }
+
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is not ListView senderListView)

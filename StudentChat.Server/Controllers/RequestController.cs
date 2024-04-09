@@ -44,6 +44,8 @@ namespace StudentChat.Server.Controllers
                 .OrderByDescending(request => request.SentTime)
                 .Skip(request.Skip)
                 .Take(request.Count)
+                .Include(request => request.Sender)
+                .Include(request => request.Receiver)
                 .Select(request => (CommonModels.FriendRequest)request)
                 .ToListAsync();
 
@@ -67,6 +69,8 @@ namespace StudentChat.Server.Controllers
                 .OrderByDescending(request => request.SentTime)
                 .Skip(request.Skip)
                 .Take(request.Count)
+                .Include(request => request.Sender)
+                .Include(request => request.Group)
                 .Select(request => (CommonModels.GroupRequest)request)
                 .ToListAsync();
 
@@ -91,6 +95,8 @@ namespace StudentChat.Server.Controllers
                 .OrderByDescending(request => request.SentTime)
                 .Skip(request.Skip)
                 .Take(request.Count)
+                .Include(request => request.Sender)
+                .Include(request => request.Receiver)
                 .Select(request => (CommonModels.FriendRequest)request)
                 .ToListAsync();
 
@@ -114,6 +120,8 @@ namespace StudentChat.Server.Controllers
                 .OrderByDescending(request => request.SentTime)
                 .Skip(request.Skip)
                 .Take(request.Count)
+                .Include(request => request.Sender)
+                .Include(request => request.Group)
                 .Select(request => (CommonModels.GroupRequest)request)
                 .ToListAsync();
 
@@ -137,6 +145,8 @@ namespace StudentChat.Server.Controllers
                 .OrderByDescending(request => request.SentTime)
                 .Skip(request.Skip)
                 .Take(request.Count)
+                .Include(request => request.Sender)
+                .Include(request => request.Receiver)
                 .Select(request => (CommonModels.FriendRequest) request)
                 .ToListAsync();
 
@@ -160,6 +170,8 @@ namespace StudentChat.Server.Controllers
                 .OrderByDescending(request => request.SentTime)
                 .Skip(request.Skip)
                 .Take(request.Count)
+                .Include(request => request.Sender)
+                .Include(request => request.Group)
                 .Select(request => (CommonModels.GroupRequest)request)
                 .ToListAsync();
 
@@ -195,6 +207,8 @@ namespace StudentChat.Server.Controllers
                 });
 
             await _dbContext.SaveChangesAsync();
+
+            await entry.Entity.LoadAllPropertiesAsync(_dbContext);
             await _notifyService.OnFriendRequestSent((CommonModels.FriendRequest)entry.Entity);
 
             return ApiResult.CreateOk();
@@ -228,6 +242,8 @@ namespace StudentChat.Server.Controllers
                 });
 
             await _dbContext.SaveChangesAsync();
+
+            await entry.Entity.LoadAllPropertiesAsync(_dbContext);
             await _notifyService.OnGroupRequestSent((CommonModels.GroupRequest)entry.Entity);
 
             return ApiResult.CreateOk();

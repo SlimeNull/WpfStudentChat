@@ -39,12 +39,13 @@
                                   FocusVisualStyle="{x:Null}">
                         <StackPanel>
                             <ItemsControl Margin="24 0"
-                                          ItemsSource="{Binding ViewModel.SearchUserResults}">
+                                          ItemsSource="{Binding ViewModel.SearchUserResults}"
+                                          d:ItemsSource="{d:SampleData ItemCount=5}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Margin="0 0 0 8">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Orientation="Horizontal">
