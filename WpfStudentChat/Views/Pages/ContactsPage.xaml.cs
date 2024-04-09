@@ -112,7 +112,25 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (sender is not ListView senderListView)
+        {
+            return;
+        }
 
+        if (senderListView.SelectedItem is null)
+        {
+            return;
+        }
+
+        if (sender == FriendsListView)
+        {
+            GroupsListView.SelectedItem = null;
+        }
+        else if (sender == GroupsListView)
+        {
+
+            FriendsListView.SelectedItem = null;
+        }
     }
 
     void IRecipient<FriendIncreasedMessage>.Receive(FriendIncreasedMessage message)
@@ -153,7 +171,9 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
             eventArg.RoutedEvent = UIElement.MouseWheelEvent;
             eventArg.Source = sender;
             var parent = ((Control)sender).Parent as UIElement;
-            parent.RaiseEvent(eventArg);
+
+            if (parent is not null)
+                parent.RaiseEvent(eventArg);
         }
     }
 }

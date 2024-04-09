@@ -30,9 +30,14 @@ namespace StudentChat.Server.Models.Database
             return UserFriends.AnyAsync(f => f.FromUserId == userId && f.ToUserId == friendUserId || f.FromUserId == friendUserId && f.ToUserId == userId);
         }
 
-        public Task<bool> CheckUserHasGroupAsync(int userId, int groupId)
+        public async Task<bool> CheckUserHasGroupAsync(int userId, int groupId)
         {
-            return GroupMembers.AnyAsync(gm => gm.UserId == userId && gm.GroupId == groupId);
+            bool owned = await Groups.AnyAsync(g => g.OwnerId == userId && g.Id == groupId);
+            if (owned)
+                return true;
+
+            bool joined = await GroupMembers.AnyAsync(gm => gm.UserId == userId && gm.GroupId == groupId);
+            return joined;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

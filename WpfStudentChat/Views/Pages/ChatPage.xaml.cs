@@ -75,7 +75,7 @@ namespace WpfStudentChat.Views.Pages
 
         async void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
         {
-            if (ViewModel.GetGroupSession(message.Message.SenderId) is null)
+            if (ViewModel.GetGroupSession(message.Message.GroupId) is null)
             {
                 var newSession = await ViewModel.AddGroupSessionAsync(message.Message.GroupId);
                 newSession.Messages.Add(message.Message);

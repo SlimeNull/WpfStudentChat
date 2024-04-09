@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.Messaging;
 using StudentChat.Models;
+using WpfStudentChat.Extensions;
 using WpfStudentChat.Models.Messages;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
@@ -51,7 +52,11 @@ namespace WpfStudentChat.Views.Pages
             if (ViewModel.Session is null)
                 return;
 
+            var atBottom = MessagesScrollViewer.IsAtBottom();
             ViewModel.Session.Messages.Add(message.Message);
+
+            if (atBottom)
+                MessagesScrollViewer.ScrollToBottom();
         }
 
         [RelayCommand]

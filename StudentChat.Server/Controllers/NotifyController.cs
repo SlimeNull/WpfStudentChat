@@ -82,7 +82,7 @@ namespace StudentChat.Server.Controllers
         private async Task MessageNotifyService_GroupMessageSent(object? sender, NotifyService.GroupMessageSentEventArgs e)
         {
             var selfUserId = HttpContext.GetUserId();
-            var isRelated = _dbContext.GroupMembers.Any(gm => gm.UserId == selfUserId && e.Message.GroupId == e.Message.GroupId);
+            var isRelated = await _dbContext.CheckUserHasGroupAsync(selfUserId, e.Message.GroupId);
 
             if (!isRelated)
                 return;

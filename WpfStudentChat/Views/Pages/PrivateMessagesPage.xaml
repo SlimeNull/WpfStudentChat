@@ -43,7 +43,8 @@
             </Grid.RowDefinitions>
 
             <Grid>
-                <ScrollViewer VerticalScrollBarVisibility="Visible"
+                <ScrollViewer Name="MessagesScrollViewer"
+                              VerticalScrollBarVisibility="Visible"
                               CanContentScroll="True">
                     <ItemsControl ItemsSource="{Binding ViewModel.Session.Messages}"
                                   Margin="12 0">
@@ -52,6 +53,29 @@
                                 <Grid x:Name="MessageBox"
                                       HorizontalAlignment="Stretch"
                                       Margin="0 12 0 0">
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <TranslateTransform/>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From=".5" To="1" Duration="0:0:0.100"/>
+                                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Y" From="-10" To="0" Duration="0:0:0.100">
+                                                                <DoubleAnimation.EasingFunction>
+                                                                    <CircleEase EasingMode="EaseOut"/>
+                                                                </DoubleAnimation.EasingFunction>
+                                                            </DoubleAnimation>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="35"/>
                                         <ColumnDefinition Width="8"/>
