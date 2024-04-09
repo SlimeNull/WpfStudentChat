@@ -7,16 +7,20 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+             xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
              mc:Ignorable="d"
-             Title="SearchWindow" Height="450" Width="600"
+             Title="搜索" Height="450" Width="600"
              WindowStartupLocation="CenterOwner"
              d:DataContext="{d:DesignInstance Type=local:SearchWindow}">
+
     <ui:UiWindow.Resources>
         <BooleanToVisibilityConverter x:Key="Boolean2Visibility"/>
+        <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
     </ui:UiWindow.Resources>
+
     <Grid>
         <TabControl>
-            <TabItem Header="Users">
+            <TabItem Header="用户">
                 <StackPanel>
                     <Grid Margin="24 24 24 0">
                         <Grid.ColumnDefinitions>
@@ -26,7 +30,7 @@
                         </Grid.ColumnDefinitions>
 
                         <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
-                                    PlaceholderText="Search users"/>
+                                    PlaceholderText="搜索用户"/>
                         <Button Grid.Column="2" Content="Search" Height="34"
                                 Command="{Binding SearchUsersCommand}"/>
                     </Grid>
@@ -38,7 +42,7 @@
                                           ItemsSource="{Binding ViewModel.SearchUserResults}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid>
+                                        <Grid Margin="0 0 0 8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -63,7 +67,9 @@
                                             <Button Grid.Column="1"
                                                     VerticalAlignment="Center"
                                                     HorizontalAlignment="Center"
-                                                    Content="Add">
+                                                    Content="Add"
+                                                    Command="{Binding Source={StaticResource DataProxy},Path=Data.SendFriendRequestCommand}"
+                                                    CommandParameter="{Binding}">
 
                                             </Button>
                                         </Grid>
@@ -71,7 +77,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Button Content="Load More"
+                            <Button Content="加载更多"
                                     HorizontalAlignment="Center"
                                     Margin="0 24 0 0"
                                     BorderThickness="0"
@@ -82,7 +88,7 @@
                     </ScrollViewer>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Groups">
+            <TabItem Header="群聊">
                 <StackPanel>
                     <Grid Margin="24 24 24 0">
                         <Grid.ColumnDefinitions>
@@ -92,7 +98,7 @@
                         </Grid.ColumnDefinitions>
 
                         <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
-                                    PlaceholderText="Search groups"/>
+                                    PlaceholderText="搜索群聊"/>
                         <Button Grid.Column="2" Content="Search" Height="34"
                                 Command="{Binding SearchGroupsCommand}"/>
                     </Grid>
@@ -103,7 +109,7 @@
                                           ItemsSource="{Binding ViewModel.SearchGroupResults}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid>
+                                        <Grid Margin="0 0 0 8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -128,7 +134,9 @@
                                             <Button Grid.Column="1"
                                                     VerticalAlignment="Center"
                                                     HorizontalAlignment="Center"
-                                                    Content="Add">
+                                                    Content="Add"
+                                                    Command="{Binding Source={StaticResource DataProxy},Path=Data.SendGroupRequestCommand}"
+                                                    CommandParameter="{Binding}">
 
                                             </Button>
                                         </Grid>
@@ -136,7 +144,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Button Content="Load More" HorizontalAlignment="Center"
+                            <Button Content="加载更多" HorizontalAlignment="Center"
                                     BorderThickness="0"
                                     Background="Transparent"
                                     Visibility="{Binding ViewModel.HasMoreGroups,Mode=OneWay,Converter={StaticResource Boolean2Visibility}}"

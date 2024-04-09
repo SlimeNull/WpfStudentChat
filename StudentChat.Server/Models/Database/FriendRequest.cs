@@ -13,6 +13,8 @@ namespace StudentChat.Server.Models.Database
 
         public bool IsDone { get; set; }
 
+        public DateTimeOffset SentTime { get; set; }
+
         public User Sender { get; set; } = null!;
         public User Receiver { get; set; } = null!;
 
@@ -24,6 +26,9 @@ namespace StudentChat.Server.Models.Database
                 SenderId = request.SenderId,
                 ReceiverId = request.ReceiverId,
                 Message = request.Message,
+                RejectReason = request.RejectReason,
+                IsDone = request.IsDone,
+                SentTime = request.SentTime
             };
         }
     }

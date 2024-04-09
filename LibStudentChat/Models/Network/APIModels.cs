@@ -42,9 +42,7 @@ namespace StudentChat.Models.Network
     public record class DeleteGroupRequestData(int GroupId);
 
 
-    public record class SearchUserRequestData(string Keyword, int Skip, int Count);
     public record class SearchUserResultData(List<User> Users);
-    public record class SearchGroupRequestData(string Keyword, int Skip, int Count);
     public record class SearchGroupResultData(List<Group> Groups);
 
 
@@ -52,6 +50,12 @@ namespace StudentChat.Models.Network
     public record class GetGroupsResultData(List<Group> Groups);
 
 
+    public record class GetSentFriendRequestsResultData(List<FriendRequest> Requests);
+    public record class GetReceivedFriendRequestsResultData(List<FriendRequest> Requests);
+    public record class GetSentGroupRequestsResultData(List<GroupRequest> Requests);
+    public record class GetReceivedGroupRequestsResultData(List<GroupRequest> Requests);
+    public record class GetFriendRequestsResultData(List<FriendRequest> Requests);
+    public record class GetGroupRequestsResultData(List<GroupRequest> Requests);
 
     /// <summary>
     /// 发送好友请求的请求数据
@@ -62,4 +66,8 @@ namespace StudentChat.Models.Network
     public record class SendGroupRequestRequestData(int GroupId, string? Message);
     public record class AcceptRequestRequestData(int RequestId);
     public record class RejectRequestRequestData(int RequestId, string? Reason);
+
+
+    public record class QueryRequestData(int Skip, int Count);
+    public record class KeywordQueryRequestData(string Keyword, int Skip, int Count);
 }

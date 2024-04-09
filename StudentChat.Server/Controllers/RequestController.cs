@@ -27,6 +27,146 @@ namespace StudentChat.Server.Controllers
             _notifyService = notifyService;
         }
 
+        [HttpPost("GetSentFriendRequests")]
+        public async Task<ApiResult<GetSentFriendRequestsResultData>> GetSentFriendRequestsAsync(QueryRequestData request)
+        {
+            if (request.Count == 0)
+            {
+                request = request with
+                {
+                    Count = 20
+                };
+            }
+
+            var selfUserId = HttpContext.GetUserId();
+            var requests = await _dbContext.FriendRequests
+                .Where(request => request.SenderId == selfUserId)
+                .OrderByDescending(request => request.SentTime)
+                .Skip(request.Skip)
+                .Take(request.Count)
+                .Select(request => (CommonModels.FriendRequest)request)
+                .ToListAsync();
+
+            return ApiResult<GetSentFriendRequestsResultData>.CreateOk(new GetSentFriendRequestsResultData(requests));
+        }
+
+        [HttpPost("GetSentGroupRequests")]
+        public async Task<ApiResult<GetSentGroupRequestsResultData>> GetSentGroupRequestsAsync(QueryRequestData request)
+        {
+            if (request.Count == 0)
+            {
+                request = request with
+                {
+                    Count = 20
+                };
+            }
+
+            var selfUserId = HttpContext.GetUserId();
+            var requests = await _dbContext.GroupRequests
+                .Where(request => request.SenderId == selfUserId)
+                .OrderByDescending(request => request.SentTime)
+                .Skip(request.Skip)
+                .Take(request.Count)
+                .Select(request => (CommonModels.GroupRequest)request)
+                .ToListAsync();
+
+            return ApiResult<GetSentGroupRequestsResultData>.CreateOk(new GetSentGroupRequestsResultData(requests));
+        }
+
+        [HttpPost("GetReceivedFriendRequests")]
+        public async Task<ApiResult<GetReceivedFriendRequestsResultData>> GetReceivedFriendRequestsAsync(QueryRequestData request)
+        {
+            if (request.Count == 0)
+            {
+                request = request with
+                {
+                    Count = 20
+                };
+            }
+
+            var selfUserId = HttpContext.GetUserId();
+
+            var requests = await _dbContext.FriendRequests
+                .Where(request => request.ReceiverId == selfUserId)
+                .OrderByDescending(request => request.SentTime)
+                .Skip(request.Skip)
+                .Take(request.Count)
+                .Select(request => (CommonModels.FriendRequest)request)
+                .ToListAsync();
+
+            return ApiResult<GetReceivedFriendRequestsResultData>.CreateOk(new GetReceivedFriendRequestsResultData(requests));
+        }
+
+        [HttpPost("GetReceivedGroupRequests")]
+        public async Task<ApiResult<GetReceivedGroupRequestsResultData>> GetReceivedGroupRequestsAsync(QueryRequestData request)
+        {
+            if (request.Count == 0)
+            {
+                request = request with
+                {
+                    Count = 20
+                };
+            }
+
+            var selfUserId = HttpContext.GetUserId();
+            var requests = await _dbContext.GroupRequests
+                .Where(request => request.Group.OwnerId == selfUserId)
+                .OrderByDescending(request => request.SentTime)
+                .Skip(request.Skip)
+                .Take(request.Count)
+                .Select(request => (CommonModels.GroupRequest)request)
+                .ToListAsync();
+
+            return ApiResult<GetReceivedGroupRequestsResultData>.CreateOk(new GetReceivedGroupRequestsResultData(requests));
+        }
+
+        [HttpPost("GetFriendRequests")]
+        public async Task<ApiResult<GetFriendRequestsResultData>> GetFriendRequests(QueryRequestData request)
+        {
+            if (request.Count == 0)
+            {
+                request = request with
+                {
+                    Count = 20
+                };
+            }
+
+            var selfUserId = HttpContext.GetUserId();
+            var requests = await _dbContext.FriendRequests
+                .Where(request => request.SenderId == selfUserId || request.ReceiverId == selfUserId)
+                .OrderByDescending(request => request.SentTime)
+                .Skip(request.Skip)
+                .Take(request.Count)
+                .Select(request => (CommonModels.FriendRequest) request)
+                .ToListAsync();
+
+            return ApiResult<GetFriendRequestsResultData>.CreateOk(new GetFriendRequestsResultData(requests));
+        }
+
+        [HttpPost("GetGroupRequests")]
+        public async Task<ApiResult<GetGroupRequestsResultData>> GetGroupRequests(QueryRequestData request)
+        {
+            if (request.Count == 0)
+            {
+                request = request with
+                {
+                    Count = 20
+                };
+            }
+
+            var selfUserId = HttpContext.GetUserId();
+            var requests = await _dbContext.GroupRequests
+                .Where(request => request.SenderId == selfUserId || request.Group.OwnerId == selfUserId)
+                .OrderByDescending(request => request.SentTime)
+                .Skip(request.Skip)
+                .Take(request.Count)
+                .Select(request => (CommonModels.GroupRequest)request)
+                .ToListAsync();
+
+            return ApiResult<GetGroupRequestsResultData>.CreateOk(new GetGroupRequestsResultData(requests));
+        }
+
+
         [HttpPost("SendFriendRequest")]
         public async Task<ApiResult> SendFriendRequestAsync(SendFriendRequestRequestData request)
         {

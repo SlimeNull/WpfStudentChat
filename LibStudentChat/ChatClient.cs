@@ -302,7 +302,7 @@ public class ChatClient
         _ = BackgroundTasks(backgroundTasksCancellation.Token);
     }
 
-    public async Task<List<PrivateMessage>> QueryPrivateMessagesAsync(int userId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count)
+    public async Task<List<PrivateMessage>> QueryPrivateMessagesAsync(int userId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count = 20)
     {
         var result = await PostAsync<QueryPrivateMessagesRequestData, QueryPrivateMessagesResultData>(
             "api/Chat/QueryPrivateMessages", 
@@ -311,7 +311,7 @@ public class ChatClient
         return result.Messages;
     }
 
-    public async Task<List<GroupMessage>> QueryGroupMessagesAsync(int groupId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count)
+    public async Task<List<GroupMessage>> QueryGroupMessagesAsync(int groupId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count = 20)
     {
         var result = await PostAsync<QueryGroupMessagesRequestData, QueryGroupMessagesResultData>(
             "api/Chat/QueryGroupMessages",
@@ -332,6 +332,59 @@ public class ChatClient
         await PostAsync<SendGroupMessageRequestData>(
             "api/Chat/SendGroupMessage",
             new SendGroupMessageRequestData(groupId, content, imageAttachments, fileAttachments));
+    }
+
+    public async Task<List<FriendRequest>> GetSentFriendRequestsAsync(int skip, int count = 20)
+    {
+        var result = await PostAsync<QueryRequestData, GetSentFriendRequestsResultData>(
+            "api/Request/GetSentFriendRequests",
+            new QueryRequestData(skip, count));
+
+        return result.Requests;
+    }
+
+    public async Task<List<FriendRequest>> GetReceivedFriendRequestsAsync(int skip, int count = 20)
+    {
+        var result = await PostAsync<QueryRequestData, GetReceivedFriendRequestsResultData>(
+            "api/Request/GetReceivedFriendRequests",
+            new QueryRequestData(skip, count));
+
+        return result.Requests;
+    }
+    public async Task<List<FriendRequest>> GetFriendRequestsAsync(int skip, int count = 20)
+    {
+        var result = await PostAsync<QueryRequestData, GetFriendRequestsResultData>(
+            "api/Request/GetFriendRequests",
+            new QueryRequestData(skip, count));
+
+        return result.Requests;
+    }
+
+    public async Task<List<GroupRequest>> GetSentGroupRequestsAsync(int skip, int count = 20)
+    {
+        var result = await PostAsync<QueryRequestData, GetSentGroupRequestsResultData>(
+            "api/Request/GetSentGroupRequests",
+            new QueryRequestData(skip, count));
+
+        return result.Requests;
+    }
+
+    public async Task<List<GroupRequest>> GetReceivedGroupRequestsAsync(int skip, int count = 20)
+    {
+        var result = await PostAsync<QueryRequestData, GetReceivedGroupRequestsResultData>(
+            "api/Request/GetReceivedGroupRequests",
+            new QueryRequestData(skip, count));
+
+        return result.Requests;
+    }
+
+    public async Task<List<GroupRequest>> GetGroupRequestsAsync(int skip, int count = 20)
+    {
+        var result = await PostAsync<QueryRequestData, GetGroupRequestsResultData>(
+            "api/Request/GetGroupRequests",
+            new QueryRequestData(skip, count));
+
+        return result.Requests;
     }
 
     public async Task SendFriendRequestAsync(int userId, string? message)
@@ -445,18 +498,18 @@ public class ChatClient
 
     public async Task<List<User>> SearchUserAsync(string keyword, int skip, int count = 30)
     {
-        var result = await PostAsync<SearchUserRequestData, SearchUserResultData>(
+        var result = await PostAsync<KeywordQueryRequestData, SearchUserResultData>(
             "api/Info/SearchUser",
-            new SearchUserRequestData(keyword, skip, count));
+            new KeywordQueryRequestData(keyword, skip, count));
 
         return result.Users;
     }
 
     public async Task<List<Group>> SearchGroupAsync(string keyword, int skip, int count = 30)
     {
-        var result = await PostAsync<SearchGroupRequestData, SearchGroupResultData>(
+        var result = await PostAsync<KeywordQueryRequestData, SearchGroupResultData>(
             "api/Info/SearchGroup",
-            new SearchGroupRequestData(keyword, skip, count));
+            new KeywordQueryRequestData(keyword, skip, count));
 
         return result.Groups;
     }

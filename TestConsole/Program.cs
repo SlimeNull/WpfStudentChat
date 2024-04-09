@@ -10,6 +10,10 @@ client.PrivateMessageReceived += Client_PrivateMessageReceived;
 await client.LoginAsync("Test", "TestHash");
 Console.WriteLine("Login ok");
 
+var requests = await client.GetReceivedGroupRequestsAsync(0, 20);
+foreach (var request in requests)
+    Console.WriteLine(request);
+
 
 await Task.Delay(-1);
 

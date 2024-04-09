@@ -35,9 +35,9 @@ public partial class LoginWindow : UiWindow
             DialogResult = true;
             Close();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            System.Windows.MessageBox.Show("登录失败");
+            System.Windows.MessageBox.Show(this, $"Failed to login. {ex.Message}", "Error");
             return;
         }
     }

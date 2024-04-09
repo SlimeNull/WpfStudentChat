@@ -14,11 +14,10 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="180"/>
-            <ColumnDefinition Width="3"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Border Background="#33FFFFFF">
+        <Border>
             <ListView ItemsSource="{Binding ViewModel.Sessions}"
                       SelectedItem="{Binding ViewModel.SelectedSession}"
                       ScrollViewer.HorizontalScrollBarVisibility="Hidden">
@@ -43,9 +42,16 @@
             </ListView>
         </Border>
 
-        <Border Grid.Column="1" Background="#33000000" Width="1"/>
-        <GridSplitter Grid.Column="1" Background="Transparent" HorizontalAlignment="Stretch"/>
+        <Border Grid.Column="0"
+                HorizontalAlignment="Right"
+                Background="#33000000"
+                Width="1"/>
+        <GridSplitter Grid.Column="0"
+                      HorizontalAlignment="Right"
+                      Background="Transparent"
+                      Width="3"
+                      FocusVisualStyle="{x:Null}"/>
 
-        <Frame Grid.Column="2" Content="{Binding ViewModel.MessagesPage}"/>
+        <Frame Grid.Column="1" Content="{Binding ViewModel.MessagesPage}"/>
     </Grid>
 </Page>

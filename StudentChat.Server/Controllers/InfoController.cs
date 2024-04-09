@@ -203,7 +203,7 @@ namespace StudentChat.Server.Controllers
         }
 
         [HttpPost("SearchUser")]
-        public async Task<ApiResult<SearchUserResultData>> SearchUser(SearchUserRequestData request)
+        public async Task<ApiResult<SearchUserResultData>> SearchUser(KeywordQueryRequestData request)
         {
             if (request.Count == 0)
             {
@@ -224,7 +224,7 @@ namespace StudentChat.Server.Controllers
         }
 
         [HttpPost("SearchGroup")]
-        public async Task<ApiResult<SearchGroupResultData>> SearchGroup(SearchGroupRequestData request)
+        public async Task<ApiResult<SearchGroupResultData>> SearchGroup(KeywordQueryRequestData request)
         {
             if (request.Count == 0)
             {

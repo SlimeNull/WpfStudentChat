@@ -45,7 +45,8 @@
                               VerticalScrollBarVisibility="Visible"
                               CanContentScroll="True">
                     <ItemsControl ItemsSource="{Binding ViewModel.Session.Messages}"
-                                  Margin="12 0 12 12">
+                                  Margin="12 0 12 12"
+                                  FocusVisualStyle="{x:Null}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="comm:PrivateMessage">
                                 <Grid x:Name="MessageBox"
@@ -128,6 +129,7 @@
             <Grid Grid.Row="2">
                 <ui:TextBox AcceptsReturn="True"
                             TextWrapping="Wrap"
+                            BorderThickness="0 1 0 0"
                             Text="{Binding ViewModel.TextInput,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                     <ui:TextBox.InputBindings>
                         <KeyBinding Gesture="Control+Enter" Command="{Binding SendMessageCommand}"/>
@@ -136,7 +138,7 @@
                 <ui:Button VerticalAlignment="Bottom"
                            HorizontalAlignment="Right"
                            Margin="12"
-                           Content="Send"
+                           Content="发送"
                            Command="{Binding SendMessageCommand}"/>
             </Grid>
         </Grid>

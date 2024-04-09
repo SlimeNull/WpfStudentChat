@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyInjection;
 using StudentChat.Models;
 using Wpf.Ui.Controls;
 using WpfStudentChat.Services;
@@ -26,13 +27,15 @@ namespace WpfStudentChat.Views.Windows
         const int SearchCount = 30;
 
         private readonly ChatClientService _chatClientService;
+        private readonly IServiceProvider _serviceProvider;
 
         public SearchWindow(
             SearchViewModel viewModel,
-            ChatClientService chatClientService)
+            ChatClientService chatClientService,
+            IServiceProvider serviceProvider)
         {
             _chatClientService = chatClientService;
-
+            _serviceProvider = serviceProvider;
             ViewModel = viewModel;
             DataContext = this;
 
@@ -102,15 +105,23 @@ namespace WpfStudentChat.Views.Windows
         }
 
         [RelayCommand]
-        public async Task SendFriendRequest(User user)
+        public void SendFriendRequest(User user)
         {
-
+            using var scope = _serviceProvider.CreateScope();
+            var window = scope.ServiceProvider.GetRequiredService<SendFriendRequestWindow>();
+            window.ViewModel.Profile = user;
+            window.Owner = this;
+            window.ShowDialog();
         }
 
         [RelayCommand]
-        public async Task SendGroupRequest(Group group)
+        public void SendGroupRequest(Group group)
         {
-
+            using var scope = _serviceProvider.CreateScope();
+            var window = scope.ServiceProvider.GetRequiredService<SendGroupRequestWindow>();
+            window.ViewModel.Profile = group;
+            window.Owner = this;
+            window.ShowDialog();
         }
     }
 }

@@ -27,31 +27,30 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="180"/>
-            <ColumnDefinition Width="3"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0"
                 Background="#33FFFFFF"
-                Padding="8">
+                Padding="8 8 0 8">
             <ScrollViewer Name="ContactsScrollViewer">
                 <StackPanel Orientation="Vertical">
                     <StackPanel>
                         <Button HorizontalAlignment="Stretch"
-                                Content="Add friend/group"
+                                Content="添加好友/群聊"
                                 Padding="0 3"
                                 Command="{Binding ShowSearchWindowCommand}"/>
                         <Button HorizontalAlignment="Stretch"
-                                Content="Create group"
+                                Content="创建群了"
                                 Padding="0 3"
                                 Margin="0 3 0 0"
                                 Command="{Binding ShowCreateGroupWindowCommand}"/>
                         <Button HorizontalAlignment="Stretch"
-                                Content="Friend requests"
+                                Content="好友请求"
                                 Padding="0 3"
                                 Margin="0 3 0 0"/>
                         <Button HorizontalAlignment="Stretch"
-                                Content="Group requests"
+                                Content="群聊请求"
                                 Padding="0 3"
                                 Margin="0 3 0 0"/>
                     </StackPanel>
@@ -62,7 +61,7 @@
                             CornerRadius="3"
                             Margin="3 10 3 0"/>
 
-                    <TextBlock Text="Groups:" Margin="3 10 0 0"/>
+                    <TextBlock Text="群聊:" Margin="3 10 0 0"/>
                     <ListView ItemsSource="{Binding ViewModel.Groups}"
                               SelectionChanged="ListView_SelectionChanged"
                               Name="GroupsListView"
@@ -76,12 +75,18 @@
                                                       CommandParameter="{Binding}"/>
                                     </Border.InputBindings>
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="30" Height="30" CornerRadius="3">
+                                        <Border Width="32" Height="32" CornerRadius="3">
                                             <b:Interaction.Behaviors>
                                                 <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                             </b:Interaction.Behaviors>
                                         </Border>
-                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5 0 0 0"/>
+                                        <StackPanel VerticalAlignment="Center"
+                                                    Margin="8 0 0 0">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="14"/>
+                                            <TextBlock Text="{Binding Description}"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
@@ -94,7 +99,7 @@
                             CornerRadius="3"
                             Margin="3 10 3 0"/>
 
-                    <TextBlock Text="Friends:" Margin="3 10 0 0"/>
+                    <TextBlock Text="好友:" Margin="3 10 0 0"/>
                     <ListView ItemsSource="{Binding ViewModel.Friends}"
                               SelectionChanged="ListView_SelectionChanged"
                               Name="FriendsListView"
@@ -108,12 +113,17 @@
                                                       CommandParameter="{Binding}"/>
                                     </Border.InputBindings>
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="30" Height="30" CornerRadius="3">
+                                        <Border Width="32" Height="32" CornerRadius="3">
                                             <b:Interaction.Behaviors>
                                                 <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                             </b:Interaction.Behaviors>
                                         </Border>
-                                        <TextBlock Text="{Binding Nickname}" VerticalAlignment="Center" Margin="5 0 0 0"/>
+                                        <StackPanel Margin="8 0 0 0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Nickname}"
+                                                       FontSize="14"/>
+                                            <TextBlock Text="{Binding Bio}"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
@@ -124,9 +134,15 @@
             </ScrollViewer>
         </Border>
 
-        <GridSplitter Grid.Column="1"/>
+        <GridSplitter Grid.Column="1"
+                      Background="Transparent"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Left"
+                      Width="3"/>
 
-        <Border Grid.Column="2">
+        <Border Grid.Column="1"
+                BorderThickness="1 0 0 0"
+                BorderBrush="{DynamicResource TextFillColorDisabledBrush}">
             <Frame Name="ContentFrame"/>
         </Border>
     </Grid>

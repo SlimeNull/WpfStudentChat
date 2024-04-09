@@ -80,6 +80,10 @@ public partial class App
             services.AddScoped<SetProfileViewModel>();
             services.AddScoped<SetGroupProfileWindow>();
             services.AddScoped<SetGroupProfileViewModel>();
+            services.AddScoped<SendFriendRequestWindow>();
+            services.AddScoped<SendFriendRequestViewModel>();
+            services.AddScoped<SendGroupRequestWindow>();
+            services.AddScoped<SendGroupRequestViewModel>();
 
             // Windows
             services.AddSingleton<LoginWindow>();

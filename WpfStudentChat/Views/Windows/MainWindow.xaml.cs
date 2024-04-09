@@ -79,9 +79,9 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
         {
             ViewModel.Profile = await _chatClientService.Client.GetSelfAsync();
         }
-        catch
+        catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(this, "Failed to load profile", "Error");
+            System.Windows.MessageBox.Show(this, $"Failed to load profile. {ex.Message}", "Error");
         }
     }
 
