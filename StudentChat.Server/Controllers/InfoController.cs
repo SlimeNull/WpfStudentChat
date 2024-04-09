@@ -156,6 +156,7 @@ namespace StudentChat.Server.Controllers
             var entry = await _dbContext.Groups.AddAsync(
                 new Group()
                 {
+                    OwnerId = selfUserId,
                     Name = request.Group.Name,
                     Description = request.Group.Description,
                     AvatarHash = request.Group.AvatarHash,

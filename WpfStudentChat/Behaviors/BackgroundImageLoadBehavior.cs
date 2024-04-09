@@ -43,7 +43,7 @@ public class BackgroundImageLoadBehavior : Behavior<Border>
         {
             if (string.IsNullOrWhiteSpace(imageHash))
             {
-                var user = await client.Client.GetUser(imageLoadBehavior.UserId);
+                var user = await client.Client.GetUserAsync(imageLoadBehavior.UserId);
                 imageHash = user.AvatarHash;
             }
 

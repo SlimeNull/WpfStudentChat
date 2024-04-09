@@ -27,12 +27,15 @@
                         <StackPanel Margin="3" Orientation="Horizontal">
                             <Border Width="32" Height="32" CornerRadius="3">
                                 <b:Interaction.Behaviors>
-                                    <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                    <mb:BackgroundImageLoadBehavior ImageHash="{Binding Subject.AvatarHash}"/>
                                 </b:Interaction.Behaviors>
                             </Border>
                             <StackPanel Margin="8 0 0 0">
-                                <TextBlock Text="{Binding Name}"/>
-                                <TextBlock TextWrapping="NoWrap"/>
+                                <TextBlock Text="{Binding Subject.Name}"
+                                           FontSize="14"/>
+                                <TextBlock TextWrapping="NoWrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="{Binding LastMessageSummary}"/>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>

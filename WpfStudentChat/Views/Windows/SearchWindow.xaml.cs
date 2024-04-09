@@ -48,7 +48,7 @@ namespace WpfStudentChat.Views.Windows
             ViewModel.HasMoreUsers = true;
 
             ViewModel.SearchUserResults.Clear();
-            var users = await _chatClientService.Client.SearchUser(ViewModel.CurrentSearchUserKeyword, 0, SearchCount);
+            var users = await _chatClientService.Client.SearchUserAsync(ViewModel.CurrentSearchUserKeyword, 0, SearchCount);
 
             foreach (var user in users)
             {
@@ -65,7 +65,7 @@ namespace WpfStudentChat.Views.Windows
             ViewModel.HasMoreGroups = true;
 
             ViewModel.SearchGroupResults.Clear();
-            var groups = await _chatClientService.Client.SearchGroup(ViewModel.CurrentSearchGroupKeyword, 0, SearchCount);
+            var groups = await _chatClientService.Client.SearchGroupAsync(ViewModel.CurrentSearchGroupKeyword, 0, SearchCount);
 
             foreach (var group in groups)
             {
@@ -78,7 +78,7 @@ namespace WpfStudentChat.Views.Windows
         [RelayCommand]
         public async Task LoadMoreUsers()
         {
-            var users = await _chatClientService.Client.SearchUser(ViewModel.CurrentSearchUserKeyword, ViewModel.SearchUserResults.Count, SearchCount);
+            var users = await _chatClientService.Client.SearchUserAsync(ViewModel.CurrentSearchUserKeyword, ViewModel.SearchUserResults.Count, SearchCount);
 
             foreach (var user in users)
             {
@@ -91,7 +91,7 @@ namespace WpfStudentChat.Views.Windows
         [RelayCommand]
         public async Task LoadMoreGroups()
         {
-            var groups = await _chatClientService.Client.SearchGroup(ViewModel.CurrentSearchGroupKeyword, ViewModel.SearchGroupResults.Count, SearchCount);
+            var groups = await _chatClientService.Client.SearchGroupAsync(ViewModel.CurrentSearchGroupKeyword, ViewModel.SearchGroupResults.Count, SearchCount);
 
             foreach (var group in groups)
             {

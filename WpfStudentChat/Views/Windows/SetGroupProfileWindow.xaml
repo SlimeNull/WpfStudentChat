@@ -1,4 +1,4 @@
-﻿<ui:UiWindow x:Class="WpfStudentChat.Views.Windows.SetProfileWindow"
+﻿<ui:UiWindow x:Class="WpfStudentChat.Views.Windows.SetGroupProfileWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,15 +7,15 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+             mc:Ignorable="d"
              ExtendsContentIntoTitleBar="True"
              WindowBackdropType="Mica"
              UseLayoutRounding="True"
-             mc:Ignorable="d"
              Title="SetProfile"
              Height="450" Width="280"
              ResizeMode="NoResize"
              WindowStartupLocation="CenterOwner"
-             d:DataContext="{d:DesignInstance Type=local:SetProfileWindow,IsDesignTimeCreatable=False}">
+             d:DataContext="{d:DesignInstance Type=local:SetGroupProfileWindow}">
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Loaded">
             <b:InvokeCommandAction Command="{Binding LoadProfileCommand}"/>
@@ -47,13 +47,13 @@
             </Border>
 
             <StackPanel Width="260" Margin="0 24 0 0">
-                <TextBlock Text="昵称"/>
-                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Nickname,Mode=TwoWay}"/>
+                <TextBlock Text="名称"/>
+                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Name,Mode=TwoWay}"/>
             </StackPanel>
 
             <StackPanel Width="260" Margin="0 12 0 0">
-                <TextBlock Text="个性签名"/>
-                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Bio,Mode=TwoWay}"/>
+                <TextBlock Text="描述"/>
+                <ui:TextBox Margin="0 3" Text="{Binding ViewModel.Profile.Description,Mode=TwoWay}"/>
             </StackPanel>
 
             <StackPanel Width="260" Margin="0 48 0 0">

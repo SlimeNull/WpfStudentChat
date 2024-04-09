@@ -77,7 +77,7 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
     {
         try
         {
-            ViewModel.Profile = await _chatClientService.Client.GetSelf();
+            ViewModel.Profile = await _chatClientService.Client.GetSelfAsync();
         }
         catch
         {

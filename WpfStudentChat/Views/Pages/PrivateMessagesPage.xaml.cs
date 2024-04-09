@@ -34,7 +34,7 @@ namespace WpfStudentChat.Views.Pages
         {
             _chatClientService = chatClientService;
 
-            SelfUserId = _chatClientService.Client.GetUserId();
+            SelfUserId = _chatClientService.Client.GetSelfUserId();
             ViewModel = viewModel;
             DataContext = this;
 
@@ -48,7 +48,10 @@ namespace WpfStudentChat.Views.Pages
 
         void IRecipient<PrivateMessageReceivedMessage>.Receive(PrivateMessageReceivedMessage message)
         {
-            ViewModel.Messages.Add(message.Message);
+            if (ViewModel.Session is null)
+                return;
+
+            ViewModel.Session.Messages.Add(message.Message);
         }
 
         [RelayCommand]
@@ -59,12 +62,12 @@ namespace WpfStudentChat.Views.Pages
             try
             {
                 ViewModel.TextInput = string.Empty;
-                if (ViewModel.Target is null)
+                if (ViewModel.Session is null)
                 {
                     return;
                 }
 
-                await _chatClientService.Client.SendPrivateMessage(ViewModel.Target.Id, textInput, null, null);
+                await _chatClientService.Client.SendPrivateMessageAsync(ViewModel.Session.Subject.Id, textInput, null, null);
             }
             catch
             {

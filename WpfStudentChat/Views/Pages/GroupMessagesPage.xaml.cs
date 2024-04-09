@@ -40,7 +40,10 @@ namespace WpfStudentChat.Views.Pages
 
         void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
         {
-            ViewModel.Messages.Add(message.Message);
+            if (ViewModel.Session is null)
+                return;
+
+            ViewModel.Session.Messages.Add(message.Message);
         }
     }
 }

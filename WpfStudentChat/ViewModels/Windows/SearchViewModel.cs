@@ -23,10 +23,10 @@ namespace WpfStudentChat.ViewModels.Windows
         private string _currentSearchGroupKeyword = string.Empty;
 
         [ObservableProperty]
-        private bool _hasMoreUsers;
+        private bool _hasMoreUsers = false;
 
         [ObservableProperty]
-        private bool _hasMoreGroups;
+        private bool _hasMoreGroups = false;
 
         public ObservableCollection<User> SearchUserResults { get; } = new();
         public ObservableCollection<Group> SearchGroupResults { get; } = new();

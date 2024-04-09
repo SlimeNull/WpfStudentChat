@@ -78,6 +78,8 @@ public partial class App
             services.AddScoped<SearchViewModel>();
             services.AddScoped<SetProfileWindow>();
             services.AddScoped<SetProfileViewModel>();
+            services.AddScoped<SetGroupProfileWindow>();
+            services.AddScoped<SetGroupProfileViewModel>();
 
             // Windows
             services.AddSingleton<LoginWindow>();

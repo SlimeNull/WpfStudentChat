@@ -31,7 +31,7 @@
                      BorderThickness="0"
                      Background="Transparent"
                      FontSize="16"
-                     Text="{Binding ViewModel.Target.Name,Mode=OneWay}"
+                     Text="{Binding ViewModel.Session.Subject.Name,Mode=OneWay}"
                      Style="{x:Null}"/>
         </Border>
 
@@ -45,7 +45,7 @@
             <Grid>
                 <ScrollViewer VerticalScrollBarVisibility="Visible"
                               CanContentScroll="True">
-                    <ItemsControl ItemsSource="{Binding ViewModel.Messages}"
+                    <ItemsControl ItemsSource="{Binding ViewModel.Session.Messages}"
                                   Margin="12 0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="comm:PrivateMessage">

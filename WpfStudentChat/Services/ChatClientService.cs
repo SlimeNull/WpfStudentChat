@@ -26,6 +26,18 @@ namespace WpfStudentChat.Services
             Client = new(new Uri(optionsAppConfig.Value.BaseUri, UriKind.Absolute));
             Client.PrivateMessageReceived += Client_PrivateMessageReceived;
             Client.GroupMessageReceived += Client_GroupMessageReceived;
+            Client.GroupIncreased += Client_GroupIncreased;
+            Client.GroupDecreased += Client_GroupDecreased;
+        }
+
+        private void Client_GroupDecreased(object? sender, StudentChat.Models.Events.GroupChangedEventArgs e)
+        {
+            _messenger.Send(new GroupDecreasedMessage(e.Group));
+        }
+
+        private void Client_GroupIncreased(object? sender, StudentChat.Models.Events.GroupChangedEventArgs e)
+        {
+            _messenger.Send(new GroupIncreasedMessage(e.Group));
         }
 
         private void Client_GroupMessageReceived(object? sender, StudentChat.Models.Events.GroupMessageReceivedEventArgs e)

@@ -146,22 +146,90 @@ namespace StudentChat.Server.Controllers
 
         private async Task MessageNotifyService_FriendIncreased(object? sender, NotifyService.FriendChangedEventArgs e)
         {
+            var selfUserId = HttpContext.GetUserId();
+            var isRelated = selfUserId== e.UserId;
 
+            if (!isRelated)
+            {
+                return;
+            }
+
+            string text =
+                $"""
+                event: friendIncreased
+                data: {JsonSerializer.Serialize(e.Friend)}
+
+
+                """;
+
+            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
+            await HttpContext.Response.Body.FlushAsync();
         }
 
         private async Task MessageNotifyService_FriendDecreased(object? sender, NotifyService.FriendChangedEventArgs e)
         {
+            var selfUserId = HttpContext.GetUserId();
+            var isRelated = selfUserId== e.UserId;
 
+            if (!isRelated)
+            {
+                return;
+            }
+
+            string text =
+                $"""
+                event: friendDecreased
+                data: {JsonSerializer.Serialize(e.Friend)}
+
+
+                """;
+
+            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
+            await HttpContext.Response.Body.FlushAsync();
         }
 
         private async Task MessageNotifyService_GroupIncreased(object? sender, NotifyService.GroupChangedEventArgs e)
         {
+            var selfUserId = HttpContext.GetUserId();
+            var isRelated = selfUserId== e.UserId;
 
+            if (!isRelated)
+            {
+                return;
+            }
+
+            string text =
+                $"""
+                event: groupIncreased
+                data: {JsonSerializer.Serialize(e.Group)}
+
+
+                """;
+
+            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
+            await HttpContext.Response.Body.FlushAsync();
         }
 
         private async Task MessageNotifyService_GroupDecreased(object? sender, NotifyService.GroupChangedEventArgs e)
         {
+            var selfUserId = HttpContext.GetUserId();
+            var isRelated = selfUserId== e.UserId;
 
+            if (!isRelated)
+            {
+                return;
+            }
+
+            string text =
+                $"""
+                event: groupDecreased
+                data: {JsonSerializer.Serialize(e.Group)}
+
+
+                """;
+
+            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(text));
+            await HttpContext.Response.Body.FlushAsync();
         }
     }
 }

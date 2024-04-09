@@ -5,9 +5,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:WpfStudentChat.Views.Windows"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
              mc:Ignorable="d"
              Title="SearchWindow" Height="450" Width="600"
+             WindowStartupLocation="CenterOwner"
              d:DataContext="{d:DesignInstance Type=local:SearchWindow}">
+    <ui:UiWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="Boolean2Visibility"/>
+    </ui:UiWindow.Resources>
     <Grid>
         <TabControl>
             <TabItem Header="Users">
@@ -21,19 +27,57 @@
 
                         <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
                                     PlaceholderText="Search users"/>
-                        <Button Grid.Column="2" Content="Search" Height="34"/>
+                        <Button Grid.Column="2" Content="Search" Height="34"
+                                Command="{Binding SearchUsersCommand}"/>
                     </Grid>
 
-                    <ScrollViewer Margin="0 24 0 0">
+                    <ScrollViewer Margin="0 24 0 0"
+                                  FocusVisualStyle="{x:Null}">
                         <StackPanel>
                             <ItemsControl Margin="24 0"
                                           ItemsSource="{Binding ViewModel.SearchUserResults}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border>
+                                                    <Border Width="32"
+                                                            Height="32"
+                                                            CornerRadius="5">
+                                                        <b:Interaction.Behaviors>
+                                                            <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                                        </b:Interaction.Behaviors>
+                                                    </Border>
+                                                </Border>
+                                                <StackPanel Margin="8 0 0 0">
+                                                    <TextBlock Text="{Binding Nickname}"
+                                                               FontSize="14"/>
+                                                    <TextBlock Text="{Binding Bio}"
+                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Button Grid.Column="1"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Content="Add">
 
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Button Content="Load More" HorizontalAlignment="Center"
+                            <Button Content="Load More"
+                                    HorizontalAlignment="Center"
+                                    Margin="0 24 0 0"
                                     BorderThickness="0"
-                                    Background="Transparent"/>
+                                    Background="Transparent"
+                                    Visibility="{Binding ViewModel.HasMoreUsers,Mode=OneWay,Converter={StaticResource Boolean2Visibility}}"
+                                    Command="{Binding LoadMoreUsersCommand}"/>
                         </StackPanel>
                     </ScrollViewer>
                 </StackPanel>
@@ -49,19 +93,54 @@
 
                         <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
                                     PlaceholderText="Search groups"/>
-                        <Button Grid.Column="2" Content="Search" Height="34"/>
+                        <Button Grid.Column="2" Content="Search" Height="34"
+                                Command="{Binding SearchGroupsCommand}"/>
                     </Grid>
 
                     <ScrollViewer Margin="0 24 0 0">
                         <StackPanel>
                             <ItemsControl Margin="24 0"
-                                          ItemsSource="{Binding ViewModel.SearchUserResults}">
+                                          ItemsSource="{Binding ViewModel.SearchGroupResults}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border>
+                                                    <Border Width="32"
+                                                            Height="32"
+                                                            CornerRadius="5">
+                                                        <b:Interaction.Behaviors>
+                                                            <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                                        </b:Interaction.Behaviors>
+                                                    </Border>
+                                                </Border>
+                                                <StackPanel Margin="8 0 0 0">
+                                                    <TextBlock Text="{Binding Name}"
+                                                               FontSize="14"/>
+                                                    <TextBlock Text="{Binding Description}"
+                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Button Grid.Column="1"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Content="Add">
 
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
                             <Button Content="Load More" HorizontalAlignment="Center"
                                     BorderThickness="0"
-                                    Background="Transparent"/>
+                                    Background="Transparent"
+                                    Visibility="{Binding ViewModel.HasMoreGroups,Mode=OneWay,Converter={StaticResource Boolean2Visibility}}"
+                                    Command="{Binding LoadMoreGroupsCommand}"/>
                         </StackPanel>
                     </ScrollViewer>
                 </StackPanel>

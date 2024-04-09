@@ -12,7 +12,7 @@ namespace WpfStudentChat.Converters
             if (value is not int userId)
                 return false;
 
-            return userId == App.Host.Services.GetRequiredService<ChatClientService>().Client.GetUserId();
+            return userId == App.Host.Services.GetRequiredService<ChatClientService>().Client.GetSelfUserId();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

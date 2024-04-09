@@ -20,14 +20,14 @@ using WpfStudentChat.ViewModels.Windows;
 namespace WpfStudentChat.Views.Windows
 {
     /// <summary>
-    /// SetProfileWindow.xaml 的交互逻辑
+    /// CreateGroupWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class SetProfileWindow : UiWindow
+    public partial class SetGroupProfileWindow : UiWindow
     {
         private readonly ChatClientService _chatClientService;
 
-        public SetProfileWindow(
-            SetProfileViewModel viewModel,
+        public SetGroupProfileWindow(
+            SetGroupProfileViewModel viewModel,
             ChatClientService chatClientService)
         {
             _chatClientService = chatClientService;
@@ -38,18 +38,21 @@ namespace WpfStudentChat.Views.Windows
             InitializeComponent();
         }
 
-        public SetProfileViewModel ViewModel { get; }
+        public SetGroupProfileViewModel ViewModel { get; }
 
         [RelayCommand]
         public async Task LoadProfile()
         {
             try
             {
-                ViewModel.Profile = await _chatClientService.Client.GetSelfAsync();
+                if (ViewModel.Profile.Id != 0)
+                {
+                    ViewModel.Profile = await _chatClientService.Client.GetGroupAsync(ViewModel.Profile.Id);
+                }
             }
-            catch (Exception ex)
+            catch
             {
-                System.Windows.MessageBox.Show(this, $"Failed to load profile. {ex.Message}", "Error");
+
             }
         }
 
@@ -76,7 +79,7 @@ namespace WpfStudentChat.Views.Windows
 
                 if (ViewModel.Profile is null)
                 {
-                    ViewModel.Profile = new StudentChat.Models.User();
+                    ViewModel.Profile = new StudentChat.Models.Group();
                 }
 
                 ViewModel.Profile = ViewModel.Profile with
@@ -95,12 +98,20 @@ namespace WpfStudentChat.Views.Windows
         {
             try
             {
-                await _chatClientService.Client.SetSelfAsync(ViewModel.Profile);
+                if (ViewModel.Profile.Id != 0)
+                {
+                    await _chatClientService.Client.SetGroupAsync(ViewModel.Profile);
+                }
+                else
+                {
+                    await _chatClientService.Client.CreateGroupAsync(ViewModel.Profile);
+                }
+
                 Close();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                System.Windows.MessageBox.Show(this, $"Failed to save profile. {ex.Message}", "Error");
+                System.Windows.MessageBox.Show(this, $"Failed to save group profile. {ex.Message}", "Error");
             }
         }
     }

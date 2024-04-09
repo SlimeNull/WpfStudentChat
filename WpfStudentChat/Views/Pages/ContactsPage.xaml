@@ -33,16 +33,27 @@
         <Border Grid.Column="0"
                 Background="#33FFFFFF"
                 Padding="8">
-            <ScrollViewer>
+            <ScrollViewer Name="ContactsScrollViewer">
                 <StackPanel Orientation="Vertical">
-                    <ListView SelectionChanged="ListView_SelectionChanged">
-                        <ListViewItem Padding="5">
-                            <TextBlock Text="Friend requests" />
-                        </ListViewItem>
-                        <ListViewItem Padding="5">
-                            <TextBlock Text="Group requests" />
-                        </ListViewItem>
-                    </ListView>
+                    <StackPanel>
+                        <Button HorizontalAlignment="Stretch"
+                                Content="Add friend/group"
+                                Padding="0 3"
+                                Command="{Binding ShowSearchWindowCommand}"/>
+                        <Button HorizontalAlignment="Stretch"
+                                Content="Create group"
+                                Padding="0 3"
+                                Margin="0 1 0 0"
+                                Command="{Binding ShowCreateGroupWindowCommand}"/>
+                        <Button HorizontalAlignment="Stretch"
+                                Content="Friend requests"
+                                Padding="0 3"
+                                Margin="0 1 0 0"/>
+                        <Button HorizontalAlignment="Stretch"
+                                Content="Group requests"
+                                Padding="0 3"
+                                Margin="0 1 0 0"/>
+                    </StackPanel>
 
                     <Border Height=".8"
                             Opacity=".5"
@@ -51,10 +62,13 @@
                             Margin="3 10 3 0"/>
 
                     <TextBlock Text="Groups:" Margin="3 10 0 0"/>
-                    <ListView ItemsSource="{Binding ViewModel.Groups}">
+                    <ListView ItemsSource="{Binding ViewModel.Groups}"
+                              SelectionChanged="ListView_SelectionChanged"
+                              Name="GroupsListView"
+                              PreviewMouseWheel="ContactsListView_PreviewMouseWheel">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border Padding="5 0 0 0" Background="Transparent">
+                                <Border Padding="3 0 0 0" Background="Transparent">
                                     <Border.InputBindings>
                                         <MouseBinding MouseAction="LeftDoubleClick"
                                                       Command="{Binding Source={StaticResource DataProxy},Path=Data.StartGroupChatCommand}"
@@ -80,10 +94,13 @@
                             Margin="3 10 3 0"/>
 
                     <TextBlock Text="Friends:" Margin="3 10 0 0"/>
-                    <ListView ItemsSource="{Binding ViewModel.Friends}">
+                    <ListView ItemsSource="{Binding ViewModel.Friends}"
+                              SelectionChanged="ListView_SelectionChanged"
+                              Name="FriendsListView"
+                              PreviewMouseWheel="ContactsListView_PreviewMouseWheel">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border Padding="2 0 0 0" Background="Transparent">
+                                <Border Padding="3 0 0 0" Background="Transparent">
                                     <Border.InputBindings>
                                         <MouseBinding MouseAction="LeftDoubleClick"
                                                       Command="{Binding Source={StaticResource DataProxy},Path=Data.StartPrivateChatCommand}"

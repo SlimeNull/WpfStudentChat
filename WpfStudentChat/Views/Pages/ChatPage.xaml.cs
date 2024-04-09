@@ -14,7 +14,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.Messaging;
 using StudentChat.Models;
+using WpfStudentChat.Models;
 using WpfStudentChat.Models.Messages;
+using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
 
 namespace WpfStudentChat.Views.Pages
@@ -28,8 +30,10 @@ namespace WpfStudentChat.Views.Pages
     {
         public ChatPage(
             ChatViewModel viewModel,
+            ChatClientService chatClientService,
             IMessenger messenger)
         {
+            SelfUserId = chatClientService.Client.GetSelfUserId();
             ViewModel = viewModel;
             DataContext = this;
 
@@ -39,39 +43,43 @@ namespace WpfStudentChat.Views.Pages
             messenger.Register<GroupMessageReceivedMessage>(this);
         }
 
+        public int SelfUserId { get; }
         public ChatViewModel ViewModel { get; }
 
-        public void EnsureSession(IIdentifiable identifiable)
+        public async Task<IChatSession> EnsureSessionAsync(IIdentifiable identifiable)
         {
-            if (identifiable is User)
-            {
-                if (!ViewModel.Sessions.OfType<User>().Any(session => session.Id == identifiable.Id))
-                {
-                    ViewModel.Sessions.Add(identifiable);
-                }
-            }
-            else if (identifiable is Group)
-            {
-                if (!ViewModel.Sessions.OfType<Group>().Any(session => session.Id == identifiable.Id))
-                {
-                    ViewModel.Sessions.Add(identifiable);
-                }
-            }
+            if (ViewModel.GetSession(identifiable) is IChatSession existChatSession)
+                return existChatSession;
+
+            return await ViewModel.AddSessionAsync(identifiable);
         }
 
         public void SelectSession(IIdentifiable identifiable)
         {
-            ViewModel.SelectedSession = identifiable;
+            ViewModel.SelectedSession = ViewModel.GetSession(identifiable);
         }
 
-        void IRecipient<PrivateMessageReceivedMessage>.Receive(PrivateMessageReceivedMessage message)
+        async void IRecipient<PrivateMessageReceivedMessage>.Receive(PrivateMessageReceivedMessage message)
         {
-            
+            if (message.Message.SenderId == SelfUserId)
+            {
+                return;
+            }
+
+            if (ViewModel.GetPrivateSession(message.Message.SenderId) is null)
+            {
+                var newSession = await ViewModel.AddPrivateSessionAsync(message.Message.SenderId);
+                newSession.Messages.Add(message.Message);
+            }
         }
 
-        void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
+        async void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
         {
-            throw new NotImplementedException();
+            if (ViewModel.GetGroupSession(message.Message.SenderId) is null)
+            {
+                var newSession = await ViewModel.AddGroupSessionAsync(message.Message.GroupId);
+                newSession.Messages.Add(message.Message);
+            }
         }
     }
 }
