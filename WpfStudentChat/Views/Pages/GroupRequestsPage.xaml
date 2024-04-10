@@ -30,79 +30,84 @@
         </b:EventTrigger>
     </b:Interaction.Triggers>
 
-    <Grid Margin="48">
-        <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding ViewModel.Requests}"
-                          d:ItemsSource="{d:SampleData ItemCount=5}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="0 0 0 8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+    <Grid FocusVisualStyle="{x:Null}">
+        <ScrollViewer FocusVisualStyle="{x:Null}">
+            <StackPanel Margin="48 36 48 0">
+                <TextBlock Text="群聊请求:"
+                           FontSize="24"/>
+                <ItemsControl Margin="0 24 0 0"
+                              ItemsSource="{Binding ViewModel.Requests}"
+                              d:ItemsSource="{d:SampleData ItemCount=5}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0 0 0 12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <StackPanel Orientation="Horizontal">
-                                <Border Width="32"
-                                        Height="32"
-                                        CornerRadius="5"
-                                        Background="#33000000">
-                                    <Border.Effect>
-                                        <DropShadowEffect ShadowDepth="0"
-                                                          Opacity="0.5"/>
-                                    </Border.Effect>
+                                <StackPanel Orientation="Horizontal">
                                     <Border Width="32"
                                             Height="32"
-                                            CornerRadius="5">
-                                        <b:Interaction.Behaviors>
-                                            <mb:BackgroundImageLoadBehavior UserId="{Binding SenderId}" />
-                                        </b:Interaction.Behaviors>
+                                            CornerRadius="5"
+                                            Background="#33000000">
+                                        <Border.Effect>
+                                            <DropShadowEffect ShadowDepth="0"
+                                                              Opacity="0.5"/>
+                                        </Border.Effect>
+                                        <Border Width="32"
+                                                Height="32"
+                                                CornerRadius="5">
+                                            <b:Interaction.Behaviors>
+                                                <mb:BackgroundImageLoadBehavior UserId="{Binding SenderId}" />
+                                            </b:Interaction.Behaviors>
+                                        </Border>
                                     </Border>
-                                </Border>
-                                <StackPanel Orientation="Vertical" Margin="8 0 0 0">
-                                    <TextBlock>
-                                        <Run Text="{Binding SenderName}"/>
-                                        <Run Text="请求加入"/>
-                                        <Run Text="{Binding GroupName}"/>
-                                    </TextBlock>
-                                    <TextBlock Text="{Binding Message}"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <Grid Grid.Column="1"
-                                  Name="HandleButtonContainer">
-                                <StackPanel Orientation="Horizontal">
-                                    <StackPanel Visibility="{Binding IsDone,Converter={StaticResource InvertBooleanToVisibilityConverter}}"
-                                                Orientation="Horizontal">
-                                        <Button
-                                            Content="接受"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding Source={StaticResource DataProxy},Path=Data.AcceptRequestCommand}"
-                                            CommandParameter="{Binding}"/>
-                                        <Button
-                                            Content="拒绝"
-                                            VerticalAlignment="Center"
-                                            Margin="8 0 0 0"
-                                            Command="{Binding Source={StaticResource DataProxy},Path=Data.RejectRequestCommand}"
-                                            CommandParameter="{Binding}"/>
+                                    <StackPanel Orientation="Vertical" Margin="8 0 0 0">
+                                        <TextBlock>
+                                            <Run Text="{Binding SenderName}"/>
+                                            <Run Text="请求加入"/>
+                                            <Run Text="{Binding GroupName}"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding Message}"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                     </StackPanel>
-                                    <TextBlock Text="已处理"
-                                               VerticalAlignment="Center"
-                                               Visibility="{Binding IsDone,Converter={StaticResource BooleanToVisibilityConverter},Mode=OneWay}"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                 </StackPanel>
+
+                                <Grid Grid.Column="1"
+                                      Name="HandleButtonContainer">
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Visibility="{Binding IsDone,Converter={StaticResource InvertBooleanToVisibilityConverter}}"
+                                                    Orientation="Horizontal">
+                                            <Button
+                                                Content="接受"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding Source={StaticResource DataProxy},Path=Data.AcceptRequestCommand}"
+                                                CommandParameter="{Binding}"/>
+                                            <Button
+                                                Content="拒绝"
+                                                VerticalAlignment="Center"
+                                                Margin="8 0 0 0"
+                                                Command="{Binding Source={StaticResource DataProxy},Path=Data.RejectRequestCommand}"
+                                                CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                        <TextBlock Text="已处理"
+                                                   VerticalAlignment="Center"
+                                                   Visibility="{Binding IsDone,Converter={StaticResource BooleanToVisibilityConverter},Mode=OneWay}"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    </StackPanel>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding SenderId,Converter={StaticResource UserIdIsSelfConverter}}"
-                                         Value="True">
-                                <Setter TargetName="HandleButtonContainer" Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding SenderId,Converter={StaticResource UserIdIsSelfConverter}}"
+                                             Value="True">
+                                    <Setter TargetName="HandleButtonContainer" Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </Page>

@@ -41,10 +41,16 @@ public class BackgroundImageLoadBehavior : Behavior<Border>
 
         try
         {
-            if (string.IsNullOrWhiteSpace(imageHash))
+            if (string.IsNullOrWhiteSpace(imageHash) && imageLoadBehavior.UserId >= 0)
             {
                 var user = await client.Client.GetUserAsync(imageLoadBehavior.UserId);
                 imageHash = user.AvatarHash;
+            }
+
+            if (string.IsNullOrWhiteSpace(imageHash))
+            {
+                imageLoadBehavior.AssociatedObject.Background = null;
+                return;
             }
 
             MemoryStream bufferStream = new();

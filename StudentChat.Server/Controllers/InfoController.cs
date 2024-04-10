@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,12 @@ namespace StudentChat.Server.Controllers
             var selfUserId = HttpContext.GetUserId();
             var user = await _dbContext.Users.FirstAsync(user => user.Id == selfUserId);
             var newProfile = request.User;
+            var existAnyUserWithSameUserName = await _dbContext.Users.AnyAsync(user => user.UserName == newProfile.UserName && user.Id != selfUserId);
+
+            if (existAnyUserWithSameUserName)
+            {
+                return ApiResult.CreateErr("There is already a user with the same username");
+            }
 
             if (!string.IsNullOrWhiteSpace(newProfile.AvatarHash))
             {
@@ -153,6 +160,12 @@ namespace StudentChat.Server.Controllers
         public async Task<ApiResult<CreateGroupResultData>> CreateGroupAsync(CreateGroupRequestData request)
         {
             var selfUserId = HttpContext.GetUserId();
+
+            if (string.IsNullOrWhiteSpace(request.Group.Name))
+            {
+                return ApiResult<CreateGroupResultData>.CreateErr("Group name can not be empty");
+            }
+
             var entry = await _dbContext.Groups.AddAsync(
                 new Group()
                 {

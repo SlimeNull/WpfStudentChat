@@ -21,8 +21,14 @@
     <Grid>
         <TabControl>
             <TabItem Header="用户">
-                <StackPanel>
-                    <Grid Margin="24 24 24 0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0"
+                          Margin="24 24 24 0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="8"/>
@@ -35,7 +41,8 @@
                                 Command="{Binding SearchUsersCommand}"/>
                     </Grid>
 
-                    <ScrollViewer Margin="0 24 0 0"
+                    <ScrollViewer Grid.Row="1"
+                                  Margin="0 24 0 0"
                                   FocusVisualStyle="{x:Null}">
                         <StackPanel>
                             <ItemsControl Margin="24 0"
@@ -87,11 +94,16 @@
                                     Command="{Binding LoadMoreUsersCommand}"/>
                         </StackPanel>
                     </ScrollViewer>
-                </StackPanel>
+                </Grid>
             </TabItem>
             <TabItem Header="群聊">
-                <StackPanel>
-                    <Grid Margin="24 24 24 0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0"
+                          Margin="24 24 24 0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="8"/>
@@ -104,7 +116,9 @@
                                 Command="{Binding SearchGroupsCommand}"/>
                     </Grid>
 
-                    <ScrollViewer Margin="0 24 0 0">
+                    <ScrollViewer Grid.Row="1"
+                                  Margin="0 24 0 0"
+                                  FocusVisualStyle="{x:Null}">
                         <StackPanel>
                             <ItemsControl Margin="24 0"
                                           ItemsSource="{Binding ViewModel.SearchGroupResults}">
@@ -152,7 +166,7 @@
                                     Command="{Binding LoadMoreGroupsCommand}"/>
                         </StackPanel>
                     </ScrollViewer>
-                </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

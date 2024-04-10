@@ -26,12 +26,6 @@ public partial class MainWindowViewModel : ObservableObject
             Icon = SymbolRegular.ContactCard24,
             PageType = typeof(Views.Pages.ContactsPage)
         },
-        new NavigationItem()
-        {
-            Content = "Data",
-            Icon = SymbolRegular.DataHistogram24,
-            PageType = typeof(Views.Pages.DataPage)
-        },
     };
 
     [ObservableProperty]
