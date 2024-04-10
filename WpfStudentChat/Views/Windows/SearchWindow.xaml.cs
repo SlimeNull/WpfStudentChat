@@ -58,7 +58,7 @@ namespace WpfStudentChat.Views.Windows
                 ViewModel.SearchUserResults.Add(user);
             }
 
-            ViewModel.HasMoreUsers = users.Count == SearchCount;
+            ViewModel.HasMoreUsers = users.Length == SearchCount;
         }
 
         [RelayCommand]
@@ -75,7 +75,7 @@ namespace WpfStudentChat.Views.Windows
                 ViewModel.SearchGroupResults.Add(group);
             }
 
-            ViewModel.HasMoreGroups = groups.Count == SearchCount;
+            ViewModel.HasMoreGroups = groups.Length == SearchCount;
         }
 
         [RelayCommand]
@@ -88,7 +88,7 @@ namespace WpfStudentChat.Views.Windows
                 ViewModel.SearchUserResults.Add(user);
             }
 
-            ViewModel.HasMoreUsers = users.Count == SearchCount;
+            ViewModel.HasMoreUsers = users.Length == SearchCount;
         }
 
         [RelayCommand]
@@ -101,7 +101,7 @@ namespace WpfStudentChat.Views.Windows
                 ViewModel.SearchGroupResults.Add(group);
             }
 
-            ViewModel.HasMoreGroups = groups.Count == SearchCount;
+            ViewModel.HasMoreGroups = groups.Length == SearchCount;
         }
 
         [RelayCommand]

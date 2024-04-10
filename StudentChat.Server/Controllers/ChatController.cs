@@ -88,7 +88,7 @@ namespace StudentChat.Server.Controllers
                 .Include(msg => msg.ImageAttachments)
                 .Include(msg => msg.FileAttachments)
                 .Select(msg => (CommonModels.PrivateMessage)msg)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<QueryPrivateMessagesResultData>.CreateOk(new QueryPrivateMessagesResultData(messages));
         }
@@ -150,7 +150,7 @@ namespace StudentChat.Server.Controllers
                 .Include(msg => msg.ImageAttachments)
                 .Include(msg => msg.FileAttachments)
                 .Select(msg => (CommonModels.GroupMessage)msg)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<QueryGroupMessagesResultData>.CreateOk(new QueryGroupMessagesResultData(messages));
         }

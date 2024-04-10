@@ -60,8 +60,6 @@ public partial class App
             // Pages
             services.AddSingleton<ChatPage>();
             services.AddSingleton<ChatViewModel>();
-            services.AddSingleton<DataPage>();
-            services.AddSingleton<DataViewModel>();
             services.AddSingleton<SettingsPage>();
             services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<ContactsPage>();
@@ -70,6 +68,8 @@ public partial class App
             services.AddSingleton<FriendRequestsViewModel>();
             services.AddSingleton<GroupRequestsPage>();
             services.AddSingleton<GroupRequestsViewModel>();
+            services.AddSingleton<ManagePage>();
+            services.AddSingleton<ManageViewModel>();
 
             // Scoped Pages
             services.AddScoped<PrivateMessagesPage>();

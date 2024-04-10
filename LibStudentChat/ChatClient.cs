@@ -17,6 +17,8 @@ public class ChatClient
 
     private readonly HttpClient _httpClient;
 
+    public bool IsAdmin { get; private set; }
+
     public ChatClient(Uri baseUri)
     {
         ArgumentNullException.ThrowIfNull(baseUri, nameof(baseUri));
@@ -28,6 +30,43 @@ public class ChatClient
     }
 
     public Uri BaseUri => _httpClient.BaseAddress!;
+
+    public async Task LoginAsync(string username, string password)
+    {
+        const string RoleKey = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+
+        if (backgroundTasksCancellation is not null)
+        {
+            await backgroundTasksCancellation.CancelAsync();
+        }
+
+        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+        byte[] passwordHash = SHA256.HashData(passwordBytes);
+        string passwordHashText = Convert.ToHexString(passwordHash);
+
+        var result = await PostAsync<LoginRequestData, LoginResultData>(
+            "/api/Auth/Login",
+            new LoginRequestData(username, passwordHashText));
+
+        token = result.Token;
+        backgroundTasksCancellation = new();
+
+        var parts = token.Split('.');
+        var payload = parts[1];
+        var padLength = 4 - payload.Length % 4;
+        if (padLength == 4)
+            padLength = 0;
+        var payloadBytes = Convert.FromBase64String(payload.PadRight(payload.Length + padLength, '='));
+        var payloadText = Encoding.UTF8.GetString(payloadBytes);
+        var payloadJson = JsonSerializer.Deserialize<JsonElement>(payloadText);
+        if (!payloadJson.TryGetProperty(RoleKey, out var role))
+            return;
+        IsAdmin = role.GetString() == "Admin";
+
+        // start background task
+        _ = BackgroundTasks(backgroundTasksCancellation.Token);
+    }
+
 
     public int GetSelfUserId()
     {
@@ -128,6 +167,8 @@ public class ChatClient
                 // TODO: log here
             }
         }
+    
+        // TODO: 断线重连
     }
 
     private async Task<TResultData> PostAsync<TRequestData, TResultData>(string path, TRequestData requestData)
@@ -280,29 +321,7 @@ public class ChatClient
     public Task<Stream?> GetFileAsync(string hash)
         => DownloadBinary($"api/Binary/GetFile/{hash}");
 
-    public async Task LoginAsync(string username, string password)
-    {
-        if (backgroundTasksCancellation is not null)
-        {
-            await backgroundTasksCancellation.CancelAsync();
-        }
-
-        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-        byte[] passwordHash = SHA256.HashData(passwordBytes);
-        string passwordHashText = Convert.ToHexString(passwordHash);
-
-        var result = await PostAsync<LoginRequestData, LoginResultData>(
-            "/api/Auth/Login", 
-            new LoginRequestData(username, passwordHashText));
-
-        token = result.Token;
-        backgroundTasksCancellation = new();
-
-        // start background task
-        _ = BackgroundTasks(backgroundTasksCancellation.Token);
-    }
-
-    public async Task<List<PrivateMessage>> QueryPrivateMessagesAsync(int userId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count = 20)
+    public async Task<PrivateMessage[]> QueryPrivateMessagesAsync(int userId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count = 20)
     {
         var result = await PostAsync<QueryPrivateMessagesRequestData, QueryPrivateMessagesResultData>(
             "api/Chat/QueryPrivateMessages", 
@@ -311,7 +330,7 @@ public class ChatClient
         return result.Messages;
     }
 
-    public async Task<List<GroupMessage>> QueryGroupMessagesAsync(int groupId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count = 20)
+    public async Task<GroupMessage[]> QueryGroupMessagesAsync(int groupId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count = 20)
     {
         var result = await PostAsync<QueryGroupMessagesRequestData, QueryGroupMessagesResultData>(
             "api/Chat/QueryGroupMessages",
@@ -320,21 +339,21 @@ public class ChatClient
         return result.Messages;
     }
 
-    public async Task SendPrivateMessageAsync(int receiverId, string content, List<Attachment>? imageAttachments, List<Attachment>? fileAttachments)
+    public async Task SendPrivateMessageAsync(int receiverId, string content, Attachment[]? imageAttachments, Attachment[]? fileAttachments)
     {
         await PostAsync<SendPrivateMessageRequestData>(
             "api/Chat/SendPrivateMessage",
             new SendPrivateMessageRequestData(receiverId, content, imageAttachments, fileAttachments));
     }
 
-    public async Task SendGroupMessageAsync(int groupId, string content, List<Attachment>? imageAttachments, List<Attachment>? fileAttachments)
+    public async Task SendGroupMessageAsync(int groupId, string content, Attachment[]? imageAttachments, Attachment[]? fileAttachments)
     {
         await PostAsync<SendGroupMessageRequestData>(
             "api/Chat/SendGroupMessage",
             new SendGroupMessageRequestData(groupId, content, imageAttachments, fileAttachments));
     }
 
-    public async Task<List<FriendRequest>> GetSentFriendRequestsAsync(int skip, int count = 20)
+    public async Task<FriendRequest[]> GetSentFriendRequestsAsync(int skip, int count = 20)
     {
         var result = await PostAsync<QueryRequestData, GetSentFriendRequestsResultData>(
             "api/Request/GetSentFriendRequests",
@@ -343,7 +362,7 @@ public class ChatClient
         return result.Requests;
     }
 
-    public async Task<List<FriendRequest>> GetReceivedFriendRequestsAsync(int skip, int count = 20)
+    public async Task<FriendRequest[]> GetReceivedFriendRequestsAsync(int skip, int count = 20)
     {
         var result = await PostAsync<QueryRequestData, GetReceivedFriendRequestsResultData>(
             "api/Request/GetReceivedFriendRequests",
@@ -351,7 +370,7 @@ public class ChatClient
 
         return result.Requests;
     }
-    public async Task<List<FriendRequest>> GetFriendRequestsAsync(int skip, int count = 20)
+    public async Task<FriendRequest[]> GetFriendRequestsAsync(int skip, int count = 20)
     {
         var result = await PostAsync<QueryRequestData, GetFriendRequestsResultData>(
             "api/Request/GetFriendRequests",
@@ -360,7 +379,7 @@ public class ChatClient
         return result.Requests;
     }
 
-    public async Task<List<GroupRequest>> GetSentGroupRequestsAsync(int skip, int count = 20)
+    public async Task<GroupRequest[]> GetSentGroupRequestsAsync(int skip, int count = 20)
     {
         var result = await PostAsync<QueryRequestData, GetSentGroupRequestsResultData>(
             "api/Request/GetSentGroupRequests",
@@ -369,7 +388,7 @@ public class ChatClient
         return result.Requests;
     }
 
-    public async Task<List<GroupRequest>> GetReceivedGroupRequestsAsync(int skip, int count = 20)
+    public async Task<GroupRequest[]> GetReceivedGroupRequestsAsync(int skip, int count = 20)
     {
         var result = await PostAsync<QueryRequestData, GetReceivedGroupRequestsResultData>(
             "api/Request/GetReceivedGroupRequests",
@@ -378,7 +397,7 @@ public class ChatClient
         return result.Requests;
     }
 
-    public async Task<List<GroupRequest>> GetGroupRequestsAsync(int skip, int count = 20)
+    public async Task<GroupRequest[]> GetGroupRequestsAsync(int skip, int count = 20)
     {
         var result = await PostAsync<QueryRequestData, GetGroupRequestsResultData>(
             "api/Request/GetGroupRequests",
@@ -496,7 +515,7 @@ public class ChatClient
             new DeleteGroupRequestData(groupId));
     }
 
-    public async Task<List<User>> SearchUserAsync(string keyword, int skip, int count = 30)
+    public async Task<User[]> SearchUserAsync(string keyword, int skip, int count = 30)
     {
         var result = await PostAsync<KeywordQueryRequestData, SearchUserResultData>(
             "api/Info/SearchUser",
@@ -505,7 +524,7 @@ public class ChatClient
         return result.Users;
     }
 
-    public async Task<List<Group>> SearchGroupAsync(string keyword, int skip, int count = 30)
+    public async Task<Group[]> SearchGroupAsync(string keyword, int skip, int count = 30)
     {
         var result = await PostAsync<KeywordQueryRequestData, SearchGroupResultData>(
             "api/Info/SearchGroup",
@@ -514,7 +533,7 @@ public class ChatClient
         return result.Groups;
     }
 
-    public async Task<List<User>> GetFriendsAsync()
+    public async Task<User[]> GetFriendsAsync()
     {
         var result = await PostAsync<GetFriendsResultData>(
             "api/Info/GetFriends");
@@ -522,7 +541,7 @@ public class ChatClient
         return result.Friends;
     }
 
-    public async Task<List<Group>> GetGroupsAsync()
+    public async Task<Group[]> GetGroupsAsync()
     {
         var result = await PostAsync<GetGroupsResultData>(
             "api/Info/GetGroups");
@@ -530,7 +549,12 @@ public class ChatClient
         return result.Groups;
     }
 
-
+    public async Task<GetUsersResultData> GetUsers(string userNameKeyword, string nicknameKeyword, int skip, int count)
+    {
+        return await PostAsync<GetUsersRequestData, GetUsersResultData>(
+            "api/Manage/GetUsers",
+            new GetUsersRequestData(userNameKeyword, nicknameKeyword, skip, count));
+    }
 
     public event EventHandler<PrivateMessageReceivedEventArgs>? PrivateMessageReceived;
     public event EventHandler<GroupMessageReceivedEventArgs>? GroupMessageReceived;

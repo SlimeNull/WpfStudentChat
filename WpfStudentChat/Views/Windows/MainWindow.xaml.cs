@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
+using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Controls.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
@@ -45,7 +46,34 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-
+        if (_chatClientService.Client.IsAdmin)
+        {
+            ViewModel.MenuItems = [
+                new NavigationItem()
+                {
+                    Content = "管理",
+                    Icon = SymbolRegular.Book24,
+                    PageType = typeof(Views.Pages.ManagePage)
+                }];
+        }
+        else
+        {
+            ViewModel.MenuItems = new()
+            {
+                new NavigationItem()
+                {
+                    Content = "消息",
+                    Icon = SymbolRegular.Home24,
+                    PageType = typeof(Views.Pages.ChatPage)
+                },
+                new NavigationItem()
+                {
+                    Content = "联系人",
+                    Icon = SymbolRegular.ContactCard24,
+                    PageType = typeof(Views.Pages.ContactsPage)
+                },
+            };
+        }
     }
 
     #region INavigationWindow methods
