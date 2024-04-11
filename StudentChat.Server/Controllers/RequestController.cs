@@ -181,9 +181,23 @@ namespace StudentChat.Server.Controllers
         public async Task<ApiResult> SendFriendRequestAsync(SendFriendRequestRequestData request)
         {
             var selfUserId = HttpContext.GetUserId();
-            var alreadyExist = _dbContext.FriendRequests.Any(r => r.SenderId == selfUserId && r.ReceiverId == request.UserId);
 
-            if (alreadyExist)
+            if (selfUserId == request.UserId)
+            {
+                return ApiResult.CreateErr("You can't add yourself as a friend");
+            }
+
+            var friendAlreadyExist = 
+                await _dbContext.UserFriends.AnyAsync(r => (r.FromUserId == selfUserId && r.ToUserId == request.UserId) || (r.FromUserId == request.UserId && r.ToUserId == selfUserId));
+
+            if (friendAlreadyExist)
+            {
+                return ApiResult.CreateErr("The other user is already your friend");
+            }
+
+            var requestAlreadyExist = 
+                await _dbContext.FriendRequests.AnyAsync(r => r.SenderId == selfUserId && r.ReceiverId == request.UserId);
+            if (requestAlreadyExist)
             {
                 return ApiResult.CreateErr("You have already sent a request");
             }
@@ -216,9 +230,18 @@ namespace StudentChat.Server.Controllers
         public async Task<ApiResult> SendGroupRequestAsync(SendGroupRequestRequestData request)
         {
             var selfUserId = HttpContext.GetUserId();
-            var alreadyExist = _dbContext.GroupRequests.Any(r => r.SenderId == selfUserId && r.GroupId == request.GroupId);
+            var groupAlreadyExist =
+                await _dbContext.Groups.AnyAsync(g => g.OwnerId == selfUserId && g.Id == request.GroupId) ||
+                await _dbContext.GroupMembers.AnyAsync(gm => gm.UserId == selfUserId && gm.GroupId == request.GroupId);
 
-            if (alreadyExist)
+            if (groupAlreadyExist)
+            {
+                return ApiResult.CreateErr("You're already a member of the group chat");
+            }
+
+            var requestAlreadyExist = await _dbContext.GroupRequests.AnyAsync(r => r.SenderId == selfUserId && r.GroupId == request.GroupId);
+
+            if (requestAlreadyExist)
             {
                 return ApiResult.CreateErr("You have already sent a request");
             }
