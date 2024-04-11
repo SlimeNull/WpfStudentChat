@@ -105,6 +105,11 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
     {
         try
         {
+            if (_chatClientService.Client.IsAdmin)
+            {
+                return;
+            }
+
             ViewModel.Profile = await _chatClientService.Client.GetSelfAsync();
         }
         catch (Exception ex)
