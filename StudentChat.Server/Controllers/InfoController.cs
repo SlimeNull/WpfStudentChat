@@ -188,7 +188,6 @@ namespace StudentChat.Server.Controllers
         {
             var selfUserId = HttpContext.GetUserId();
             var group = await _dbContext.Groups
-                .Include(group => group.Members)
                 .FirstOrDefaultAsync(group => group.Id == request.GroupId);
 
             if (group is null)
@@ -196,21 +195,67 @@ namespace StudentChat.Server.Controllers
                 return ApiResult.CreateErr("Group not found");
             }
 
-            if (group.OwnerId != selfUserId)
+            if (group.OwnerId == selfUserId)
             {
-                return ApiResult.CreateErr("You are not owner of that group");
+                _dbContext.Groups.Remove(group);
+                await _dbContext.GroupMembers
+                    .Where(gm => gm.GroupId == group.Id)
+                    .ExecuteDeleteAsync();
+
+                await _dbContext.SaveChangesAsync();
+
+                var commonGroup = (CommonModels.Group)group;
+                await _notifyService.OnGroupDecreased(selfUserId, commonGroup);
+
+                await _dbContext.Entry(group)
+                    .Collection(e => e.Members)
+                    .LoadAsync();
+
+                foreach (var member in group.Members)
+                {
+                    await _notifyService.OnGroupDecreased(member.Id, commonGroup);
+                }
+            }
+            else
+            {
+                var member = _dbContext.GroupMembers.FirstOrDefault(m => m.GroupId == group.Id && m.UserId == selfUserId);
+
+                if (member is null)
+                {
+                    return ApiResult.CreateErr("You are not member of that group");
+                }
+
+                _dbContext.GroupMembers.Remove(member);
+                await _dbContext.SaveChangesAsync();
+
+                var commonGroup = (CommonModels.Group)group;
+                await _notifyService.OnGroupDecreased(selfUserId, commonGroup);
             }
 
-            _dbContext.Groups.Remove(group);
+            return ApiResult.CreateOk();
+        }
+
+        [HttpPost("DeleteFriend")]
+        public async Task<ApiResult> DeleteFriendAsync(DeleteFriendRequestData request)
+        {
+            var selfUserId = HttpContext.GetUserId();
+            var friend = await _dbContext.UserFriends
+                .FirstOrDefaultAsync(f => (f.FromUserId == selfUserId && f.ToUserId == request.UserId) || (f.FromUserId == request.UserId && f.ToUserId == selfUserId));
+
+            if (friend is null)
+            {
+                return ApiResult.CreateErr("No such friend");
+            }
+
+            var otherUserId = friend.FromUserId == selfUserId ? friend.ToUserId : friend.FromUserId;
+            var self = await _dbContext.Users.FirstAsync(u => u.Id == selfUserId);
+            var other = await _dbContext.Users.FirstAsync(u => u.Id == otherUserId);
+
+            _dbContext.UserFriends.Remove(friend);
             await _dbContext.SaveChangesAsync();
 
-            var commonGroup = (CommonModels.Group)group;
-            await _notifyService.OnGroupDecreased(selfUserId, commonGroup);
-
-            foreach (var member in group.Members)
-            {
-                await _notifyService.OnGroupDecreased(member.Id, commonGroup);
-            }
+            await _notifyService.OnFriendDecreased(selfUserId, (CommonModels.User)other);
+            await _notifyService.OnFriendDecreased(otherUserId, (CommonModels.User)self);
 
             return ApiResult.CreateOk();
         }

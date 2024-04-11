@@ -4,12 +4,57 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:WpfStudentChat.Views.Pages"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ContactsGroupPage"
+      d:Background="White"
       d:DataContext="{d:DesignInstance Type=local:ContactsGroupPage}">
 
     <Grid>
-        <TextBlock Text="{Binding Group.Name}"/>
+        <ui:Card VerticalAlignment="Top"
+                 HorizontalAlignment="Stretch"
+                 MaxWidth="500"
+                 Margin="48">
+            <StackPanel MinHeight="400">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="58" Height="58" CornerRadius="10"
+                            Background="#33000000">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0" Opacity=".5"/>
+                        </Border.Effect>
+                        <Border Width="58" Height="58" CornerRadius="10">
+                            <b:Interaction.Behaviors>
+                                <mb:BackgroundImageLoadBehavior ImageHash="{Binding Group.AvatarHash}"/>
+                            </b:Interaction.Behaviors>
+                        </Border>
+                    </Border>
+                    <StackPanel Margin="14 0 0 0"
+                                Orientation="Vertical">
+                        <TextBlock Text="{Binding Group.Name}"
+                                   d:Text="Name"
+                                   FontSize="14"/>
+                        <TextBlock Text="{Binding Group.Description}"
+                                   d:Text="Description"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+                <Grid Margin="48">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                        <Button Content="Chat"
+                                Padding="15 6"
+                                Command="{Binding StartChatCommand}"/>
+                        <Button Content="Delete"
+                                Padding="15 6"
+                                Margin="8 0 0 0 "
+                                Command="{Binding DeleteContactCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </ui:Card>
     </Grid>
 </Page>

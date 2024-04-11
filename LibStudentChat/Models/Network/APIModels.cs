@@ -39,6 +39,8 @@ namespace StudentChat.Models.Network
     public record class SetPasswordRequestData(string PasswordHash);
     public record class CreateGroupRequestData(Group Group);
     public record class CreateGroupResultData(Group Group);
+
+    public record class DeleteFriendRequestData(int UserId);
     public record class DeleteGroupRequestData(int GroupId);
 
 

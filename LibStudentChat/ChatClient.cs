@@ -496,6 +496,13 @@ public class ChatClient
             new DeleteGroupRequestData(groupId));
     }
 
+    public async Task DeleteFriendAsync(int userId)
+    {
+        await PostAsync<DeleteFriendRequestData>(
+            "api/Info/DeleteFriend",
+            new DeleteFriendRequestData(userId));
+    }
+
     public async Task<List<User>> SearchUserAsync(string keyword, int skip, int count = 30)
     {
         var result = await PostAsync<KeywordQueryRequestData, SearchUserResultData>(

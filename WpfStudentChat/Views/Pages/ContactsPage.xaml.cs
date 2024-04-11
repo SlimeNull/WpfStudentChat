@@ -131,6 +131,12 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
             return;
         }
 
+        if (FriendsListView.SelectedItem is null &&
+            GroupsListView.SelectedItem is null)
+        {
+            ContentFrame.Content = null;
+        }
+
         if (senderListView.SelectedItem is null)
         {
             return;
@@ -139,11 +145,16 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         if (sender == FriendsListView)
         {
             GroupsListView.SelectedItem = null;
+
+            var page = new ContactsFriendPage((User)senderListView.SelectedItem);
+            ContentFrame.Content = page;
         }
         else if (sender == GroupsListView)
         {
-
             FriendsListView.SelectedItem = null;
+
+            var page = new ContactsGroupPage((Group)senderListView.SelectedItem);
+            ContentFrame.Content = page;
         }
     }
 

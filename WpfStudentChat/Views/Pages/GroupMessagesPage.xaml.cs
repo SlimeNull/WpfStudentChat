@@ -71,9 +71,10 @@ namespace WpfStudentChat.Views.Pages
 
                 await _chatClientService.Client.SendGroupMessageAsync(ViewModel.Session.Subject.Id, textInput, null, null);
             }
-            catch
+            catch (Exception ex)
             {
                 ViewModel.TextInput = textInput;
+                MessageBox.Show(App.Current.MainWindow, $"Failed to send message. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
