@@ -8,6 +8,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+    xmlns:vc="clr-namespace:ValueConverters;assembly=ValueConverters"
     Title="SimpleChat"
     Width="1100"
     Height="650"
@@ -20,6 +21,13 @@
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+
+    <ui:UiWindow.Resources>
+        <vc:ValueConverterGroup x:Key="InvertBoolean2VisibilityConverter">
+            <vc:BoolInverter/>
+            <BooleanToVisibilityConverter/>
+        </vc:ValueConverterGroup>
+    </ui:UiWindow.Resources>
 
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Loaded">
@@ -47,7 +55,8 @@
                 </Grid.RowDefinitions>
                 <Border Width="42" Height="42" Margin="0 8"
                         CornerRadius="5"
-                        Background="#33000000">
+                        Background="#33000000"
+                        Visibility="{Binding SelfIsAdmin,Converter={StaticResource InvertBoolean2VisibilityConverter}}">
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="PreviewMouseDown">
                             <b:InvokeCommandAction Command="{Binding ShowSetProfileWindowCommand}"/>

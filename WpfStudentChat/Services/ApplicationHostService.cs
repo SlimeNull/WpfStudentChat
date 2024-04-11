@@ -43,14 +43,22 @@ public class ApplicationHostService : IHostedService
     /// </summary>
     private async Task HandleActivationAsync()
     {
-        var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-        _navigationWindow = mainWindow;
-
+        var chatClientService = _serviceProvider.GetRequiredService<ChatClientService>();
         var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
         if (loginWindow.ShowDialog() ?? false)
         {
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            _navigationWindow = mainWindow;
             _navigationWindow.ShowWindow();
-            _navigationWindow.Navigate(typeof(Views.Pages.ChatPage));
+
+            if (!chatClientService.Client.IsAdmin)
+            {
+                _navigationWindow.Navigate(typeof(Views.Pages.ChatPage));
+            }
+            else
+            {
+                _navigationWindow.Navigate(typeof(Views.Pages.ManagePage));
+            }
         }
         else
         {

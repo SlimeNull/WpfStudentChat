@@ -19,6 +19,7 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
     private readonly ChatClientService _chatClientService;
     private readonly IServiceProvider _serviceProvider;
 
+    public bool SelfIsAdmin => _chatClientService.Client.IsAdmin;
     public MainWindowViewModel ViewModel { get; }
 
     public MainWindow(
