@@ -3,6 +3,7 @@ using StudentChat.Models;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Controls.Interfaces;
+using WpfStudentChat.Services;
 
 namespace WpfStudentChat.ViewModels.Windows;
 
@@ -12,21 +13,7 @@ public partial class MainWindowViewModel : ObservableObject
     private string _applicationTitle = "WPF UI - WpfStudentChat";
 
     [ObservableProperty]
-    private ObservableCollection<INavigationControl> _menuItems = new()
-    {
-        new NavigationItem()
-        {
-            Content = "消息",
-            Icon = SymbolRegular.Home24,
-            PageType = typeof(Views.Pages.ChatPage)
-        },
-        new NavigationItem()
-        {
-            Content = "联系人",
-            Icon = SymbolRegular.ContactCard24,
-            PageType = typeof(Views.Pages.ContactsPage)
-        },
-    };
+    private ObservableCollection<INavigationControl> _menuItems = [];
 
     [ObservableProperty]
     private ObservableCollection<INavigationControl> _footerMenuItems = new()
@@ -47,4 +34,5 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private User? _profile;
+
 }

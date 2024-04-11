@@ -263,20 +263,18 @@ namespace StudentChat.Server.Controllers
         [HttpPost("SearchUser")]
         public async Task<ApiResult<SearchUserResultData>> SearchUser(KeywordQueryRequestData request)
         {
-            if (request.Count == 0)
-            {
-                request = request with
-                {
-                    Count = 10
-                };
-            }
+            var count = request.Count;
+            if (count <= 0)
+                count = 10;
+
+            var skip = Math.Max(0, request.Skip);
 
             var users = await _dbContext.Users
                 .Where(user => user.UserName.Contains(request.Keyword) || user.Nickname.Contains(request.Keyword))
-                .Skip(request.Skip)
-                .Take(request.Count)
+                .Skip(skip)
+                .Take(count)
                 .Select(user => (CommonModels.User)user)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<SearchUserResultData>.CreateOk(new SearchUserResultData(users));
         }
@@ -284,20 +282,18 @@ namespace StudentChat.Server.Controllers
         [HttpPost("SearchGroup")]
         public async Task<ApiResult<SearchGroupResultData>> SearchGroup(KeywordQueryRequestData request)
         {
-            if (request.Count == 0)
-            {
-                request = request with
-                {
-                    Count = 10
-                };
-            }
+            int count = request.Count;
+            if (count == 0)
+                count = 10;
+
+            int skip = Math.Max(0, request.Skip);
 
             var groups = await _dbContext.Groups
                 .Where(group => group.Name.Contains(request.Keyword))
-                .Skip(request.Skip)
-                .Take(request.Count)
+                .Skip(skip)
+                .Take(count)
                 .Select(group => (CommonModels.Group)group)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<SearchGroupResultData>.CreateOk(new SearchGroupResultData(groups));
         }
@@ -314,7 +310,7 @@ namespace StudentChat.Server.Controllers
             var friends = selfUser.AddedFriends
                 .Concat(selfUser.AcceptedFriends)
                 .Select(user => (CommonModels.User)user)
-                .ToList();
+                .ToArray();
 
             return ApiResult<GetFriendsResultData>.CreateOk(new GetFriendsResultData(friends));
         }
@@ -331,7 +327,7 @@ namespace StudentChat.Server.Controllers
             var groups = selfUser.OwnedGroups
                 .Concat(selfUser.JoindGroups)
                 .Select(group => (CommonModels.Group)group)
-                .ToList();
+                .ToArray();
 
             return ApiResult<GetGroupsResultData>.CreateOk(new GetGroupsResultData(groups));
         }

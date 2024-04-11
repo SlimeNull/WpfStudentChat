@@ -68,6 +68,8 @@ public partial class App
             services.AddSingleton<FriendRequestsViewModel>();
             services.AddSingleton<GroupRequestsPage>();
             services.AddSingleton<GroupRequestsViewModel>();
+            services.AddSingleton<ManagePage>();
+            services.AddSingleton<ManageViewModel>();
 
             // Scoped Pages
             services.AddScoped<PrivateMessagesPage>();

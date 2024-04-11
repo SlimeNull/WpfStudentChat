@@ -47,7 +47,7 @@ namespace StudentChat.Server.Controllers
                 .Include(request => request.Sender)
                 .Include(request => request.Receiver)
                 .Select(request => (CommonModels.FriendRequest)request)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<GetSentFriendRequestsResultData>.CreateOk(new GetSentFriendRequestsResultData(requests));
         }
@@ -72,7 +72,7 @@ namespace StudentChat.Server.Controllers
                 .Include(request => request.Sender)
                 .Include(request => request.Group)
                 .Select(request => (CommonModels.GroupRequest)request)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<GetSentGroupRequestsResultData>.CreateOk(new GetSentGroupRequestsResultData(requests));
         }
@@ -98,7 +98,7 @@ namespace StudentChat.Server.Controllers
                 .Include(request => request.Sender)
                 .Include(request => request.Receiver)
                 .Select(request => (CommonModels.FriendRequest)request)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<GetReceivedFriendRequestsResultData>.CreateOk(new GetReceivedFriendRequestsResultData(requests));
         }
@@ -123,7 +123,7 @@ namespace StudentChat.Server.Controllers
                 .Include(request => request.Sender)
                 .Include(request => request.Group)
                 .Select(request => (CommonModels.GroupRequest)request)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<GetReceivedGroupRequestsResultData>.CreateOk(new GetReceivedGroupRequestsResultData(requests));
         }
@@ -148,7 +148,7 @@ namespace StudentChat.Server.Controllers
                 .Include(request => request.Sender)
                 .Include(request => request.Receiver)
                 .Select(request => (CommonModels.FriendRequest) request)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<GetFriendRequestsResultData>.CreateOk(new GetFriendRequestsResultData(requests));
         }
@@ -156,24 +156,22 @@ namespace StudentChat.Server.Controllers
         [HttpPost("GetGroupRequests")]
         public async Task<ApiResult<GetGroupRequestsResultData>> GetGroupRequests(QueryRequestData request)
         {
-            if (request.Count == 0)
-            {
-                request = request with
-                {
-                    Count = 20
-                };
-            }
+            var count = request.Count;
+            if (count <= 0)
+                count = 20;
+
+            var skip = Math.Max(0, request.Skip);
 
             var selfUserId = HttpContext.GetUserId();
             var requests = await _dbContext.GroupRequests
                 .Where(request => request.SenderId == selfUserId || request.Group.OwnerId == selfUserId)
                 .OrderByDescending(request => request.SentTime)
-                .Skip(request.Skip)
-                .Take(request.Count)
+                .Skip(skip)
+                .Take(count)
                 .Include(request => request.Sender)
                 .Include(request => request.Group)
                 .Select(request => (CommonModels.GroupRequest)request)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return ApiResult<GetGroupRequestsResultData>.CreateOk(new GetGroupRequestsResultData(requests));
         }

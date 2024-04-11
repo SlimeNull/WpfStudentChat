@@ -16,18 +16,21 @@ namespace StudentChat.Models.Network
 
 
     public record class QueryPrivateMessagesRequestData(int UserId, DateTimeOffset? StartTime, DateTimeOffset? EndTime, int Count);
-    public record class QueryPrivateMessagesResultData(List<PrivateMessage> Messages);
+    public record class QueryPrivateMessagesResultData(PrivateMessage[] Messages);
 
     public record class QueryGroupMessagesRequestData(int GroupId, DateTimeOffset? StartTime, DateTimeOffset? EndTime, int Count);
-    public record class QueryGroupMessagesResultData(List<GroupMessage> Messages);
+    public record class QueryGroupMessagesResultData(GroupMessage[] Messages);
 
-    public record class SendPrivateMessageRequestData(int ReceiverId, string Content, List<Attachment>? ImageAttachments, List<Attachment>? FileAttachments);
-    public record class SendGroupMessageRequestData(int GroupId, string Content, List<Attachment>? ImageAttachments, List<Attachment>? FileAttachments);
+    public record class SendPrivateMessageRequestData(int ReceiverId, string Content, Attachment[]? ImageAttachments, Attachment[]? FileAttachments);
+    public record class SendGroupMessageRequestData(int GroupId, string Content, Attachment[]? ImageAttachments, Attachment[]? FileAttachments);
 
 
 
     public record class AddUserRequestData(User User, string PasswordHash);
     public record class AddUserResultData(User User);
+
+    public record class GetUsersRequestData(string UserNameKeyword, string NicknameKeyword, int Skip, int Count);
+    public record class GetUsersResultData(int TotalCount, User[] Users);
 
 
     public record class GetUserRequestData(int UserId);
@@ -44,20 +47,20 @@ namespace StudentChat.Models.Network
     public record class DeleteGroupRequestData(int GroupId);
 
 
-    public record class SearchUserResultData(List<User> Users);
-    public record class SearchGroupResultData(List<Group> Groups);
+    public record class SearchUserResultData(User[] Users);
+    public record class SearchGroupResultData(Group[] Groups);
 
 
-    public record class GetFriendsResultData(List<User> Friends);
-    public record class GetGroupsResultData(List<Group> Groups);
+    public record class GetFriendsResultData(User[] Friends);
+    public record class GetGroupsResultData(Group[] Groups);
 
 
-    public record class GetSentFriendRequestsResultData(List<FriendRequest> Requests);
-    public record class GetReceivedFriendRequestsResultData(List<FriendRequest> Requests);
-    public record class GetSentGroupRequestsResultData(List<GroupRequest> Requests);
-    public record class GetReceivedGroupRequestsResultData(List<GroupRequest> Requests);
-    public record class GetFriendRequestsResultData(List<FriendRequest> Requests);
-    public record class GetGroupRequestsResultData(List<GroupRequest> Requests);
+    public record class GetSentFriendRequestsResultData(FriendRequest[] Requests);
+    public record class GetReceivedFriendRequestsResultData(FriendRequest[] Requests);
+    public record class GetSentGroupRequestsResultData(GroupRequest[] Requests);
+    public record class GetReceivedGroupRequestsResultData(GroupRequest[] Requests);
+    public record class GetFriendRequestsResultData(FriendRequest[] Requests);
+    public record class GetGroupRequestsResultData(GroupRequest[] Requests);
 
     /// <summary>
     /// 发送好友请求的请求数据
