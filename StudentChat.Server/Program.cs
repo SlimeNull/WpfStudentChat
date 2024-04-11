@@ -118,18 +118,6 @@ using (var scope = app.Services.CreateScope())
     }
 
     await dbContext.SaveChangesAsync();
-
-    if (!dbContext.UserFriends.Any(uf => uf.FromUserId == 0 && uf.ToUserId == 1))
-    {
-        await dbContext.UserFriends.AddAsync(
-            new UserFriend()
-            {
-                FromUserId = 1,
-                ToUserId = 2,
-            });
-    }
-
-    await dbContext.SaveChangesAsync();
 }
 
 #endif

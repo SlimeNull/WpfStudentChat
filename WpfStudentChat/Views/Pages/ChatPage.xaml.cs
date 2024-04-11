@@ -59,6 +59,14 @@ namespace WpfStudentChat.Views.Pages
             ViewModel.SelectedSession = ViewModel.GetSession(identifiable);
         }
 
+        [RelayCommand]
+        public void DeleteSession(IChatSession session)
+        {
+            ViewModel.Sessions.Remove(session);
+            if (ViewModel.SelectedSession == session)
+                ViewModel.SelectedSession = null;
+        }
+
         async void IRecipient<PrivateMessageReceivedMessage>.Receive(PrivateMessageReceivedMessage message)
         {
             if (message.Message.SenderId == SelfUserId)

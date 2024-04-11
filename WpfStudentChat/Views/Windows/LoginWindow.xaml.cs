@@ -1,4 +1,5 @@
-﻿using Wpf.Ui.Controls;
+﻿using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Windows;
 
@@ -23,6 +24,8 @@ public partial class LoginWindow : UiWindow
         DataContext = this;
 
         InitializeComponent();
+
+        Wpf.Ui.Appearance.Watcher.Watch(this);
     }
 
     [RelayCommand]

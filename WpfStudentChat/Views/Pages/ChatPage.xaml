@@ -7,9 +7,14 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+      xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       d:DataContext="{d:DesignInstance Type=local:ChatPage,IsDesignTimeCreatable=False}">
+
+    <Page.Resources>
+        <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
+    </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -23,7 +28,15 @@
                       ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="3" Orientation="Horizontal">
+                        <StackPanel Margin="3" Orientation="Horizontal"
+                                    Background="Transparent">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="删除"
+                                              Command="{Binding Source={StaticResource DataProxy},Path=Data.DeleteSessionCommand}"
+                                              CommandParameter="{Binding}"/>
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
                             <Border Width="32" Height="32" CornerRadius="3">
                                 <b:Interaction.Behaviors>
                                     <mb:BackgroundImageLoadBehavior ImageHash="{Binding Subject.AvatarHash}"/>

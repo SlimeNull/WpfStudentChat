@@ -196,7 +196,7 @@ namespace StudentChat.Server.Controllers
             }
 
             var requestAlreadyExist = 
-                await _dbContext.FriendRequests.AnyAsync(r => r.SenderId == selfUserId && r.ReceiverId == request.UserId);
+                await _dbContext.FriendRequests.AnyAsync(r => r.SenderId == selfUserId && r.ReceiverId == request.UserId && !r.IsDone);
             if (requestAlreadyExist)
             {
                 return ApiResult.CreateErr("You have already sent a request");
@@ -216,6 +216,7 @@ namespace StudentChat.Server.Controllers
                     SenderId = selfUserId,
                     ReceiverId = request.UserId,
                     Message = request.Message,
+                    SentTime = DateTimeOffset.Now,
                 });
 
             await _dbContext.SaveChangesAsync();
@@ -239,7 +240,7 @@ namespace StudentChat.Server.Controllers
                 return ApiResult.CreateErr("You're already a member of the group chat");
             }
 
-            var requestAlreadyExist = await _dbContext.GroupRequests.AnyAsync(r => r.SenderId == selfUserId && r.GroupId == request.GroupId);
+            var requestAlreadyExist = await _dbContext.GroupRequests.AnyAsync(r => r.SenderId == selfUserId && r.GroupId == request.GroupId && !r.IsDone);
 
             if (requestAlreadyExist)
             {
@@ -260,6 +261,7 @@ namespace StudentChat.Server.Controllers
                     SenderId = selfUserId,
                     GroupId = request.GroupId,
                     Message = request.Message,
+                    SentTime = DateTimeOffset.Now,
                 });
 
             await _dbContext.SaveChangesAsync();
