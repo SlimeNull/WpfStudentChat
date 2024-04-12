@@ -39,13 +39,13 @@ namespace StudentChat.Server.Controllers
             if(!string.IsNullOrEmpty(request.UserNameKeyword))
                 queryable = queryable.Where(user => user.UserName.Contains(request.UserNameKeyword));
 
-            var totalCount = await queryable.CountAsync();
+            var totalCount = await queryable.CountAsync(HttpContext.RequestAborted);
 
             var users = await queryable
                 .Skip(skip)
                 .Take(count)
                 .Select(user => (CommonModels.User)user)
-                .ToArrayAsync();
+                .ToArrayAsync(HttpContext.RequestAborted);
 
             return ApiResult<GetUsersResultData>.CreateOk(new(totalCount, users));
         }
@@ -53,21 +53,55 @@ namespace StudentChat.Server.Controllers
         [HttpPost("AddUser")]
         public async Task<ApiResult<AddUserResultData>> AddUser(AddUserRequestData request)
         {
-            var alreadyExist = await _dbContext.Users.AnyAsync(user => user.UserName == request.User.UserName);
+            var alreadyExist = await _dbContext.Users.AnyAsync(user => user.UserName == request.User.UserName, HttpContext.RequestAborted);
             if (alreadyExist)
             {
                 return ApiResult<AddUserResultData>.CreateErr("已经有相同用户名的用户了");
             }
 
             var entry = await _dbContext.Users.AddAsync(
-                new Models.Database.User()
+                new User()
                 {
                     UserName = request.User.UserName,
                     PasswordHash = request.PasswordHash
-                });
+                }, HttpContext.RequestAborted);
 
             return ApiResult<AddUserResultData>.CreateOk(
                 new AddUserResultData((CommonModels.User)entry.Entity));
+        }
+
+        [HttpPost("UpdateUserInfo")]
+        public async Task<ApiResult> UpdateUserInfo(UpdateUserInfoRequestData request)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(HttpContext.RequestAborted);
+            if (user == null)
+                return ApiResult.CreateErr("用户不存在");
+
+            user.Nickname = request.User.Nickname;
+            user.Bio = request.User.Bio;
+            user.AvatarHash = request.User.AvatarHash;
+            user.UserName = request.User.UserName;
+
+            if(request.PasswordHash is { })
+                user.PasswordHash = request.PasswordHash;
+
+            _dbContext.Update(user);
+            await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
+
+            return ApiResult.CreateOk();
+        }
+
+        [HttpPost("DeleteUser")]
+        public async Task<ApiResult> DeleteUser(DeleteUserRequestData request)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == request.UserId, HttpContext.RequestAborted);
+            if (user == null)
+                return ApiResult.CreateErr("用户不存在");
+
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
+
+            return ApiResult.CreateOk();
         }
     }
 }

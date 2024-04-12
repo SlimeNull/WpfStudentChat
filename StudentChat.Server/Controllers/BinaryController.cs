@@ -10,7 +10,7 @@ namespace StudentChat.Server.Controllers
 {
     [Controller]
     [Route("api/[controller]")]
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "Admin,User")]
     public class BinaryController : ControllerBase
     {
         private readonly ChatServerDbContext _dbContext;

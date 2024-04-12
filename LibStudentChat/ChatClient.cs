@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Tracing;
+﻿using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
@@ -182,7 +183,7 @@ public class ChatClient
         }
 
         var response = await _httpClient.SendAsync(request);
-
+        response.EnsureSuccessStatusCode();
         var apiResult = await response.Content.ReadFromJsonAsync<ApiResult<TResultData>>();
 
         if (apiResult is null)
@@ -209,6 +210,7 @@ public class ChatClient
         }
 
         var response = await _httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
         var apiResult = await response.Content.ReadFromJsonAsync<ApiResult>();
 
         if (apiResult is null)
@@ -262,8 +264,9 @@ public class ChatClient
         }
 
         var response = await _httpClient.SendAsync(request);
-        var apiResult = await response.Content.ReadFromJsonAsync<ApiResult<BinaryUploadResultData>>();
-
+        response.EnsureSuccessStatusCode();
+        ApiResult<BinaryUploadResultData>? apiResult = await response.Content.ReadFromJsonAsync<ApiResult<BinaryUploadResultData>>();
+        
         if (apiResult is null)
         {
             throw new Exception("Server returns empty result");
@@ -556,12 +559,39 @@ public class ChatClient
         return result.Groups;
     }
 
-    public async Task<GetUsersResultData> GetUsers(string userNameKeyword, string nicknameKeyword, int skip, int count)
+
+    #region Admin
+
+    public async Task<GetUsersResultData> GetUsers(string? userNameKeyword, string? nicknameKeyword, int skip, int count)
     {
         return await PostAsync<GetUsersRequestData, GetUsersResultData>(
             "api/Manage/GetUsers",
             new GetUsersRequestData(userNameKeyword, nicknameKeyword, skip, count));
     }
+
+    public async Task UpdateUserInfo(User user, string? passwordHash)
+    {
+        await PostAsync<UpdateUserInfoRequestData>(
+            "api/Manage/UpdateUserInfo",
+            new(user, passwordHash));
+    }
+
+    public async Task AddUser(User user, string passwordHash)
+    {
+        await PostAsync<AddUserRequestData>(
+            "api/Manage/AddUser",
+            new(user, passwordHash));
+    }
+
+    public async Task DeleteUser(int userId)
+    {
+        await PostAsync<DeleteUserRequestData>(
+            "api/Manage/DeleteUser",
+            new(userId));
+    }
+
+    #endregion
+
 
     public event EventHandler<PrivateMessageReceivedEventArgs>? PrivateMessageReceived;
     public event EventHandler<GroupMessageReceivedEventArgs>? GroupMessageReceived;
