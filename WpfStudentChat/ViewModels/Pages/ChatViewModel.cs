@@ -100,55 +100,65 @@ namespace WpfStudentChat.ViewModels.Pages
         partial void OnSelectedSessionChanged(IChatSession? value)
         {
             if (value is null)
+            {
+                MessagesPage = null;
                 return;
+            }
 
             MessagesPage = _cachedMessagesPages[value];
         }
 
         private void Sessions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action != NotifyCollectionChangedAction.Add &&
-                e.Action != NotifyCollectionChangedAction.Replace)
+            if ((e.Action == NotifyCollectionChangedAction.Add ||
+                e.Action == NotifyCollectionChangedAction.Replace) &&
+                e.NewItems is not null)
             {
-                return;
-            }
-
-            if (e.NewItems is null)
-            {
-                return;
-            }
-
-            foreach (var item in e.NewItems)
-            {
-                if (item is not IChatSession session)
+                foreach (var item in e.NewItems)
                 {
-                    continue;
+                    if (item is not IChatSession session)
+                    {
+                        continue;
+                    }
+
+                    if (!_cachedMessagesPages.TryGetValue(session, out var messagesPage))
+                    {
+                        using var scope = _serviceProvider.CreateScope();
+
+                        if (session is PrivateChatSession user)
+                        {
+                            var newPage = scope.ServiceProvider.GetRequiredService<PrivateMessagesPage>();
+                            newPage.ViewModel.Session = user;
+
+                            messagesPage = newPage;
+                        }
+                        else if (session is GroupChatSession group)
+                        {
+                            var newPage = scope.ServiceProvider.GetRequiredService<GroupMessagesPage>();
+                            newPage.ViewModel.Session = group;
+
+                            messagesPage = newPage;
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("This would never happen");
+                        }
+
+                        _cachedMessagesPages[session] = messagesPage;
+                    }
                 }
-
-                if (!_cachedMessagesPages.TryGetValue(session, out var messagesPage))
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove &&
+                e.OldItems is not null)
+            {
+                foreach (var item in e.OldItems)
                 {
-                    using var scope = _serviceProvider.CreateScope();
-
-                    if (session is PrivateChatSession user)
+                    if (item is not IChatSession session)
                     {
-                        var newPage = scope.ServiceProvider.GetRequiredService<PrivateMessagesPage>();
-                        newPage.ViewModel.Session = user;
-
-                        messagesPage = newPage;
-                    }
-                    else if (session is GroupChatSession group)
-                    {
-                        var newPage = scope.ServiceProvider.GetRequiredService<GroupMessagesPage>();
-                        newPage.ViewModel.Session = group;
-
-                        messagesPage = newPage;
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("This would never happen");
+                        continue;
                     }
 
-                    _cachedMessagesPages[session] = messagesPage;
+                    _cachedMessagesPages.Remove(session);
                 }
             }
         }

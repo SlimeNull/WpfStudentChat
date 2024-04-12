@@ -67,6 +67,7 @@
                     <ListView ItemsSource="{Binding ViewModel.Groups}"
                               SelectionChanged="ListView_SelectionChanged"
                               Name="GroupsListView"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               PreviewMouseWheel="ContactsListView_PreviewMouseWheel">
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -105,6 +106,7 @@
                     <ListView ItemsSource="{Binding ViewModel.Friends}"
                               SelectionChanged="ListView_SelectionChanged"
                               Name="FriendsListView"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               PreviewMouseWheel="ContactsListView_PreviewMouseWheel">
                         <ListView.ItemTemplate>
                             <DataTemplate>
