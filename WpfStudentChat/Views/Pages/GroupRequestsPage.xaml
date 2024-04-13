@@ -8,14 +8,14 @@
       xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
       xmlns:cvt="clr-namespace:WpfStudentChat.Converters"
       xmlns:vc="clr-namespace:ValueConverters;assembly=ValueConverters"
-      xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
+      xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="GroupRequestsPage"
       d:DataContext="{d:DesignInstance Type=local:GroupRequestsPage,IsDesignTimeCreatable=False}">
 
     <Page.Resources>
-        <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
+        <ws:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
         <cvt:UserIdIsSelfConverter x:Key="UserIdIsSelfConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <vc:ValueConverterGroup x:Key="InvertBooleanToVisibilityConverter">

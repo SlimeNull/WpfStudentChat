@@ -7,6 +7,7 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+             xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
              xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
              mc:Ignorable="d"
              Title="搜索" Height="450" Width="600"
@@ -15,7 +16,7 @@
 
     <ui:UiWindow.Resources>
         <BooleanToVisibilityConverter x:Key="Boolean2Visibility"/>
-        <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
+        <ws:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
     </ui:UiWindow.Resources>
 
     <Grid>

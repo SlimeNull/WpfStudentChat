@@ -13,11 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using StudentChat.Models;
 using WpfStudentChat.Extensions;
 using WpfStudentChat.Models.Messages;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
+using WpfStudentChat.ViewModels.Windows;
+using WpfStudentChat.Views.Windows;
 
 namespace WpfStudentChat.Views.Pages
 {
@@ -34,7 +37,6 @@ namespace WpfStudentChat.Views.Pages
             IMessenger messenger)
         {
             _chatClientService = chatClientService;
-
             SelfUserId = _chatClientService.Client.GetSelfUserId();
             ViewModel = viewModel;
             DataContext = this;
@@ -79,6 +81,20 @@ namespace WpfStudentChat.Views.Pages
                 ViewModel.TextInput = textInput;
                 MessageBox.Show(App.Current.MainWindow, $"Failed to send message. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        [RelayCommand]
+        public void OpenSendImageWindow()
+        {
+            if (ViewModel.Session is null)
+                return;
+
+            using var scope = App.Host.Services.CreateScope();
+            var window = scope.ServiceProvider.GetRequiredService<SendImageWindow>();
+            window.Owner = App.Current.MainWindow;
+            window.ViewModel.Target = ViewModel.Session.Subject;
+
+            window.ShowDialog();
         }
     }
 }

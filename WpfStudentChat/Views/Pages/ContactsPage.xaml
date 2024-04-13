@@ -7,7 +7,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
-      xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
+      xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       d:Background="White"
@@ -21,7 +21,7 @@
     </b:Interaction.Triggers>
 
     <Page.Resources>
-        <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
+        <ws:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
     </Page.Resources>
 
     <Grid>

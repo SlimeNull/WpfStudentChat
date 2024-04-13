@@ -13,7 +13,12 @@ public class PasswordBoxBehavior : Behavior<PasswordBox>
 
     public static readonly DependencyProperty PasswordProperty = DependencyProperty.Register("Password", typeof(string), typeof(PasswordBoxBehavior), new PropertyMetadata(string.Empty, (dp, v) =>
     {
-        var obj = (PasswordBoxBehavior)dp;
+        if (dp is not PasswordBoxBehavior obj ||
+            obj.AssociatedObject is null)
+        {
+            return;
+        }
+
         var passwordBox = obj.AssociatedObject;
         passwordBox.Password = (string)v.NewValue;
     }));

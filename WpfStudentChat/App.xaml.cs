@@ -88,6 +88,8 @@ public partial class App
             services.AddScoped<SendFriendRequestViewModel>();
             services.AddScoped<SendGroupRequestWindow>();
             services.AddScoped<SendGroupRequestViewModel>();
+            services.AddScoped<SendImageWindow>();
+            services.AddScoped<SendImageViewModel>();
             services.AddScoped<ContactsFriendPage>();
             services.AddScoped<ContactsGroupPage>();
 

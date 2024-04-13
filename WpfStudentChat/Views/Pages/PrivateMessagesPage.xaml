@@ -9,7 +9,8 @@
       xmlns:comm="clr-namespace:StudentChat.Models;assembly=LibStudentChat"
       xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
-      xmlns:bp="clr-namespace:EleCho.WpfUtilities;assembly=EleCho.WpfUtilities.BindingProxy"
+      xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
+      xmlns:vc="clr-namespace:ValueConverters;assembly=ValueConverters"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PrivateMessagesPage"
@@ -18,7 +19,11 @@
 
     <Page.Resources>
         <cvt:UserIdIsSelfConverter x:Key="UserIdIsSelf"/>
-        <bp:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
+        <ws:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
+        <vc:ValueConverterGroup x:Key="NotNullToVisibilityConverter">
+            <ws:ValueIsNotNullConverter/>
+            <ws:BooleanToVisibilityConverter/>
+        </vc:ValueConverterGroup>
     </Page.Resources>
 
     <DockPanel>
@@ -47,6 +52,7 @@
                               VerticalScrollBarVisibility="Visible"
                               CanContentScroll="True">
                     <ItemsControl ItemsSource="{Binding ViewModel.Session.Messages}"
+                                  d:ItemsSource="{d:SampleData ItemCount=5}"
                                   Margin="12 0"
                                   FocusVisualStyle="{x:Null}">
                         <ItemsControl.ItemTemplate>
@@ -96,19 +102,47 @@
                                         </b:Interaction.Behaviors>
                                     </Border>
 
-                                    <StackPanel x:Name="MessageContents"
-                                                Grid.Column="2"
-                                                HorizontalAlignment="Left">
+                                    <ws:StackPanel x:Name="MessageContents"
+                                                   Grid.Column="2"
+                                                   Spacing="8"
+                                                   HorizontalAlignment="Left">
                                         <ui:Card Padding="10">
-                                            <TextBox IsReadOnly="True"
-                                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                                     Background="Transparent"
-                                                     BorderThickness="0"
-                                                     TextWrapping="Wrap"
-                                                     Text="{Binding Content}"
-                                                     Style="{x:Null}"/>
+                                            <ws:StackPanel Spacing="8">
+                                                <TextBox IsReadOnly="True"
+                                                         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                         Background="Transparent"
+                                                         BorderThickness="0"
+                                                         TextWrapping="Wrap"
+                                                         Text="{Binding Content}"
+                                                         Style="{x:Null}"/>
+                                                <ItemsControl ItemsSource="{Binding ImageAttachments}"
+                                                              Visibility="{Binding ImageAttachments,Converter={StaticResource NotNullToVisibilityConverter}}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate >
+                                                            <ws:WrapPanel HorizontalSpacing="8"
+                                                                          VerticalSpacing="8"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Width="150"
+                                                                    Height="150"
+                                                                    Background="Transparent"
+                                                                    CornerRadius="5">
+                                                                <Border CornerRadius="5"
+                                                                        Width="150"
+                                                                        Height="150">
+                                                                    <b:Interaction.Behaviors>
+                                                                        <mb:BackgroundImageLoadBehavior ImageHash="{Binding AttachmentHash}"/>
+                                                                    </b:Interaction.Behaviors>
+                                                                </Border>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ws:StackPanel>
                                         </ui:Card>
-                                    </StackPanel>
+                                    </ws:StackPanel>
                                 </Grid>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding SenderId,Converter={StaticResource UserIdIsSelf}}"
@@ -129,7 +163,17 @@
                           VerticalAlignment="Stretch"/>
 
             <Grid Grid.Row="2">
-                <ui:TextBox AcceptsReturn="True"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <ws:StackPanel Orientation="Horizontal" Spacing="2">
+                    <ui:Button Content="发送图片" Padding="3 2" Command="{Binding OpenSendImageWindowCommand}"/>
+                    <ui:Button Content="发送文件" Padding="3 2"/>
+                </ws:StackPanel>
+                <ui:TextBox Grid.Row="1"
+                            Margin="0 1 0 0"
+                            AcceptsReturn="True"
                             TextWrapping="Wrap"
                             BorderThickness="0 1 0 0"
                             Text="{Binding ViewModel.TextInput,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
@@ -137,7 +181,8 @@
                         <KeyBinding Gesture="Control+Enter" Command="{Binding SendMessageCommand}"/>
                     </ui:TextBox.InputBindings>
                 </ui:TextBox>
-                <ui:Button VerticalAlignment="Bottom"
+                <ui:Button Grid.Row="1"
+                           VerticalAlignment="Bottom"
                            HorizontalAlignment="Right"
                            Margin="12"
                            Content="发送"

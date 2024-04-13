@@ -13,11 +13,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using StudentChat.Models;
 using WpfStudentChat.Extensions;
 using WpfStudentChat.Models.Messages;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
+using WpfStudentChat.Views.Windows;
 
 namespace WpfStudentChat.Views.Pages
 {
