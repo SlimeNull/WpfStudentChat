@@ -92,6 +92,7 @@ public partial class App
             services.AddScoped<SendImageViewModel>();
             services.AddScoped<ContactsFriendPage>();
             services.AddScoped<ContactsGroupPage>();
+            services.AddScoped<EditUserWindow>();
 
             // Windows
             services.AddSingleton<LoginWindow>();

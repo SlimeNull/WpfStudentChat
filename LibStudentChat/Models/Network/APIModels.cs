@@ -29,9 +29,11 @@ namespace StudentChat.Models.Network
     public record class AddUserRequestData(User User, string PasswordHash);
     public record class AddUserResultData(User User);
 
-    public record class GetUsersRequestData(string UserNameKeyword, string NicknameKeyword, int Skip, int Count);
+    public record class GetUsersRequestData(string? UserNameKeyword, string? NicknameKeyword, int Skip, int Count);
     public record class GetUsersResultData(int TotalCount, User[] Users);
 
+    public record class UpdateUserInfoRequestData(User User, string? PasswordHash);
+    public record class DeleteUserRequestData(int UserId);
 
     public record class GetUserRequestData(int UserId);
     public record class GetUserResultData(User User);

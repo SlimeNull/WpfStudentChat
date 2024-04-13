@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:WpfStudentChat.Views.Pages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:models="clr-namespace:StudentChat.Models;assembly=LibStudentChat"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ManagePage"
@@ -19,15 +20,25 @@
         <Border Grid.Row="0">
             <StackPanel Orientation="Horizontal">
                 <Button Content="刷新用户" Command="{Binding ViewModel.LoadUsersCommand}"/>
-                <Button Content="导入用户" />
-                <Button Content="删除选中用户" />
+                <Button Content="导入用户" Command="{Binding ViewModel.ImportUsersCommand}" />
+                <Button Content="删除选中用户" Command="{Binding DeleteSelectedUsersCommand}" />
             </StackPanel>
         </Border>
 
         <Border Grid.Row="1">
+            <Border.Resources>
+                <Style TargetType="ui:DataGrid"/>
+            </Border.Resources>
             <ui:DataGrid ItemsSource="{Binding ViewModel.Users}"
                          d:ItemsSource="{d:SampleData ItemCount=10}"
-                         AutoGenerateColumns="False">
+                         AutoGenerateColumns="False"
+                         Name="userDataGrid"
+                         IsReadOnly="True">
+                <ui:DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource ResourceKey={x:Type DataGridRow}}">
+                        <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick" />
+                    </Style>
+                </ui:DataGrid.RowStyle>
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Id" MinWidth="50">
                         <DataGridTemplateColumn.CellTemplate>
@@ -59,6 +70,14 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </ui:DataGrid>
+        </Border>
+
+        <Border Name="EditDialog"
+                Grid.RowSpan="99"
+                Grid.ColumnSpan="99"
+                Visibility="Hidden"
+                DataContext="{x:Null}">
+
         </Border>
     </Grid>
 </Page>
