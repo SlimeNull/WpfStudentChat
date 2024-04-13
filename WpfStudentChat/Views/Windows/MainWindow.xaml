@@ -9,6 +9,7 @@
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
     xmlns:vc="clr-namespace:ValueConverters;assembly=ValueConverters"
+    xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
     Title="SimpleChat"
     Width="1100"
     Height="650"
@@ -65,11 +66,11 @@
                     <Border.Effect>
                         <DropShadowEffect ShadowDepth="1" Opacity=".5"/>
                     </Border.Effect>
-                    <Border Width="42" Height="42" CornerRadius="5">
+                    <ws:Image Width="42" Height="42" CornerRadius="5">
                         <b:Interaction.Behaviors>
-                            <mb:BackgroundImageLoadBehavior ImageHash="{Binding ViewModel.Profile.AvatarHash}"/>
+                            <mb:ChatImageLoadBehavior ImageHash="{Binding ViewModel.Profile.AvatarHash}"/>
                         </b:Interaction.Behaviors>
-                    </Border>
+                    </ws:Image>
                 </Border>
                 <ui:NavigationStore x:Name="RootNavigation"
                                     Grid.Row="1"

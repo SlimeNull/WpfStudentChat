@@ -20,17 +20,17 @@
     <Page.Resources>
         <cvt:UserIdIsSelfConverter x:Key="UserIdIsSelf"/>
         <ws:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
-        
+
         <vc:ValueConverterGroup x:Key="NotNullToVisibilityConverter">
             <ws:ValueIsNotNullConverter/>
             <ws:BooleanToVisibilityConverter/>
         </vc:ValueConverterGroup>
-        
+
         <ws:ValueConverterGroup x:Key="CollectionNotEmptyToVisibility">
             <ws:CollectionIsNotNullOrEmptyConverter/>
             <ws:BooleanToVisibilityConverter/>
         </ws:ValueConverterGroup>
-        
+
         <ws:ValueConverterGroup x:Key="StringNotWhiteSpaceToVisibility">
             <ws:StringIsNotNullOrWhiteSpaceConverter/>
             <ws:BooleanToVisibilityConverter/>
@@ -102,16 +102,16 @@
                                         <ColumnDefinition Width="35"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Border x:Name="Avatar"
-                                            Grid.Column="0"
-                                            Width="35"
-                                            Height="35"
-                                            CornerRadius="5"
-                                            VerticalAlignment="Top">
+                                    <ws:Image x:Name="Avatar"
+                                              Grid.Column="0"
+                                              Width="35"
+                                              Height="35"
+                                              CornerRadius="5"
+                                              VerticalAlignment="Top">
                                         <b:Interaction.Behaviors>
-                                            <mb:BackgroundImageLoadBehavior UserId="{Binding SenderId}"/>
+                                            <mb:ChatImageLoadBehavior UserId="{Binding SenderId}"/>
                                         </b:Interaction.Behaviors>
-                                    </Border>
+                                    </ws:Image>
 
                                     <StackPanel x:Name="MessageContents"
                                                 Grid.Column="2"
@@ -151,13 +151,12 @@
                                                                                   CommandParameter="{Binding}"/>
                                                                     </ContextMenu>
                                                                 </Border.ContextMenu>
-                                                                <Border CornerRadius="5"
-                                                                        Width="150"
-                                                                        Height="150">
+                                                                <ws:Image CornerRadius="5"
+                                                                          MaxWidth="150">
                                                                     <b:Interaction.Behaviors>
-                                                                        <mb:BackgroundImageLoadBehavior ImageHash="{Binding AttachmentHash}"/>
+                                                                        <mb:ChatImageLoadBehavior ImageHash="{Binding AttachmentHash}"/>
                                                                     </b:Interaction.Behaviors>
-                                                                </Border>
+                                                                </ws:Image>
                                                             </Border>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>

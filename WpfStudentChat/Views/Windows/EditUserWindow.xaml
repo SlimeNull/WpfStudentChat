@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WpfStudentChat.Views.Windows"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+        xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
         mc:Ignorable="d"
         Title="EditUserWindow" Height="400" Width="400"
         WindowStartupLocation="CenterOwner"
@@ -44,13 +45,13 @@
                     <Border.Effect>
                         <DropShadowEffect ShadowDepth="1" Opacity=".5"/>
                     </Border.Effect>
-                    <Border Width="75"
-                            Height="75"
-                            CornerRadius="15">
+                    <ws:Image Width="75"
+                              Height="75"
+                              CornerRadius="15">
                         <b:Interaction.Behaviors>
-                            <mb:BackgroundImageLoadBehavior ImageHash="{Binding User.AvatarHash}"/>
+                            <mb:ChatImageLoadBehavior ImageHash="{Binding User.AvatarHash}"/>
                         </b:Interaction.Behaviors>
-                    </Border>
+                    </ws:Image>
                 </Border>
 
                 <StackPanel Orientation="Horizontal">

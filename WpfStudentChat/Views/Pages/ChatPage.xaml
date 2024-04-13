@@ -37,11 +37,11 @@
                                               CommandParameter="{Binding}"/>
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
-                            <Border Width="32" Height="32" CornerRadius="3">
+                            <ws:Image Width="32" Height="32" CornerRadius="3">
                                 <b:Interaction.Behaviors>
-                                    <mb:BackgroundImageLoadBehavior ImageHash="{Binding Subject.AvatarHash}"/>
+                                    <mb:ChatImageLoadBehavior ImageHash="{Binding Subject.AvatarHash}"/>
                                 </b:Interaction.Behaviors>
-                            </Border>
+                            </ws:Image>
                             <StackPanel Margin="8 0 0 0">
                                 <TextBlock Text="{Binding Subject.Name}"
                                            FontSize="14"/>

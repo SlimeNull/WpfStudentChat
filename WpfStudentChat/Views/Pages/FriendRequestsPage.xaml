@@ -56,13 +56,13 @@
                                             <DropShadowEffect ShadowDepth="0"
                                                               Opacity="0.5"/>
                                         </Border.Effect>
-                                        <Border Width="32"
-                                                Height="32"
-                                                CornerRadius="5">
+                                        <ws:Image Width="32"
+                                                  Height="32"
+                                                  CornerRadius="5">
                                             <b:Interaction.Behaviors>
-                                                <mb:BackgroundImageLoadBehavior UserId="{Binding SenderId}" />
+                                                <mb:ChatImageLoadBehavior UserId="{Binding SenderId}" />
                                             </b:Interaction.Behaviors>
-                                        </Border>
+                                        </ws:Image>
                                     </Border>
                                     <StackPanel Orientation="Vertical" Margin="8 0 0 0">
                                         <TextBlock>

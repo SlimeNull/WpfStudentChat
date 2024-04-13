@@ -8,7 +8,7 @@ using WpfStudentChat.Services;
 
 namespace WpfStudentChat.Behaviors;
 
-public class BackgroundImageLoadBehavior : Behavior<Border>
+public class ChatImageLoadBehavior : Behavior<EleCho.WpfSuite.Image>
 {
     public int UserId
     {
@@ -24,15 +24,15 @@ public class BackgroundImageLoadBehavior : Behavior<Border>
 
     // Using a DependencyProperty as the backing store for ImageHash.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty ImageHashProperty =
-        DependencyProperty.Register("ImageHash", typeof(string), typeof(BackgroundImageLoadBehavior), new PropertyMetadata(string.Empty, StatusChangedCallback));
+        DependencyProperty.Register("ImageHash", typeof(string), typeof(ChatImageLoadBehavior), new PropertyMetadata(string.Empty, StatusChangedCallback));
 
     // Using a DependencyProperty as the backing store for UserId.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty UserIdProperty =
-        DependencyProperty.Register("UserId", typeof(int), typeof(BackgroundImageLoadBehavior), new PropertyMetadata(-1, StatusChangedCallback));
+        DependencyProperty.Register("UserId", typeof(int), typeof(ChatImageLoadBehavior), new PropertyMetadata(-1, StatusChangedCallback));
 
     private static async void StatusChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is not BackgroundImageLoadBehavior imageLoadBehavior)
+        if (d is not ChatImageLoadBehavior imageLoadBehavior)
             return;
 
         var client = App.Host.Services.GetRequiredService<ChatClientService>();
@@ -75,10 +75,7 @@ public class BackgroundImageLoadBehavior : Behavior<Border>
             image.StreamSource = bufferStream;
             image.EndInit();
 
-            imageLoadBehavior.AssociatedObject.Background = new ImageBrush()
-            {
-                ImageSource = image
-            };
+            imageLoadBehavior.AssociatedObject.Source = image;
         }
         catch { }
     }

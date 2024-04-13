@@ -78,11 +78,11 @@
                                                       CommandParameter="{Binding}"/>
                                     </Border.InputBindings>
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="32" Height="32" CornerRadius="3">
+                                        <ws:Image Width="32" Height="32" CornerRadius="3">
                                             <b:Interaction.Behaviors>
-                                                <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                                <mb:ChatImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                             </b:Interaction.Behaviors>
-                                        </Border>
+                                        </ws:Image>
                                         <StackPanel VerticalAlignment="Center"
                                                     Margin="8 0 0 0">
                                             <TextBlock Text="{Binding Name}"
@@ -117,11 +117,11 @@
                                                       CommandParameter="{Binding}"/>
                                     </Border.InputBindings>
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="32" Height="32" CornerRadius="3">
+                                        <ws:Image Width="32" Height="32" CornerRadius="3">
                                             <b:Interaction.Behaviors>
-                                                <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                                <mb:ChatImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                             </b:Interaction.Behaviors>
-                                        </Border>
+                                        </ws:Image>
                                         <StackPanel Margin="8 0 0 0" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Nickname}"
                                                        FontSize="14"/>

@@ -57,13 +57,13 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Orientation="Horizontal">
                                                 <Border>
-                                                    <Border Width="32"
+                                                    <ws:Image Width="32"
                                                             Height="32"
                                                             CornerRadius="5">
                                                         <b:Interaction.Behaviors>
-                                                            <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                                            <mb:ChatImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                                         </b:Interaction.Behaviors>
-                                                    </Border>
+                                                    </ws:Image>
                                                 </Border>
                                                 <StackPanel Margin="8 0 0 0">
                                                     <TextBlock Text="{Binding Nickname}"
@@ -131,13 +131,13 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Orientation="Horizontal">
                                                 <Border>
-                                                    <Border Width="32"
+                                                    <ws:Image Width="32"
                                                             Height="32"
                                                             CornerRadius="5">
                                                         <b:Interaction.Behaviors>
-                                                            <mb:BackgroundImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
+                                                            <mb:ChatImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                                         </b:Interaction.Behaviors>
-                                                    </Border>
+                                                    </ws:Image>
                                                 </Border>
                                                 <StackPanel Margin="8 0 0 0">
                                                     <TextBlock Text="{Binding Name}"
