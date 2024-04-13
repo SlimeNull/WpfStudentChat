@@ -10,7 +10,9 @@
       xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
       xmlns:vc="clr-namespace:ValueConverters;assembly=ValueConverters"
       xmlns:cvt="clr-namespace:WpfStudentChat.Converters"
+      xmlns:comm="clr-namespace:StudentChat.Models;assembly=LibStudentChat"
       mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=local:GroupMessagesPage}"
       d:DesignHeight="450" d:DesignWidth="800"
       d:Background="White"
       Title="GroupMessagesPage">
@@ -18,10 +20,21 @@
     <Page.Resources>
         <cvt:UserIdIsSelfConverter x:Key="UserIdIsSelf"/>
         <ws:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
+        
         <vc:ValueConverterGroup x:Key="NotNullToVisibilityConverter">
             <ws:ValueIsNotNullConverter/>
             <ws:BooleanToVisibilityConverter/>
         </vc:ValueConverterGroup>
+        
+        <ws:ValueConverterGroup x:Key="CollectionNotEmptyToVisibility">
+            <ws:CollectionIsNotNullOrEmptyConverter/>
+            <ws:BooleanToVisibilityConverter/>
+        </ws:ValueConverterGroup>
+        
+        <ws:ValueConverterGroup x:Key="StringNotWhiteSpaceToVisibility">
+            <ws:StringIsNotNullOrWhiteSpaceConverter/>
+            <ws:BooleanToVisibilityConverter/>
+        </ws:ValueConverterGroup>
     </Page.Resources>
 
     <DockPanel>
@@ -50,6 +63,7 @@
                               VerticalScrollBarVisibility="Visible"
                               CanContentScroll="True">
                     <ItemsControl ItemsSource="{Binding ViewModel.Session.Messages}"
+                                  d:ItemsSource="{d:SampleData ItemCount=1}"
                                   Margin="12 0 12 12"
                                   FocusVisualStyle="{x:Null}">
                         <ItemsControl.ItemTemplate>
@@ -102,17 +116,22 @@
                                     <StackPanel x:Name="MessageContents"
                                                 Grid.Column="2"
                                                 HorizontalAlignment="Left">
-                                        <ui:Card Padding="10">
-                                            <ws:StackPanel Spacing="8">
-                                                <TextBox IsReadOnly="True"
+                                        <ui:Card Padding="8 8 8 0">
+                                            <StackPanel>
+                                                <TextBox Margin="0 0 0 8"
+                                                         IsReadOnly="True"
                                                          Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                                          Background="Transparent"
                                                          BorderThickness="0"
                                                          TextWrapping="Wrap"
                                                          Text="{Binding Content}"
-                                                         Style="{x:Null}"/>
-                                                <ItemsControl ItemsSource="{Binding ImageAttachments}"
-                                                              Visibility="{Binding ImageAttachments,Converter={StaticResource NotNullToVisibilityConverter}}">
+                                                         Style="{x:Null}"
+                                                         Visibility="{Binding Content,Converter={StaticResource StringNotWhiteSpaceToVisibility},Mode=OneWay}"/>
+
+                                                <ItemsControl Margin="0 0 0 8"
+                                                              ItemsSource="{Binding ImageAttachments}"
+                                                              d:ItemsSource="{d:SampleData ItemCount=0}"
+                                                              Visibility="{Binding ImageAttachments,Converter={StaticResource CollectionNotEmptyToVisibility},Mode=OneWay}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate >
                                                             <ws:WrapPanel HorizontalSpacing="8"
@@ -125,6 +144,13 @@
                                                                     Height="150"
                                                                     Background="Transparent"
                                                                     CornerRadius="5">
+                                                                <Border.ContextMenu>
+                                                                    <ContextMenu>
+                                                                        <MenuItem Header="保存"
+                                                                                  Command="{Binding Source={StaticResource DataProxy},Path=Data.SaveAttachmentCommand}"
+                                                                                  CommandParameter="{Binding}"/>
+                                                                    </ContextMenu>
+                                                                </Border.ContextMenu>
                                                                 <Border CornerRadius="5"
                                                                         Width="150"
                                                                         Height="150">
@@ -137,7 +163,47 @@
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
 
-                                            </ws:StackPanel>
+                                                <ItemsControl Margin="0 0 0 8"
+                                                              ItemsSource="{Binding FileAttachments}"
+                                                              d:ItemsSource="{d:SampleData ItemCount=1}"
+                                                              Visibility="{Binding FileAttachments,Converter={StaticResource CollectionNotEmptyToVisibility},Mode=OneWay}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <ws:FlexPanel MainSpacing="8"
+                                                                          CrossSpacing="8"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="comm:Attachment">
+                                                            <Border Padding="10 5"
+                                                                    CornerRadius="5"
+                                                                    Background="{DynamicResource ControlStrongFillColorLightBrush}">
+                                                                <b:Interaction.Triggers>
+                                                                    <b:EventTrigger EventName="MouseDown">
+                                                                        <b:InvokeCommandAction Command="{Binding Source={StaticResource DataProxy},Path=Data.SaveAttachmentCommand}"
+                                                                                               CommandParameter="{Binding}"/>
+                                                                    </b:EventTrigger>
+                                                                </b:Interaction.Triggers>
+                                                                <Border.ContextMenu>
+                                                                    <ContextMenu>
+                                                                        <MenuItem Header="保存"
+                                                                                  Command="{Binding Source={StaticResource DataProxy},Path=Data.SaveAttachmentCommand}"
+                                                                                  CommandParameter="{Binding}"/>
+                                                                    </ContextMenu>
+                                                                </Border.ContextMenu>
+                                                                <Border.Effect>
+                                                                    <DropShadowEffect ShadowDepth="0" Opacity=".5"/>
+                                                                </Border.Effect>
+                                                                <ws:StackPanel Orientation="Horizontal"
+                                                                               Spacing="8">
+                                                                    <ui:SymbolIcon Symbol="ArrowDownload16"/>
+                                                                    <TextBlock Text="{Binding Name}"/>
+                                                                </ws:StackPanel>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
                                         </ui:Card>
                                     </StackPanel>
                                 </Grid>
@@ -166,7 +232,7 @@
                 </Grid.RowDefinitions>
                 <ws:StackPanel Orientation="Horizontal" Spacing="2">
                     <ui:Button Content="发送图片" Padding="3 2" Command="{Binding OpenSendImageWindowCommand}"/>
-                    <ui:Button Content="发送文件" Padding="3 2"/>
+                    <ui:Button Content="发送文件" Padding="3 2" Command="{Binding OpenSendFileDialogCommand}"/>
                 </ws:StackPanel>
                 <ui:TextBox Grid.Row="1"
                             Margin="0 1 0 0"

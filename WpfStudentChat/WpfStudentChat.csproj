@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -15,8 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EleCho.WpfSuite" Version="0.0.5" />
-    <PackageReference Include="EleCho.WpfUtilities.BindingProxy" Version="1.0.0" />
+    <PackageReference Include="EleCho.WpfSuite" Version="0.0.8" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
     <PackageReference Include="NPOI" Version="2.7.0" />
     <PackageReference Include="ValueConverters" Version="3.0.26" />

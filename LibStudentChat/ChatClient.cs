@@ -280,7 +280,7 @@ public class ChatClient
         return apiResult.Data;
     }
 
-    private async Task<Stream?> DownloadBinary(string path)
+    private async Task<Stream> DownloadBinary(string path)
     {
         try
         {
@@ -318,10 +318,10 @@ public class ChatClient
         return result.Hash;
     }
 
-    public Task<Stream?> GetImageAsync(string hash)
+    public Task<Stream> GetImageAsync(string hash)
         => DownloadBinary($"api/Binary/GetImage/{hash}");
 
-    public Task<Stream?> GetFileAsync(string hash)
+    public Task<Stream> GetFileAsync(string hash)
         => DownloadBinary($"api/Binary/GetFile/{hash}");
 
     public async Task<PrivateMessage[]> QueryPrivateMessagesAsync(int userId, DateTimeOffset? startTime, DateTimeOffset? endTime, int count = 20)
