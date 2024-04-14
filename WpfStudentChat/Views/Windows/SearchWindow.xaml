@@ -37,7 +37,7 @@
 
                         <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
                                     PlaceholderText="搜索用户"/>
-                        <Button Grid.Column="2" Content="Search" Height="34"
+                        <Button Grid.Column="2" Content="搜索" Height="34"
                                 Command="{Binding SearchUsersCommand}"/>
                     </Grid>
 
@@ -58,8 +58,8 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <Border>
                                                     <ws:Image Width="32"
-                                                            Height="32"
-                                                            CornerRadius="5">
+                                                              Height="32"
+                                                              CornerRadius="5">
                                                         <b:Interaction.Behaviors>
                                                             <mb:ChatImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                                         </b:Interaction.Behaviors>
@@ -75,7 +75,7 @@
                                             <Button Grid.Column="1"
                                                     VerticalAlignment="Center"
                                                     HorizontalAlignment="Center"
-                                                    Content="Add"
+                                                    Content="添加"
                                                     Command="{Binding Source={StaticResource DataProxy},Path=Data.SendFriendRequestCommand}"
                                                     CommandParameter="{Binding}">
 
@@ -112,7 +112,7 @@
 
                         <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
                                     PlaceholderText="搜索群聊"/>
-                        <Button Grid.Column="2" Content="Search" Height="34"
+                        <Button Grid.Column="2" Content="搜索" Height="34"
                                 Command="{Binding SearchGroupsCommand}"/>
                     </Grid>
 
@@ -132,8 +132,8 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <Border>
                                                     <ws:Image Width="32"
-                                                            Height="32"
-                                                            CornerRadius="5">
+                                                              Height="32"
+                                                              CornerRadius="5">
                                                         <b:Interaction.Behaviors>
                                                             <mb:ChatImageLoadBehavior ImageHash="{Binding AvatarHash}"/>
                                                         </b:Interaction.Behaviors>

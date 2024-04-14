@@ -8,7 +8,7 @@
         xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="SendImageWindow" Height="450" Width="800"
+        Title="发送图片" Height="450" Width="800"
         WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance Type=local:SendImageWindow}">
@@ -46,7 +46,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <ui:TextBox PlaceholderText="Caption"
+                <ui:TextBox PlaceholderText="附加消息"
                             Text="{Binding ViewModel.Caption}"/>
                 <ui:Button Grid.Column="2"
                            Content="发送"

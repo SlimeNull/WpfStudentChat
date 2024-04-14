@@ -1,10 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentChat.Models.Network;
-using StudentChat.Server.Models;
 using StudentChat.Server.Models.Database;
 using CommonModels = StudentChat.Models;
 
@@ -34,9 +31,9 @@ namespace StudentChat.Server.Controllers
                 skip = 0;
 
             var queryable = _dbContext.Users.AsQueryable();
-            if(!string.IsNullOrEmpty(request.NicknameKeyword))
+            if (!string.IsNullOrEmpty(request.NicknameKeyword))
                 queryable = queryable.Where(user => user.Nickname.Contains(request.NicknameKeyword));
-            if(!string.IsNullOrEmpty(request.UserNameKeyword))
+            if (!string.IsNullOrEmpty(request.UserNameKeyword))
                 queryable = queryable.Where(user => user.UserName.Contains(request.UserNameKeyword));
 
             var totalCount = await queryable.CountAsync(HttpContext.RequestAborted);
@@ -82,7 +79,7 @@ namespace StudentChat.Server.Controllers
             user.AvatarHash = request.User.AvatarHash;
             user.UserName = request.User.UserName;
 
-            if(request.PasswordHash is { })
+            if (request.PasswordHash is { })
                 user.PasswordHash = request.PasswordHash;
 
             _dbContext.Update(user);
@@ -94,10 +91,30 @@ namespace StudentChat.Server.Controllers
         [HttpPost("DeleteUser")]
         public async Task<ApiResult> DeleteUser(DeleteUserRequestData request)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == request.UserId, HttpContext.RequestAborted);
+            var user = await _dbContext.Users
+                .Include(user => user.OwnedGroups)
+                .Include(user => user.JoindGroups)
+                .Include(user => user.AcceptedFriends)
+                .Include(user => user.AddedFriends)
+                .Include(user => user.ReceivedFriendRequests)
+                .Include(user => user.ReceivedPrivateMessages)
+                .Include(user => user.SentFriendRequests)
+                .Include(user => user.SentGroupMessages)
+                .Include(user => user.SentPrivateMessages)
+                .FirstOrDefaultAsync(user => user.Id == request.UserId, HttpContext.RequestAborted);
+
             if (user == null)
                 return ApiResult.CreateErr("用户不存在");
 
+            user.JoindGroups.Clear();
+            user.AcceptedFriends.Clear();
+            user.AddedFriends.Clear();
+            user.ReceivedFriendRequests.Clear();
+            user.ReceivedPrivateMessages.Clear();
+            user.SentFriendRequests.Clear();
+            user.SentGroupMessages.Clear();
+            user.SentPrivateMessages.Clear();
+            user.JoindGroups.Clear();
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
 
