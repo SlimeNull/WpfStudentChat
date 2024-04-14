@@ -10,7 +10,7 @@
     xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
     xmlns:vc="clr-namespace:ValueConverters;assembly=ValueConverters"
     xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
-    Title="SimpleChat"
+    Title="聊天"
     Width="1100"
     Height="650"
     d:DataContext="{d:DesignInstance local:MainWindow,IsDesignTimeCreatable=True}"

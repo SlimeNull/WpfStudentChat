@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.Intrinsics.Arm;
 using System.Windows.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xaml.Behaviors;

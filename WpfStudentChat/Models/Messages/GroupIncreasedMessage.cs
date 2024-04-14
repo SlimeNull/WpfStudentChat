@@ -1,9 +1,8 @@
 ﻿using StudentChat.Models;
 
-namespace WpfStudentChat.Models.Messages
+namespace WpfStudentChat.Models.Messages;
+
+public class GroupIncreasedMessage(Group group)
 {
-    public class GroupIncreasedMessage(Group group)
-    {
-        public Group Group { get; } = group;
-    }
+    public Group Group { get; } = group;
 }

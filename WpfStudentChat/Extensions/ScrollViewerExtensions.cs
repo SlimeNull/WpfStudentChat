@@ -1,12 +1,11 @@
 ﻿using System.Windows.Controls;
 
-namespace WpfStudentChat.Extensions
+namespace WpfStudentChat.Extensions;
+
+public static class ScrollViewerExtensions
 {
-    public static class ScrollViewerExtensions
+    public static bool IsAtBottom(this ScrollViewer scrollViewer, float faultTolerance = 10)
     {
-        public static bool IsAtBottom(this ScrollViewer scrollViewer, float faultTolerance = 10)
-        {
-            return scrollViewer.VerticalOffset > scrollViewer.ScrollableHeight - faultTolerance;
-        }
+        return scrollViewer.VerticalOffset > scrollViewer.ScrollableHeight - faultTolerance;
     }
 }

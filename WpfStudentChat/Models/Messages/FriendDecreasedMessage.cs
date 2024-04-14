@@ -1,9 +1,8 @@
 ﻿using StudentChat.Models;
 
-namespace WpfStudentChat.Models.Messages
+namespace WpfStudentChat.Models.Messages;
+
+public class FriendDecreasedMessage(User friend)
 {
-    public class FriendDecreasedMessage(User friend)
-    {
-        public User Friend { get; } = friend;
-    }
+    public User Friend { get; } = friend;
 }

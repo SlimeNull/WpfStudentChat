@@ -1,8 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using StudentChat.Models;
-using Wpf.Ui.Controls;
-using WpfStudentChat.Services;
-using WpfStudentChat.Views.Pages;
 
 namespace WpfStudentChat.ViewModels.Pages;
 

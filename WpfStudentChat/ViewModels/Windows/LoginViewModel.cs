@@ -1,8 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using StudentChat;
-using WpfStudentChat.Services;
-
-namespace WpfStudentChat.ViewModels.Windows;
+﻿namespace WpfStudentChat.ViewModels.Windows;
 
 public partial class LoginViewModel : ObservableObject
 {

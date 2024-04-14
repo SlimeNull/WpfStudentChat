@@ -1,6 +1,5 @@
-namespace WpfStudentChat.Resources
+namespace WpfStudentChat.Resources;
+
+public partial class Translations
 {
-    public partial class Translations
-    {
-    }
 }

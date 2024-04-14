@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StudentChat.Models;
+﻿using StudentChat.Models;
 
-namespace WpfStudentChat.Models
+namespace WpfStudentChat.Models;
+
+public interface IChatSession
 {
-    public interface IChatSession
-    {
-        public IIdentifiable Subject { get; }
+    public IIdentifiable Subject { get; }
 
-        public IEnumerable<Message> Messages { get; }
+    public IEnumerable<Message> Messages { get; }
 
-        public string LastMessageSummary { get; }
-    }
+    public string LastMessageSummary { get; }
 }

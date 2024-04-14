@@ -12,7 +12,7 @@
              WindowBackdropType="Mica"
              UseLayoutRounding="True"
              mc:Ignorable="d"
-             Title="SetProfile"
+             Title="用户信息"
              Height="450" Width="280"
              ResizeMode="NoResize"
              WindowStartupLocation="CenterOwner"

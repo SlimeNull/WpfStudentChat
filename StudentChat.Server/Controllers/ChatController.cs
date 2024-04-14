@@ -1,333 +1,328 @@
-﻿using System.Text;
-using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentChat.Models.Network;
 using StudentChat.Server.Extensions;
-using StudentChat.Server.Models;
 using StudentChat.Server.Models.Database;
 using StudentChat.Server.Services;
 using CommonModels = StudentChat.Models;
 
-namespace StudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers;
+
+[ApiController]
+[Authorize(Roles = "User")]
+[Route("api/[controller]")]
+public class ChatController : ControllerBase
 {
-    [ApiController]
-    [Authorize(Roles = "User")]
-    [Route("api/[controller]")]
-    public class ChatController : ControllerBase
+    private readonly ChatServerDbContext _dbContext;
+    private readonly NotifyService _messageNotifyService;
+
+
+
+    public ChatController(
+        ChatServerDbContext dbContext,
+        NotifyService messageNotifyService)
     {
-        private readonly ChatServerDbContext _dbContext;
-        private readonly NotifyService _messageNotifyService;
+        _dbContext = dbContext;
+        _messageNotifyService = messageNotifyService;
+    }
 
 
+    [HttpPost("QueryPrivateMessages")]
+    public async Task<ApiResult<QueryPrivateMessagesResultData>> QueryPrivateMessagesAsync(QueryPrivateMessagesRequestData request)
+    {
+        var selfUserId = HttpContext.GetUserId();
+        var query = _dbContext.PrivateMessages
+            .Where(msg => (msg.SenderId == selfUserId && msg.ReceiverId == request.UserId) || (msg.SenderId == request.UserId && msg.ReceiverId == selfUserId));
 
-        public ChatController(
-            ChatServerDbContext dbContext,
-            NotifyService messageNotifyService)
+        if (request.Count > 100)
         {
-            _dbContext = dbContext;
-            _messageNotifyService = messageNotifyService;
+            return ApiResult<QueryPrivateMessagesResultData>.CreateErr("Invalid query, count is too large");
         }
 
-
-        [HttpPost("QueryPrivateMessages")]
-        public async Task<ApiResult<QueryPrivateMessagesResultData>> QueryPrivateMessagesAsync(QueryPrivateMessagesRequestData request)
+        if (request.StartTime.HasValue)
         {
-            var selfUserId = HttpContext.GetUserId();
-            var query = _dbContext.PrivateMessages
-                .Where(msg => (msg.SenderId == selfUserId && msg.ReceiverId == request.UserId) || (msg.SenderId == request.UserId && msg.ReceiverId == selfUserId));
+            query = query
+                .Where(msg => msg.SentTime >= request.StartTime.Value);
 
-            if (request.Count > 100)
-            {
-                return ApiResult<QueryPrivateMessagesResultData>.CreateErr("Invalid query, count is too large");
-            }
-
-            if (request.StartTime.HasValue)
+            if (request.EndTime.HasValue)
             {
                 query = query
-                    .Where(msg => msg.SentTime >= request.StartTime.Value);
+                    .Where(msg => msg.SentTime <= request.EndTime.Value);
+            }
 
-                if (request.EndTime.HasValue)
-                {
-                    query = query
-                        .Where(msg => msg.SentTime <= request.EndTime.Value);
-                }
+            query = query.OrderBy(msg => msg.SentTime);
 
-                query = query.OrderBy(msg => msg.SentTime);
+            if (request.Count > 0)
+            {
+                query = query.Take(request.Count);
+            }
+        }
+        else
+        {
+            if (request.EndTime.HasValue)
+            {
+                query = query
+                    .Where(msg => msg.SentTime <= request.EndTime.Value);
+            }
 
-                if (request.Count > 0)
-                {
-                    query = query.Take(request.Count);
-                }
+            if (request.Count > 0)
+            {
+                query = query
+                    .OrderByDescending(msg => msg.SentTime)
+                    .Take(request.Count)
+                    .Reverse();
             }
             else
             {
-                if (request.EndTime.HasValue)
-                {
-                    query = query
-                        .Where(msg => msg.SentTime <= request.EndTime.Value);
-                }
-
-                if (request.Count > 0)
-                {
-                    query = query
-                        .OrderByDescending(msg => msg.SentTime)
-                        .Take(request.Count)
-                        .Reverse();
-                }
-                else
-                {
-                    query = query
-                        .OrderBy(msg => msg.SentTime);
-                }
+                query = query
+                    .OrderBy(msg => msg.SentTime);
             }
-
-            var messages = await query
-                .Include(msg => msg.ImageAttachments)
-                .Include(msg => msg.FileAttachments)
-                .Select(msg => (CommonModels.PrivateMessage)msg)
-                .ToArrayAsync();
-
-            return ApiResult<QueryPrivateMessagesResultData>.CreateOk(new QueryPrivateMessagesResultData(messages));
         }
 
+        var messages = await query
+            .Include(msg => msg.ImageAttachments)
+            .Include(msg => msg.FileAttachments)
+            .Select(msg => (CommonModels.PrivateMessage)msg)
+            .ToArrayAsync();
 
-        [HttpPost("QueryGroupMessages")]
-        public async Task<ApiResult<QueryGroupMessagesResultData>> QueryGroupMessagesAsync(QueryGroupMessagesRequestData request)
+        return ApiResult<QueryPrivateMessagesResultData>.CreateOk(new QueryPrivateMessagesResultData(messages));
+    }
+
+
+    [HttpPost("QueryGroupMessages")]
+    public async Task<ApiResult<QueryGroupMessagesResultData>> QueryGroupMessagesAsync(QueryGroupMessagesRequestData request)
+    {
+        var selfUserId = HttpContext.GetUserId();
+        var query = _dbContext.GroupMessages
+            .Where(msg => msg.GroupId == request.GroupId);
+
+        if (request.Count > 100)
         {
-            var selfUserId = HttpContext.GetUserId();
-            var query = _dbContext.GroupMessages
-                .Where(msg => msg.GroupId == request.GroupId);
+            return ApiResult<QueryGroupMessagesResultData>.CreateErr("Invalid query, count is too large");
+        }
 
-            if (request.Count > 100)
-            {
-                return ApiResult<QueryGroupMessagesResultData>.CreateErr("Invalid query, count is too large");
-            }
+        if (request.StartTime.HasValue)
+        {
+            query = query
+                .Where(msg => msg.SentTime >= request.StartTime.Value);
 
-            if (request.StartTime.HasValue)
+            if (request.EndTime.HasValue)
             {
                 query = query
-                    .Where(msg => msg.SentTime >= request.StartTime.Value);
+                    .Where(msg => msg.SentTime <= request.EndTime.Value);
+            }
 
-                if (request.EndTime.HasValue)
-                {
-                    query = query
-                        .Where(msg => msg.SentTime <= request.EndTime.Value);
-                }
+            query = query.OrderBy(msg => msg.SentTime);
 
-                query = query.OrderBy(msg => msg.SentTime);
+            if (request.Count > 0)
+            {
+                query = query.Take(request.Count);
+            }
+        }
+        else
+        {
+            if (request.EndTime.HasValue)
+            {
+                query = query
+                    .Where(msg => msg.SentTime <= request.EndTime.Value);
+            }
 
-                if (request.Count > 0)
-                {
-                    query = query.Take(request.Count);
-                }
+            if (request.Count > 0)
+            {
+                query = query
+                    .OrderByDescending(msg => msg.SentTime)
+                    .Take(request.Count)
+                    .Reverse();
             }
             else
             {
-                if (request.EndTime.HasValue)
-                {
-                    query = query
-                        .Where(msg => msg.SentTime <= request.EndTime.Value);
-                }
-
-                if (request.Count > 0)
-                {
-                    query = query
-                        .OrderByDescending(msg => msg.SentTime)
-                        .Take(request.Count)
-                        .Reverse();
-                }
-                else
-                {
-                    query = query
-                        .OrderBy(msg => msg.SentTime);
-                }
+                query = query
+                    .OrderBy(msg => msg.SentTime);
             }
-
-            var messages = await query
-                .Include(msg => msg.ImageAttachments)
-                .Include(msg => msg.FileAttachments)
-                .Select(msg => (CommonModels.GroupMessage)msg)
-                .ToArrayAsync();
-
-            return ApiResult<QueryGroupMessagesResultData>.CreateOk(new QueryGroupMessagesResultData(messages));
         }
 
+        var messages = await query
+            .Include(msg => msg.ImageAttachments)
+            .Include(msg => msg.FileAttachments)
+            .Select(msg => (CommonModels.GroupMessage)msg)
+            .ToArrayAsync();
 
-        [HttpPost("SendPrivateMessage")]
-        public async Task<ApiResult> SendPrivateMessageAsync(SendPrivateMessageRequestData request)
+        return ApiResult<QueryGroupMessagesResultData>.CreateOk(new QueryGroupMessagesResultData(messages));
+    }
+
+
+    [HttpPost("SendPrivateMessage")]
+    public async Task<ApiResult> SendPrivateMessageAsync(SendPrivateMessageRequestData request)
+    {
+        int selfUserId = HttpContext.GetUserId();
+        bool selfHasFriend = await _dbContext.CheckUserHasFriendAsync(selfUserId, request.ReceiverId);
+
+        if (!selfHasFriend)
         {
-            int selfUserId = HttpContext.GetUserId();
-            bool selfHasFriend = await _dbContext.CheckUserHasFriendAsync(selfUserId, request.ReceiverId);
-
-            if (!selfHasFriend)
-            {
-                return ApiResult.CreateErr("No such friend");
-            }
-
-            if (request.ImageAttachments is not null)
-            {
-                foreach (var attachment in request.ImageAttachments)
-                {
-                    var dataExist = await _dbContext.Images
-                        .AsNoTracking()
-                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
-
-                    if (!dataExist)
-                    {
-                        return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
-                    }
-                }
-            }
-
-            if (request.FileAttachments is not null)
-            {
-                foreach (var attachment in request.FileAttachments)
-                {
-                    var dataExist = await _dbContext.Files
-                        .AsNoTracking()
-                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
-
-                    if (!dataExist)
-                    {
-                        return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
-                    }
-                }
-            }
-
-            var entry = _dbContext.PrivateMessages.Add(
-                new PrivateMessage()
-                {
-                    SenderId = selfUserId,
-                    ReceiverId = request.ReceiverId,
-                    Content = request.Content,
-                    SentTime = DateTimeOffset.Now,
-                });
-
-            await _dbContext.SaveChangesAsync();
-
-            if (request.ImageAttachments is not null)
-            {
-                foreach (var attachment in request.ImageAttachments)
-                {
-                    await _dbContext.PrivateMessageImageAttachments.AddAsync(
-                        new PrivateMessageImageAttachment()
-                        {
-                            Name = attachment.Name,
-                            MessageId = entry.Entity.Id,
-                            AttachmentHash = attachment.AttachmentHash,
-                        });
-                }
-            }
-
-            if (request.FileAttachments is not null)
-            {
-                foreach (var attachment in request.FileAttachments)
-                {
-                    await _dbContext.PrivateMessageFileAttachments.AddAsync(
-                        new PrivateMessageFileAttachment()
-                        {
-                            Name = attachment.Name,
-                            MessageId = entry.Entity.Id,
-                            AttachmentHash = attachment.AttachmentHash,
-                        });
-                }
-            }
-
-            await _dbContext.SaveChangesAsync();
-            await _messageNotifyService.OnPrivateMessageSent((CommonModels.PrivateMessage)entry.Entity);
-
-            return ApiResult.CreateOk();
+            return ApiResult.CreateErr("No such friend");
         }
 
-
-        [HttpPost("SendGroupMessage")]
-        public async Task<ApiResult> SendGroupMessageAsync(SendGroupMessageRequestData request)
+        if (request.ImageAttachments is not null)
         {
-            int selfUserId = HttpContext.GetUserId();
-            bool selfHasGroup = await _dbContext.CheckUserHasGroupAsync(selfUserId, request.GroupId);
-
-            if (!selfHasGroup)
+            foreach (var attachment in request.ImageAttachments)
             {
-                return ApiResult.CreateErr("No such group");
-            }
+                var dataExist = await _dbContext.Images
+                    .AsNoTracking()
+                    .AnyAsync(image => image.Hash == attachment.AttachmentHash);
 
-            if (request.ImageAttachments is not null)
-            {
-                foreach (var attachment in request.ImageAttachments)
+                if (!dataExist)
                 {
-                    var dataExist = await _dbContext.Images
-                        .AsNoTracking()
-                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
-
-                    if (!dataExist)
-                    {
-                        return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
-                    }
+                    return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
                 }
             }
-
-            if (request.FileAttachments is not null)
-            {
-                foreach (var attachment in request.FileAttachments)
-                {
-                    var dataExist = await _dbContext.Files
-                        .AsNoTracking()
-                        .AnyAsync(image => image.Hash == attachment.AttachmentHash);
-
-                    if (!dataExist)
-                    {
-                        return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
-                    }
-                }
-            }
-
-            var entry = _dbContext.GroupMessages.Add(
-                new GroupMessage()
-                {
-                    SenderId = selfUserId,
-                    GroupId = request.GroupId,
-                    Content = request.Content,
-                    SentTime = DateTimeOffset.Now,
-                });
-
-            await _dbContext.SaveChangesAsync();
-
-            if (request.ImageAttachments is not null)
-            {
-                foreach (var attachment in request.ImageAttachments)
-                {
-                    await _dbContext.GroupMessageImageAttachments.AddAsync(
-                        new GroupMessageImageAttachment()
-                        {
-                            Name = attachment.Name,
-                            MessageId = entry.Entity.Id,
-                            AttachmentHash = attachment.AttachmentHash,
-                        });
-                }
-            }
-
-            if (request.FileAttachments is not null)
-            {
-                foreach (var attachment in request.FileAttachments)
-                {
-                    await _dbContext.GroupMessageFileAttachments.AddAsync(
-                        new GroupMessageFileAttachment()
-                        {
-                            Name = attachment.Name,
-                            MessageId = entry.Entity.Id,
-                            AttachmentHash = attachment.AttachmentHash,
-                        });
-                }
-            }
-
-            await _dbContext.SaveChangesAsync();
-
-            await _messageNotifyService.OnGroupMessageSent((CommonModels.GroupMessage)entry.Entity);
-
-            return ApiResult.CreateOk();
         }
+
+        if (request.FileAttachments is not null)
+        {
+            foreach (var attachment in request.FileAttachments)
+            {
+                var dataExist = await _dbContext.Files
+                    .AsNoTracking()
+                    .AnyAsync(image => image.Hash == attachment.AttachmentHash);
+
+                if (!dataExist)
+                {
+                    return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
+                }
+            }
+        }
+
+        var entry = _dbContext.PrivateMessages.Add(
+            new PrivateMessage()
+            {
+                SenderId = selfUserId,
+                ReceiverId = request.ReceiverId,
+                Content = request.Content,
+                SentTime = DateTimeOffset.Now,
+            });
+
+        await _dbContext.SaveChangesAsync();
+
+        if (request.ImageAttachments is not null)
+        {
+            foreach (var attachment in request.ImageAttachments)
+            {
+                await _dbContext.PrivateMessageImageAttachments.AddAsync(
+                    new PrivateMessageImageAttachment()
+                    {
+                        Name = attachment.Name,
+                        MessageId = entry.Entity.Id,
+                        AttachmentHash = attachment.AttachmentHash,
+                    });
+            }
+        }
+
+        if (request.FileAttachments is not null)
+        {
+            foreach (var attachment in request.FileAttachments)
+            {
+                await _dbContext.PrivateMessageFileAttachments.AddAsync(
+                    new PrivateMessageFileAttachment()
+                    {
+                        Name = attachment.Name,
+                        MessageId = entry.Entity.Id,
+                        AttachmentHash = attachment.AttachmentHash,
+                    });
+            }
+        }
+
+        await _dbContext.SaveChangesAsync();
+        await _messageNotifyService.OnPrivateMessageSent((CommonModels.PrivateMessage)entry.Entity);
+
+        return ApiResult.CreateOk();
+    }
+
+
+    [HttpPost("SendGroupMessage")]
+    public async Task<ApiResult> SendGroupMessageAsync(SendGroupMessageRequestData request)
+    {
+        int selfUserId = HttpContext.GetUserId();
+        bool selfHasGroup = await _dbContext.CheckUserHasGroupAsync(selfUserId, request.GroupId);
+
+        if (!selfHasGroup)
+        {
+            return ApiResult.CreateErr("No such group");
+        }
+
+        if (request.ImageAttachments is not null)
+        {
+            foreach (var attachment in request.ImageAttachments)
+            {
+                var dataExist = await _dbContext.Images
+                    .AsNoTracking()
+                    .AnyAsync(image => image.Hash == attachment.AttachmentHash);
+
+                if (!dataExist)
+                {
+                    return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
+                }
+            }
+        }
+
+        if (request.FileAttachments is not null)
+        {
+            foreach (var attachment in request.FileAttachments)
+            {
+                var dataExist = await _dbContext.Files
+                    .AsNoTracking()
+                    .AnyAsync(image => image.Hash == attachment.AttachmentHash);
+
+                if (!dataExist)
+                {
+                    return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
+                }
+            }
+        }
+
+        var entry = _dbContext.GroupMessages.Add(
+            new GroupMessage()
+            {
+                SenderId = selfUserId,
+                GroupId = request.GroupId,
+                Content = request.Content,
+                SentTime = DateTimeOffset.Now,
+            });
+
+        await _dbContext.SaveChangesAsync();
+
+        if (request.ImageAttachments is not null)
+        {
+            foreach (var attachment in request.ImageAttachments)
+            {
+                await _dbContext.GroupMessageImageAttachments.AddAsync(
+                    new GroupMessageImageAttachment()
+                    {
+                        Name = attachment.Name,
+                        MessageId = entry.Entity.Id,
+                        AttachmentHash = attachment.AttachmentHash,
+                    });
+            }
+        }
+
+        if (request.FileAttachments is not null)
+        {
+            foreach (var attachment in request.FileAttachments)
+            {
+                await _dbContext.GroupMessageFileAttachments.AddAsync(
+                    new GroupMessageFileAttachment()
+                    {
+                        Name = attachment.Name,
+                        MessageId = entry.Entity.Id,
+                        AttachmentHash = attachment.AttachmentHash,
+                    });
+            }
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        await _messageNotifyService.OnGroupMessageSent((CommonModels.GroupMessage)entry.Entity);
+
+        return ApiResult.CreateOk();
     }
 }

@@ -8,7 +8,7 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
              mc:Ignorable="d"
-             Title="SimpleChat - Login"
+             Title="登录"
              Height="300" Width="400"
              ResizeMode="NoResize"
              ExtendsContentIntoTitleBar="True"
@@ -35,7 +35,7 @@
                     ClipToBounds="False">
             <TextBlock HorizontalAlignment="Center"
                        FontSize="24"
-                       Text="SimpleChat"/>
+                       Text="学生聊天系统"/>
 
             <StackPanel Orientation="Horizontal" Margin="0 36 0 0">
                 <TextBlock Text="用户名: " Width="60" />

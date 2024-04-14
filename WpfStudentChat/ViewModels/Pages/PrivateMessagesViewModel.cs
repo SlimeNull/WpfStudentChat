@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StudentChat.Models;
-using WpfStudentChat.Models;
+﻿using WpfStudentChat.Models;
 
-namespace WpfStudentChat.ViewModels.Pages
+namespace WpfStudentChat.ViewModels.Pages;
+
+public partial class PrivateMessagesViewModel : ObservableObject
 {
-    public partial class PrivateMessagesViewModel : ObservableObject
-    {
-        [ObservableProperty]
-        private string _textInput = string.Empty;
+    [ObservableProperty]
+    private string _textInput = string.Empty;
 
-        [ObservableProperty]
-        private PrivateChatSession? _session;
-    }
+    [ObservableProperty]
+    private PrivateChatSession? _session;
 }

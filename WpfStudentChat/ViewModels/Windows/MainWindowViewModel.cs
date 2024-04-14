@@ -3,7 +3,6 @@ using StudentChat.Models;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Controls.Interfaces;
-using WpfStudentChat.Services;
 
 namespace WpfStudentChat.ViewModels.Windows;
 

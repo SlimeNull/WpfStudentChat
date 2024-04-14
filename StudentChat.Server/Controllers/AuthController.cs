@@ -1,39 +1,36 @@
 ﻿using StudentChat.Models.Network;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using StudentChat.Server.Models;
 using StudentChat.Server.Services;
 
-namespace StudentChat.Server.Controllers
+namespace StudentChat.Server.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly AuthService _authService;
+
+
+    public AuthController(AuthService authService)
     {
-        private readonly AuthService _authService;
+        _authService = authService;
+    }
 
 
-        public AuthController(AuthService authService)
+    [HttpPost("Login")]
+    [AllowAnonymous]
+    public async Task<ApiResult<LoginResultData>> LoginAsync([FromBody] LoginRequestData request)
+    {
+        var token = await _authService.GetTokenAsync(request.UserName, request.PasswordHash);
+
+        if (token is null)
         {
-            _authService = authService;
+            return ApiResult<LoginResultData>.CreateErr("Invalid user name or password hash");
         }
-
-
-        [HttpPost("Login")]
-        [AllowAnonymous]
-        public async Task<ApiResult<LoginResultData>> LoginAsync([FromBody] LoginRequestData request)
+        else
         {
-            var token = await _authService.GetTokenAsync(request.UserName, request.PasswordHash);
-
-            if (token is null)
-            {
-                return ApiResult<LoginResultData>.CreateErr("Invalid user name or password hash");
-            }
-            else
-            {
-                return ApiResult<LoginResultData>.CreateOk(new LoginResultData(token));
-            }
+            return ApiResult<LoginResultData>.CreateOk(new LoginResultData(token));
         }
     }
 }

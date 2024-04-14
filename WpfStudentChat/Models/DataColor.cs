@@ -1,9 +1,8 @@
 ﻿using System.Windows.Media;
 
-namespace WpfStudentChat.Models
+namespace WpfStudentChat.Models;
+
+public struct DataColor
 {
-    public struct DataColor
-    {
-        public Brush Color { get; set; }
-    }
+    public Brush Color { get; set; }
 }

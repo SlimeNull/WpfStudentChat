@@ -1,7 +1,6 @@
-﻿namespace WpfStudentChat.Models
+﻿namespace WpfStudentChat.Models;
+
+public class AppConfig
 {
-    public class AppConfig
-    {
-        public string BaseUri { get; set; } = string.Empty;
-    }
+    public string BaseUri { get; set; } = string.Empty;
 }

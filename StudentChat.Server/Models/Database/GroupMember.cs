@@ -1,13 +1,12 @@
-﻿namespace StudentChat.Server.Models.Database
+﻿namespace StudentChat.Server.Models.Database;
+
+public class GroupMember
 {
-    public class GroupMember
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public int GroupId { get; set; }
-        public int UserId { get; set; }
+    public int GroupId { get; set; }
+    public int UserId { get; set; }
 
-        public Group Group { get; set; } = null!;
-        public User User { get; set; } = null!;
-    }
+    public Group Group { get; set; } = null!;
+    public User User { get; set; } = null!;
 }
