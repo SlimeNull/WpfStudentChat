@@ -38,7 +38,7 @@ public partial class App : Application
 
             services.AddHostedService<ApplicationHostService>();
             services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
-            services.AddSqlite<ChatDbContext>("Data Source=chat.db");
+            //services.AddSqlite<ChatDbContext>("Data Source=chat.db");
             
             // Page resolver service
             services.AddSingleton<IPageService, PageService>();
