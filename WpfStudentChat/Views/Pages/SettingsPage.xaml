@@ -18,17 +18,19 @@
 
     </Page.Resources>
 
-    <ws:StackPanel HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Orientation="Horizontal"
-                   Spacing="10">
-        <ui:Button Content="修改密码"
-                   Padding="10"
-                   FontSize="18"
-                   Command="{Binding ViewModel.SetPasswordCommand}"/>
-        <ui:Button Content="退出登录"
-                   Padding="10"
-                   FontSize="18"
-                   Command="{Binding LogoutCommand}"/>
-    </ws:StackPanel>
+    <Border Padding="10">
+        <ws:StackPanel HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Orientation="Horizontal"
+                       Spacing="10">
+            <ui:Button Content="修改密码"
+                       Padding="10"
+                       FontSize="18"
+                       Command="{Binding ViewModel.SetPasswordCommand}"/>
+            <ui:Button Content="退出登录"
+                       Padding="10"
+                       FontSize="18"
+                       Command="{Binding LogoutCommand}"/>
+        </ws:StackPanel>
+    </Border>
 </Page>

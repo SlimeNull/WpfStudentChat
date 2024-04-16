@@ -7,6 +7,7 @@ using Wpf.Ui;
 using Wpf.Ui.Mvvm.Contracts;
 using Wpf.Ui.Mvvm.Services;
 using WpfStudentChat.Models;
+using WpfStudentChat.Models.Database;
 using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
 using WpfStudentChat.ViewModels.Windows;
@@ -37,7 +38,8 @@ public partial class App : Application
 
             services.AddHostedService<ApplicationHostService>();
             services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
-
+            services.AddSqlite<ChatDbContext>("Data Source=chat.db");
+            
             // Page resolver service
             services.AddSingleton<IPageService, PageService>();
 

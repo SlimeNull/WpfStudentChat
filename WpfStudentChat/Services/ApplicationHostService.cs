@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Wpf.Ui;
 using Wpf.Ui.Mvvm.Contracts;
+using WpfStudentChat.Models.Database;
 using WpfStudentChat.Views.Windows;
 
 namespace WpfStudentChat.Services;
@@ -43,6 +44,10 @@ public class ApplicationHostService : IHostedService
     /// </summary>
     private async Task HandleActivationAsync()
     {
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ChatDbContext>();
+        await db.Database.EnsureCreatedAsync();
+
         var chatClientService = _serviceProvider.GetRequiredService<ChatClientService>();
         var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
         if (loginWindow.ShowDialog() ?? false)
