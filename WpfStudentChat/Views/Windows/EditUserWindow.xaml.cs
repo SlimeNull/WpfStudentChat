@@ -42,17 +42,13 @@ public partial class EditUserWindow : Window, INotifyPropertyChanged
     }
 
     [RelayCommand]
-    public void SetPassword()
+    public void ResetPassword()
     {
-        var result = Microsoft.VisualBasic.Interaction.InputBox("输入密码", "");
-        if (!string.IsNullOrEmpty(result))
-        {
-            UserPassword = result;
-        }
+        UserPassword = "1234"; // 重置密码成1234
     }
 
     [RelayCommand]
-    public async void SetImage()
+    public async Task SetImage()
     {
         if (User is null)
             return;
@@ -82,7 +78,7 @@ public partial class EditUserWindow : Window, INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, $"Failed to upload image. {ex.Message}", "Error");
+            MessageBox.Show(this, $"上传头像失败. {ex.Message}", "错误");
             return;
         }
     }

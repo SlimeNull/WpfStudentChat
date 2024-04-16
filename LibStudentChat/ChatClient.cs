@@ -215,7 +215,7 @@ public class ChatClient
 
         if (apiResult is null)
         {
-            throw new Exception("Server returns empty result");
+            throw new Exception("服务器返回空接口");
         }
 
         if (!apiResult.Ok)
@@ -234,12 +234,12 @@ public class ChatClient
         }
 
         var response = await _httpClient.SendAsync(request);
-
+        response.EnsureSuccessStatusCode();
         var apiResult = await response.Content.ReadFromJsonAsync<ApiResult<TResultData>>();
 
         if (apiResult is null)
         {
-            throw new Exception("Server returns empty result");
+            throw new Exception("服务器返回空接口");
         }
 
         if (!apiResult.Ok || apiResult.Data is null)

@@ -48,7 +48,7 @@ namespace WpfStudentChat.Views.Windows
             }
             catch(Exception ex)
             {
-                System.Windows.MessageBox.Show(this, $"Failed to send friend request. {ex.Message}");
+                System.Windows.MessageBox.Show(this, $"发送好友请求失败. {ex.Message}");
             }
         }
     }

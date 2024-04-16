@@ -1,5 +1,6 @@
 ﻿using Wpf.Ui.Appearance;
 using Wpf.Ui.Common.Interfaces;
+using WpfStudentChat.Services;
 
 namespace WpfStudentChat.ViewModels.Pages;
 
@@ -12,6 +13,12 @@ public partial class SettingsViewModel : ObservableObject, INavigationAware
 
     [ObservableProperty]
     private ThemeType _currentTheme = ThemeType.Unknown;
+    private readonly ChatClientService _chatClientService;
+
+    public SettingsViewModel(ChatClientService chatClientService)
+    {
+        _chatClientService = chatClientService;
+    }
 
     public void OnNavigatedTo()
     {
@@ -58,5 +65,14 @@ public partial class SettingsViewModel : ObservableObject, INavigationAware
 
                 break;
         }
+    }
+
+    [RelayCommand]
+    private async Task SetPassword()
+    {
+        var password = Microsoft.VisualBasic.Interaction.InputBox("设置密码", "提示");
+        if(string.IsNullOrWhiteSpace(password))
+            return;
+        await _chatClientService.Client.SetSelfPasswordAsync(password);
     }
 }

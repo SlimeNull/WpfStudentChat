@@ -17,6 +17,8 @@
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Loaded">
             <b:InvokeCommandAction Command="{Binding LoadFriendsAndGroupsCommand}"/>
+            <b:InvokeCommandAction Command="{Binding LoadAdornerCommand}"/>
+            <b:InvokeCommandAction Command="{Binding EnsureFriendRequestsCommand}"/>
         </b:EventTrigger>
     </b:Interaction.Triggers>
 
@@ -45,7 +47,8 @@
                                 Padding="0 3"
                                 Margin="0 3 0 0"
                                 Command="{Binding ShowCreateGroupWindowCommand}"/>
-                        <Button HorizontalAlignment="Stretch"
+                        <Button Name="FriendRequestButton"
+                                HorizontalAlignment="Stretch"
                                 Content="好友请求"
                                 Padding="0 3"
                                 Margin="0 3 0 0"

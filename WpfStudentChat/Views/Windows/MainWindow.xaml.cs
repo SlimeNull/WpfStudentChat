@@ -64,7 +64,7 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
                 new NavigationItem()
                 {
                     Content = "消息",
-                    Icon = SymbolRegular.Home24,
+                    Icon = SymbolRegular.Chat24,
                     PageType = typeof(Views.Pages.ChatPage)
                 },
                 new NavigationItem()
@@ -75,6 +75,12 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
                 },
             };
         }
+        ViewModel.MenuItems.Add(new NavigationItem()
+        {
+            Content = "Ai聊天",
+            Icon = SymbolRegular.Bot24,
+            PageType = typeof(Views.Pages.AiChatPage)
+        });
     }
 
     #region INavigationWindow methods
@@ -115,7 +121,7 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(this, $"Failed to load profile. {ex.Message}", "Error");
+            System.Windows.MessageBox.Show(this, $"无法加载配置文件. {ex.Message}", "错误");
         }
     }
 

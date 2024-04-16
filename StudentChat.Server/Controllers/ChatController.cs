@@ -99,7 +99,7 @@ public class ChatController : ControllerBase
 
         if (request.Count > 100)
         {
-            return ApiResult<QueryGroupMessagesResultData>.CreateErr("Invalid query, count is too large");
+            return ApiResult<QueryGroupMessagesResultData>.CreateErr("无效查询, 数量太大");
         }
 
         if (request.StartTime.HasValue)
@@ -160,7 +160,7 @@ public class ChatController : ControllerBase
 
         if (!selfHasFriend)
         {
-            return ApiResult.CreateErr("No such friend");
+            return ApiResult.CreateErr("不是好友");
         }
 
         if (request.ImageAttachments is not null)
@@ -173,7 +173,7 @@ public class ChatController : ControllerBase
 
                 if (!dataExist)
                 {
-                    return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
+                    return ApiResult.CreateErr($"消息包含无效图片附件: {attachment.Name}");
                 }
             }
         }
@@ -188,7 +188,7 @@ public class ChatController : ControllerBase
 
                 if (!dataExist)
                 {
-                    return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
+                    return ApiResult.CreateErr($"消息包含无效文件附件: {attachment.Name}");
                 }
             }
         }
@@ -247,7 +247,7 @@ public class ChatController : ControllerBase
 
         if (!selfHasGroup)
         {
-            return ApiResult.CreateErr("No such group");
+            return ApiResult.CreateErr("没有这个群");
         }
 
         if (request.ImageAttachments is not null)
@@ -260,7 +260,7 @@ public class ChatController : ControllerBase
 
                 if (!dataExist)
                 {
-                    return ApiResult.CreateErr($"Message contains invalid image attachment: {attachment.Name}");
+                    return ApiResult.CreateErr($"消息包含无效图片附件: {attachment.Name}");
                 }
             }
         }
@@ -275,7 +275,7 @@ public class ChatController : ControllerBase
 
                 if (!dataExist)
                 {
-                    return ApiResult.CreateErr($"Message contains invalid file attachment: {attachment.Name}");
+                    return ApiResult.CreateErr($"消息包含无效文件附件: {attachment.Name}");
                 }
             }
         }

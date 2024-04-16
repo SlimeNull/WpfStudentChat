@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 using StudentChat.Models;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
@@ -9,7 +10,7 @@ namespace WpfStudentChat.ViewModels.Windows;
 public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _applicationTitle = "WPF UI - WpfStudentChat";
+    private string _applicationTitle = "聊天";
 
     [ObservableProperty]
     private ObservableCollection<INavigationControl> _menuItems = [];

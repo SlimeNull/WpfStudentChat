@@ -67,7 +67,7 @@ public partial class PrivateMessagesPage : Page, IRecipient<PrivateMessageReceiv
         catch (Exception ex)
         {
             ViewModel.TextInput = textInput;
-            MessageBox.Show(App.Current.MainWindow, $"Failed to send message. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(App.Current.MainWindow, $"消息发送失败. {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

@@ -35,7 +35,7 @@ public partial class ContactsFriendPage : Page
     {
         var chatClientService = App.Host.Services.GetRequiredService<ChatClientService>();
 
-        if (MessageBox.Show(App.Current.MainWindow, "Are you sure you want to delete this friend", "Tip", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+        if (MessageBox.Show(App.Current.MainWindow, "您确定要删除该好友吗", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
             return;
 
         await chatClientService.Client.DeleteFriendAsync(User.Id);

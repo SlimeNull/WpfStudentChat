@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using Wpf.Ui;
 using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Mvvm.Contracts;
+using WpfStudentChat.Adorners;
 using WpfStudentChat.Extensions;
 using WpfStudentChat.Models.Messages;
 using WpfStudentChat.Services;
@@ -22,11 +24,16 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
     IRecipient<FriendIncreasedMessage>,
     IRecipient<FriendDecreasedMessage>,
     IRecipient<GroupIncreasedMessage>,
-    IRecipient<GroupDecreasedMessage>
+    IRecipient<GroupDecreasedMessage>,
+    IRecipient<FriendRequestReceivedMessage>
 {
     private readonly ChatClientService _chatClientService;
     private readonly IServiceProvider _serviceProvider;
     private readonly INavigationService _navigationService;
+
+    private readonly UnreadAdorner _friendRequestButtonAdorner;
+
+    private bool isLoadedAdorner = false;
 
     public ContactsViewModel ViewModel { get; }
     public ContactsPage(
@@ -48,6 +55,29 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         messenger.Register<FriendDecreasedMessage>(this);
         messenger.Register<GroupIncreasedMessage>(this);
         messenger.Register<GroupDecreasedMessage>(this);
+        messenger.Register<FriendRequestReceivedMessage>(this);
+
+        _friendRequestButtonAdorner = new UnreadAdorner(FriendRequestButton);
+    }
+
+    [RelayCommand]
+    public void LoadAdorner()
+    {
+        if (isLoadedAdorner)
+            return;
+        isLoadedAdorner = true;
+
+        AdornerLayer.GetAdornerLayer(FriendRequestButton).Add(_friendRequestButtonAdorner); // 红点
+    }
+
+    [RelayCommand]
+    public async Task EnsureFriendRequests()
+    {
+        var requests = await _chatClientService.Client.GetFriendRequestsAsync(0);
+        if(requests.Any(request => !request.IsDone && request.SenderId != _chatClientService.Client.GetSelfUserId()))
+        {
+            _friendRequestButtonAdorner.IsShow = true;
+        }
     }
 
     [RelayCommand]
@@ -68,7 +98,7 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         }
         catch
         {
-            System.Windows.MessageBox.Show(Application.Current.MainWindow, "Faild to load friends and groups", "Error");
+            System.Windows.MessageBox.Show(Application.Current.MainWindow, "无法加载好友和群", "错误");
         }
     }
 
@@ -115,6 +145,7 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
     {
         var page = _serviceProvider.GetRequiredService<FriendRequestsPage>();
         ContentFrame.Content = page;
+        _friendRequestButtonAdorner.IsShow = false;
     }
 
     [RelayCommand]
@@ -182,6 +213,14 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
 
         if (index != -1)
             ViewModel.Groups.RemoveAt(index);
+    }
+
+    void IRecipient<FriendRequestReceivedMessage>.Receive(FriendRequestReceivedMessage message)
+    {
+        if (message.Request.SenderId == _chatClientService.Client.GetSelfUserId())
+            return;
+
+        _friendRequestButtonAdorner.IsShow = true;
     }
 
     private void ContactsListView_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)

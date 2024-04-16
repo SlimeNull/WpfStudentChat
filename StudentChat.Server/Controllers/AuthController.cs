@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
 
         if (token is null)
         {
-            return ApiResult<LoginResultData>.CreateErr("Invalid user name or password hash");
+            return ApiResult<LoginResultData>.CreateErr("无效的用户名或密码");
         }
         else
         {

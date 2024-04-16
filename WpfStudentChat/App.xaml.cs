@@ -70,6 +70,7 @@ public partial class App : Application
             services.AddSingleton<GroupRequestsViewModel>();
             services.AddSingleton<ManagePage>();
             services.AddSingleton<ManageViewModel>();
+            services.AddSingleton<AiChatPage>();
 
             // Scoped Pages
             services.AddScoped<PrivateMessagesPage>();

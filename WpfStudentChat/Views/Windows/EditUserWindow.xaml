@@ -77,10 +77,10 @@
                              d:Text="123456"/>
                 </StackPanel>
 
-                <Button Content="设置用户密码"
+                <Button Content="重置用户密码"
                         Margin="0 10 0 0"
                         HorizontalAlignment="Center"
-                        Command="{Binding SetPasswordCommand}"/>
+                        Command="{Binding ResetPasswordCommand}"/>
             </StackPanel>
 
             <UniformGrid Grid.Row="1"

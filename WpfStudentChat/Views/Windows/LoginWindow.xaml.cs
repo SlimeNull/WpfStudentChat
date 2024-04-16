@@ -40,7 +40,7 @@ public partial class LoginWindow : UiWindow
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(this, $"Failed to login. {ex.Message}", "Error");
+            System.Windows.MessageBox.Show(this, $"登录失败. {ex.Message}", "错误");
             return;
         }
     }

@@ -182,7 +182,7 @@ public class RequestController : ControllerBase
 
         if (selfUserId == request.UserId)
         {
-            return ApiResult.CreateErr("You can't add yourself as a friend");
+            return ApiResult.CreateErr("无法添加自己为好友");
         }
 
         var friendAlreadyExist = 
@@ -190,14 +190,14 @@ public class RequestController : ControllerBase
 
         if (friendAlreadyExist)
         {
-            return ApiResult.CreateErr("The other user is already your friend");
+            return ApiResult.CreateErr("已经是好友了");
         }
 
         var requestAlreadyExist = 
             await _dbContext.FriendRequests.AnyAsync(r => r.SenderId == selfUserId && r.ReceiverId == request.UserId && !r.IsDone);
         if (requestAlreadyExist)
         {
-            return ApiResult.CreateErr("You have already sent a request");
+            return ApiResult.CreateErr("已存在一个好友请求");
         }
 
         var userExist = await _dbContext.Users
@@ -205,7 +205,7 @@ public class RequestController : ControllerBase
 
         if (!userExist)
         {
-            return ApiResult.CreateErr("No such user");
+            return ApiResult.CreateErr("用户不存在");
         }
 
         var entry = _dbContext.FriendRequests.Add(
@@ -235,14 +235,14 @@ public class RequestController : ControllerBase
 
         if (groupAlreadyExist)
         {
-            return ApiResult.CreateErr("You're already a member of the group chat");
+            return ApiResult.CreateErr("已经是群聊成员");
         }
 
         var requestAlreadyExist = await _dbContext.GroupRequests.AnyAsync(r => r.SenderId == selfUserId && r.GroupId == request.GroupId && !r.IsDone);
 
         if (requestAlreadyExist)
         {
-            return ApiResult.CreateErr("You have already sent a request");
+            return ApiResult.CreateErr("已存在一个请求");
         }
 
         var groupExist = await _dbContext.Groups
@@ -250,7 +250,7 @@ public class RequestController : ControllerBase
 
         if (!groupExist)
         {
-            return ApiResult.CreateErr("No such group");
+            return ApiResult.CreateErr("群不存在");
         }
 
         var entry = _dbContext.GroupRequests.Add(
@@ -280,12 +280,12 @@ public class RequestController : ControllerBase
 
         if (friendRequest is null)
         {
-            return ApiResult.CreateErr("No such friend request");
+            return ApiResult.CreateErr("没有这样的好友请求");
         }
 
         if (friendRequest.IsDone)
         {
-            return ApiResult.CreateErr("This request has already been processed");
+            return ApiResult.CreateErr("这个请求已处理");
         }
 
         friendRequest.IsDone = true;
@@ -316,12 +316,12 @@ public class RequestController : ControllerBase
 
         if (friendRequest is null)
         {
-            return ApiResult.CreateErr("No such friend request");
+            return ApiResult.CreateErr("没有这样的好友请求");
         }
 
         if (friendRequest.IsDone)
         {
-            return ApiResult.CreateErr("This request has already been processed");
+            return ApiResult.CreateErr("请求已经处理");
         }
 
         friendRequest.IsDone = true;
@@ -352,12 +352,12 @@ public class RequestController : ControllerBase
 
         if (groupRequest is null)
         {
-            return ApiResult.CreateErr("No such group request");
+            return ApiResult.CreateErr("没有这样的群请求");
         }
 
         if (groupRequest.IsDone)
         {
-            return ApiResult.CreateErr("This request has already been processed");
+            return ApiResult.CreateErr("群请求已处理");
         }
 
         var group = await _dbContext.Groups
@@ -366,7 +366,7 @@ public class RequestController : ControllerBase
 
         if (group.OwnerId != selfId)
         {
-            return ApiResult.CreateErr("You are not owner of that group");
+            return ApiResult.CreateErr("不是群的所有者");
         }
 
         groupRequest.IsDone = true;
@@ -393,12 +393,12 @@ public class RequestController : ControllerBase
 
         if (groupRequest is null)
         {
-            return ApiResult.CreateErr("No such group request");
+            return ApiResult.CreateErr("没有这样的群请求");
         }
 
         if (groupRequest.IsDone)
         {
-            return ApiResult.CreateErr("This request has already been processed");
+            return ApiResult.CreateErr("群请求已处理");
         }
 
         var group = await _dbContext.Groups
@@ -407,7 +407,7 @@ public class RequestController : ControllerBase
 
         if (group.OwnerId != selfId)
         {
-            return ApiResult.CreateErr("You are not owner of that group");
+            return ApiResult.CreateErr("不是群的所有者");
         }
 
         groupRequest.IsDone = true;

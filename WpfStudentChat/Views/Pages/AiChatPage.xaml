@@ -1,0 +1,97 @@
+﻿<Page x:Class="WpfStudentChat.Views.Pages.AiChatPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:WpfStudentChat.Views.Pages"
+      xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
+      xmlns:openai="clr-namespace:OpenAI;assembly=OpenAI-DotNet"
+      xmlns:vc="clr-namespace:WpfStudentChat.Converters"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AiChatPage"
+      d:DataContext="{d:DesignInstance Type=local:AiChatPage}">
+
+    <Page.Resources>
+        <ws:BindingProxy x:Key="this" Data="{Binding}"/>
+    </Page.Resources>
+
+    <Border Padding="5">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="120"/>
+            </Grid.RowDefinitions>
+
+            <Border>
+                <ScrollViewer Name="Scroll" VerticalScrollBarVisibility="Auto">
+
+                    <ItemsControl ItemsSource="{Binding Messages}"
+                                  d:ItemsSource="{d:SampleData ItemCount=10}"
+                                  d:Background="White">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ws:StackPanel Orientation="Vertical" Margin="10 5">
+                                    <ws:ConditionalControl Condition="{Binding Role,Converter={x:Static vc:EqualsConverter.Instance},ConverterParameter={x:Static openai:Role.User}}"
+                                                           ContentWhenTrue="{Binding}"
+                                                           ContentWhenFalse="{Binding}">
+                                        <ws:ConditionalControl.ContentTemplateWhenTrue>
+                                            <DataTemplate>
+                                                <ws:StackPanel HorizontalAlignment="Right"
+                                                               Orientation="Vertical"
+                                                               Spacing="5">
+                                                    <TextBlock Text="{Binding Source={StaticResource this},Path=Data.UserName}" HorizontalAlignment="Right"/>
+                                                    <ui:Card HorizontalAlignment="Right"
+                                                             Padding="10">
+                                                        <TextBlock Text="{Binding Content}"/>
+                                                    </ui:Card>
+                                                </ws:StackPanel>
+                                            </DataTemplate>
+                                        </ws:ConditionalControl.ContentTemplateWhenTrue>
+                                        <ws:ConditionalControl.ContentTemplateWhenFalse>
+                                            <DataTemplate>
+                                                <ws:StackPanel HorizontalAlignment="Left"
+                                                               Orientation="Vertical"
+                                                               Spacing="5">
+                                                    <TextBlock>AI助手</TextBlock>
+                                                    <ui:Card HorizontalAlignment="Left"
+                                                             Padding="10">
+                                                        <TextBlock Text="{Binding Content}"/>
+                                                    </ui:Card>
+                                                </ws:StackPanel>
+                                            </DataTemplate>
+                                        </ws:ConditionalControl.ContentTemplateWhenFalse>
+                                    </ws:ConditionalControl>
+                                </ws:StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <GridSplitter Grid.Row="1" />
+
+            <Border Grid.Row="2">
+                <Grid>
+                    <TextBox Name="TextBoxInput"
+                             Text="{Binding Input,UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True"
+                             AcceptsTab="True"
+                             KeyDown="TextBox_KeyDown"/>
+                    <Button Content="发送"
+                            Margin="10"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Right"
+                            Command="{Binding SendCommand}"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Page>

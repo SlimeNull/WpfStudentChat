@@ -60,8 +60,11 @@ public class ManageController : ControllerBase
             new User()
             {
                 UserName = request.User.UserName,
-                PasswordHash = request.PasswordHash
+                PasswordHash = request.PasswordHash,
+                Nickname = request.User.Nickname,
             }, HttpContext.RequestAborted);
+
+        await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
 
         return ApiResult<AddUserResultData>.CreateOk(
             new AddUserResultData((CommonModels.User)entry.Entity));
