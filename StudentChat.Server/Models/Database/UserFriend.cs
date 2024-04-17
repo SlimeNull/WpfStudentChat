@@ -4,6 +4,9 @@ public class UserFriend
 {
     public int Id { get; set; }
 
+    public DateTimeOffset FromLastReadTime { get; set; }
+    public DateTimeOffset ToLastReadTime { get; set; }
+
     public int FromUserId { get; set; }
     public int ToUserId { get; set; }
 

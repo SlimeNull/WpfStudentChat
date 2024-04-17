@@ -28,6 +28,8 @@ namespace WpfStudentChat.Views.Pages
         IRecipient<PrivateMessageReceivedMessage>,
         IRecipient<GroupMessageReceivedMessage>
     {
+        private readonly ChatClientService _chatClientService;
+
         public ChatPage(
             ChatViewModel viewModel,
             ChatClientService chatClientService,
@@ -35,12 +37,67 @@ namespace WpfStudentChat.Views.Pages
         {
             SelfUserId = chatClientService.Client.GetSelfUserId();
             ViewModel = viewModel;
+            _chatClientService = chatClientService;
             DataContext = this;
 
             InitializeComponent();
 
             messenger.Register<PrivateMessageReceivedMessage>(this);
             messenger.Register<GroupMessageReceivedMessage>(this);
+
+            Loaded += ChatPage_Loaded;
+        }
+
+        private bool _isLoaded = false;
+        private async void ChatPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_isLoaded)
+                return;
+            _isLoaded = true;
+
+            var groups = await _chatClientService.Client.GetGroupsAsync();
+            var friends = await _chatClientService.Client.GetFriendsAsync();
+
+            var groupLoad = Parallel.ForEachAsync(groups, async (group, cancellationToken) =>
+            {
+                if (ViewModel.GetGroupSession(group.Id) is null)
+                {
+                    await Dispatcher.InvokeAsync(async () =>
+                    {
+                        var newSession = await ViewModel.AddGroupSessionAsync(group.Id);
+                        newSession.LastReadTime = await _chatClientService.Client.GetGroupMessageLastTime(group.Id);
+                        var messages = await _chatClientService.Client.QueryGroupMessagesAsync(group.Id, DateTimeOffset.Now.AddDays(-30), DateTimeOffset.Now, 100);
+                        var unreadCount = messages.Count(v => v.SentTime >= newSession.LastReadTime);
+                        newSession.UnreadMessageCount = unreadCount;
+                        foreach (var message in messages)
+                        {
+                            newSession.Messages.Add(message);
+                        }
+                    });
+                }
+            });
+
+            var friendLoad = Parallel.ForEachAsync(friends, async (friend, cancellationToken) =>
+            {
+                if (ViewModel.GetPrivateSession(friend.Id) is null)
+                {
+                    await Dispatcher.InvokeAsync(async () =>
+                    {
+                        var newSession = await ViewModel.AddPrivateSessionAsync(friend.Id);
+                        newSession.LastReadTime = await _chatClientService.Client.GetFriendMessageLastTime(friend.Id);
+                        var messages = await _chatClientService.Client.QueryPrivateMessagesAsync(friend.Id, DateTimeOffset.Now.AddDays(-30), DateTimeOffset.Now, 100);
+                        var unreadCount = messages.Count(v => v.SentTime >= newSession.LastReadTime);
+                        newSession.UnreadMessageCount = unreadCount;
+                        foreach (var message in messages)
+                        {
+                            newSession.Messages.Add(message);
+                        }
+                    });
+                }
+            });
+
+            await groupLoad;
+            await friendLoad;
         }
 
         public int SelfUserId { get; }

@@ -247,7 +247,7 @@ public class ChatController : ControllerBase
 
         if (!selfHasGroup)
         {
-            return ApiResult.CreateErr("没有这个群");
+            return ApiResult.CreateErr($"没有这个{Consts.GroupName}");
         }
 
         if (request.ImageAttachments is not null)
@@ -324,5 +324,31 @@ public class ChatController : ControllerBase
         await _messageNotifyService.OnGroupMessageSent((CommonModels.GroupMessage)entry.Entity);
 
         return ApiResult.CreateOk();
+    }
+
+    [HttpPost("QueryLatestMessage")]
+    public async Task<ApiResult<QueryLatestMessageResultData>> QueryLatestMessage(QueryLatestMessageRequestData request)
+    {
+        var count = Math.Min(request.Count, 100);
+
+        var userId = HttpContext.GetUserId();
+
+        Dictionary<CommonModels.Group, CommonModels.GroupMessage[]> groupMessages = await _dbContext.Groups
+            .Include(v => v.Members)
+            .Include(v => v.Messages)
+            .Where(group => group.Members.Any(member => member.Id == userId))
+            .SelectMany(v => v.Messages)
+            .GroupBy(v => (CommonModels.Group)v.Group)
+            .ToDictionaryAsync(v => v.Key, v => v.Select(v => (CommonModels.GroupMessage)v).ToArray());
+
+        Dictionary<CommonModels.User, CommonModels.PrivateMessage[]> privateMessages = await _dbContext.PrivateMessages
+            .Include(v => v.SenderId)
+            .Where(msg => msg.ReceiverId == userId)
+            .OrderBy(msg => msg.SentTime)
+            .Take(count)
+            .GroupBy(v => v.Sender)
+            .ToDictionaryAsync(v => (CommonModels.User)v.Key, v => v.Select(v => (CommonModels.PrivateMessage)v).ToArray());
+
+        return ApiResult<QueryLatestMessageResultData>.CreateOk(new(privateMessages, groupMessages));
     }
 }

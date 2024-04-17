@@ -6,7 +6,7 @@ public static class ListExtensions
     {
         ArgumentNullException.ThrowIfNull(list, nameof(list));
         ArgumentNullException.ThrowIfNull(predicate, nameof(predicate));
-
+        
         for (int i = 0; i < list.Count; i++)
         {
             if (predicate.Invoke(list[i]))

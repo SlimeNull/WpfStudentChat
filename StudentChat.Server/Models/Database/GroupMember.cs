@@ -4,6 +4,8 @@ public class GroupMember
 {
     public int Id { get; set; }
 
+    public DateTimeOffset LastReadTime { get; set; }
+
     public int GroupId { get; set; }
     public int UserId { get; set; }
 

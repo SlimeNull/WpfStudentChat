@@ -56,13 +56,28 @@ public class ManageController : ControllerBase
             return ApiResult<AddUserResultData>.CreateErr("已经有相同用户名的用户了");
         }
 
-        var entry = await _dbContext.Users.AddAsync(
-            new User()
+        var user = new User()
+        {
+            UserName = request.User.UserName,
+            PasswordHash = request.PasswordHash,
+            Nickname = request.User.Nickname,
+        };
+        var entry = await _dbContext.Users.AddAsync(user, HttpContext.RequestAborted);
+
+        if (!string.IsNullOrWhiteSpace(request.GroupName))
+        {
+            var group = _dbContext.Groups.FirstOrDefault(group => group.Name == request.GroupName);
+            if (group is null)
             {
-                UserName = request.User.UserName,
-                PasswordHash = request.PasswordHash,
-                Nickname = request.User.Nickname,
-            }, HttpContext.RequestAborted);
+                group = new Group()
+                {
+                    Name = request.GroupName,
+                    Owner = user,
+                };
+                _dbContext.Groups.Add(group);
+            }
+            group.Members.Add(user);
+        }
 
         await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
 

@@ -6,15 +6,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Data;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using StudentChat.Models;
 using WpfStudentChat.Models;
+using WpfStudentChat.Models.Messages;
 using WpfStudentChat.Services;
 using WpfStudentChat.Views.Pages;
 
 namespace WpfStudentChat.ViewModels.Pages;
 
-public partial class ChatViewModel : ObservableObject
+public partial class ChatViewModel : ObservableObject, IRecipient<PrivateMessageReceivedMessage>, IRecipient<GroupMessageReceivedMessage>
 {
     private readonly ChatClientService _chatClientService;
     private readonly IServiceProvider _serviceProvider;
@@ -23,12 +26,18 @@ public partial class ChatViewModel : ObservableObject
 
     public ChatViewModel(
         ChatClientService chatClientService,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider,
+        IMessenger messenger)
     {
         _chatClientService = chatClientService;
         _serviceProvider = serviceProvider;
 
         Sessions.CollectionChanged += Sessions_CollectionChanged;
+
+        messenger.Register<PrivateMessageReceivedMessage>(this);
+        messenger.Register<GroupMessageReceivedMessage>(this);
+
+        BindingOperations.EnableCollectionSynchronization(Sessions, Sessions);
     }
 
     [ObservableProperty]
@@ -106,6 +115,18 @@ public partial class ChatViewModel : ObservableObject
         }
 
         MessagesPage = _cachedMessagesPages[value];
+
+        // 已读消息
+        if (value is PrivateChatSession user)
+        {
+            user.UnreadMessageCount = 0;
+            _ = _chatClientService.Client.SetFriendMessageLastTime(user.Subject.Id, DateTimeOffset.Now);
+        }
+        else if (value is GroupChatSession group)
+        {
+            group.UnreadMessageCount = 0;
+            _ = _chatClientService.Client.SetGroupMessageLastTime(group.Subject.Id, DateTimeOffset.Now);
+        }
     }
 
     private void Sessions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -161,5 +182,27 @@ public partial class ChatViewModel : ObservableObject
                 _cachedMessagesPages.Remove(session);
             }
         }
+    }
+
+    async void IRecipient<PrivateMessageReceivedMessage>.Receive(PrivateMessageReceivedMessage message)
+    {
+        var session = GetPrivateSession(message.Message.SenderId);
+        if (session is null)
+            return;
+
+        await _chatClientService.Client.SetFriendMessageLastTime(message.Message.SenderId, DateTimeOffset.Now);
+
+        session.UnreadMessageCount++;
+    }
+
+    async void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
+    {
+        var session = GetGroupSession(message.Message.GroupId);
+        if (session is null)
+            return;
+
+        session.UnreadMessageCount++;
+
+        await _chatClientService.Client.SetGroupMessageLastTime(message.Message.GroupId, DateTimeOffset.Now);
     }
 }

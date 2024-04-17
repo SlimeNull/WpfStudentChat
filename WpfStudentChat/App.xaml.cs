@@ -1,4 +1,5 @@
-﻿using System.Windows.Threading;
+﻿using System.Runtime.Versioning;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,8 @@ using WpfStudentChat.ViewModels.Pages;
 using WpfStudentChat.ViewModels.Windows;
 using WpfStudentChat.Views.Pages;
 using WpfStudentChat.Views.Windows;
+
+[assembly: SupportedOSPlatform("windows")]
 
 namespace WpfStudentChat;
 

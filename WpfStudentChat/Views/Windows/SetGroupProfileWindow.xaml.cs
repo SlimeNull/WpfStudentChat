@@ -89,16 +89,17 @@ namespace WpfStudentChat.Views.Windows
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(this, $"Failed to upload image. {ex.Message}", "Error");
+                System.Windows.MessageBox.Show(this, $"图片上传失败. {ex.Message}", "错误");
             }
         }
 
         [RelayCommand]
         public async Task SaveProfileAndClose()
         {
+            var isSet = ViewModel.Profile.Id != 0;
             try
             {
-                if (ViewModel.Profile.Id != 0)
+                if (isSet)
                 {
                     await _chatClientService.Client.SetGroupAsync(ViewModel.Profile);
                 }
@@ -111,7 +112,7 @@ namespace WpfStudentChat.Views.Windows
             }
             catch(Exception ex)
             {
-                System.Windows.MessageBox.Show(this, $"Failed to save group profile. {ex.Message}", "Error");
+                System.Windows.MessageBox.Show(this, $"{(isSet ? "设置" : "创建")}群聊信息失败. {ex.Message}", "错误");
             }
         }
     }

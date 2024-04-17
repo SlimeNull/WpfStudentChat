@@ -553,12 +553,50 @@ public class ChatClient
 
     public async Task<Group[]> GetGroupsAsync()
     {
-        var result = await PostAsync<GetGroupsResultData>(
-            "api/Info/GetGroups");
+        var result = await PostAsync<GetGroupsResultData>("api/Info/GetGroups");
 
         return result.Groups;
     }
 
+    public async Task<QueryLatestMessageResultData> QueryLatestMessage(int count = 100)
+    {
+        var result = await PostAsync<QueryLatestMessageRequestData, QueryLatestMessageResultData>("api/Chat/QueryLatestMessage",
+            new QueryLatestMessageRequestData(count));
+
+        return result;
+    }
+
+    public async Task<DateTimeOffset> GetFriendMessageLastTime(int friendUserId)
+    {
+        var result = await PostAsync<GetFriendMessageLastTimeRequestData, GetFriendMessageLastTimeResultData>(
+            "api/Info/GetFriendMessageLastTime",
+            new GetFriendMessageLastTimeRequestData(friendUserId));
+
+        return result.DateTime;
+    }
+
+    public async Task SetFriendMessageLastTime(int friendUserId, DateTimeOffset dateTime)
+    {
+        await PostAsync<SetFriendMessageLastTimeRequestData>(
+            "api/Info/SetFriendMessageLastTime",
+            new SetFriendMessageLastTimeRequestData(friendUserId, dateTime));
+    }
+
+    public async Task<DateTimeOffset> GetGroupMessageLastTime(int groupId)
+    {
+        var result = await PostAsync<GetGroupMessageLastTimeRequestData, GetGroupMessageLastTimeResultData>(
+            "api/Info/GetGroupMessageLastTime",
+            new GetGroupMessageLastTimeRequestData(groupId));
+
+        return result.DateTime;
+    }
+
+    public async Task SetGroupMessageLastTime(int groupId, DateTimeOffset dateTime)
+    {
+        await PostAsync<SetGroupMessageLastTimeRequestData>(
+            "api/Info/SetGroupMessageLastTime",
+            new SetGroupMessageLastTimeRequestData(groupId, dateTime));
+    }
 
     #region Admin
 
@@ -576,11 +614,11 @@ public class ChatClient
             new(user, passwordHash));
     }
 
-    public async Task AddUser(User user, string passwordHash)
+    public async Task AddUser(User user, string passwordHash, string? groupName)
     {
         await PostAsync<AddUserRequestData>(
             "api/Manage/AddUser",
-            new(user, passwordHash));
+            new(user, passwordHash, groupName));
     }
 
     public async Task DeleteUser(int userId)

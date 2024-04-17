@@ -7,6 +7,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:mb="clr-namespace:WpfStudentChat.Behaviors"
+      xmlns:chat="clr-namespace:StudentChat;assembly=LibStudentChat"
       xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
@@ -71,7 +72,8 @@
                               SelectionChanged="ListView_SelectionChanged"
                               Name="GroupsListView"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                              PreviewMouseWheel="ContactsListView_PreviewMouseWheel">
+                              PreviewMouseWheel="ContactsListView_PreviewMouseWheel"
+                              d:ItemsSource="{d:SampleData ItemCount=3}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Padding="3 0 0 0" Background="Transparent">
@@ -110,7 +112,8 @@
                               SelectionChanged="ListView_SelectionChanged"
                               Name="FriendsListView"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                              PreviewMouseWheel="ContactsListView_PreviewMouseWheel">
+                              PreviewMouseWheel="ContactsListView_PreviewMouseWheel"
+                              d:ItemsSource="{d:SampleData ItemCount=2}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Padding="3 0 0 0" Background="Transparent">

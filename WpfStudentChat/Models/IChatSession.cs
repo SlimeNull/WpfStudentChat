@@ -9,4 +9,6 @@ public interface IChatSession
     public IEnumerable<Message> Messages { get; }
 
     public string LastMessageSummary { get; }
+
+    public int UnreadMessageCount { get; }
 }

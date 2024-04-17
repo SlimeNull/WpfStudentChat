@@ -43,7 +43,7 @@ public class InfoController : ControllerBase
 
         if (existAnyUserWithSameUserName)
         {
-            return ApiResult.CreateErr("There is already a user with the same username");
+            return ApiResult.CreateErr("已经有一个用户具有相同的用户名");
         }
 
         if (!string.IsNullOrWhiteSpace(newProfile.AvatarHash))
@@ -79,7 +79,7 @@ public class InfoController : ControllerBase
 
         if (string.IsNullOrWhiteSpace(request.PasswordHash))
         {
-            return ApiResult.CreateErr("Invalid password hash");
+            return ApiResult.CreateErr("密码哈希值无效");
         }
 
         user.PasswordHash = request.PasswordHash;
@@ -96,7 +96,7 @@ public class InfoController : ControllerBase
 
         if (user is null)
         {
-            return ApiResult<GetUserResultData>.CreateErr("Invalid user id");
+            return ApiResult<GetUserResultData>.CreateErr("用户 ID 无效");
         }
 
         return ApiResult<GetUserResultData>.CreateOk(new GetUserResultData((CommonModels.User)user));
@@ -109,7 +109,7 @@ public class InfoController : ControllerBase
 
         if (group is null)
         {
-            return ApiResult<GetGroupResultData>.CreateErr("Invalid group id");
+            return ApiResult<GetGroupResultData>.CreateErr($"{Consts.GroupName} ID 无效");
         }
 
         return ApiResult<GetGroupResultData>.CreateOk(new GetGroupResultData((CommonModels.Group)group));
@@ -123,12 +123,12 @@ public class InfoController : ControllerBase
 
         if (group is null)
         {
-            return ApiResult.CreateErr("Group not found");
+            return ApiResult.CreateErr($"找不到{Consts.GroupName}");
         }
 
         if (group.OwnerId != selfUserId)
         {
-            return ApiResult.CreateErr("You are not owner of that group");
+            return ApiResult.CreateErr($"您不是该{Consts.GroupName}的所有者");
         }
 
         var newProfile = request.Group;
@@ -160,7 +160,12 @@ public class InfoController : ControllerBase
 
         if (string.IsNullOrWhiteSpace(request.Group.Name))
         {
-            return ApiResult<CreateGroupResultData>.CreateErr("Group name can not be empty");
+            return ApiResult<CreateGroupResultData>.CreateErr($"{Consts.GroupName}不能为空");
+        }
+
+        if(_dbContext.Groups.Any(g => g.Name == request.Group.Name))
+        {
+            return ApiResult<CreateGroupResultData>.CreateErr($"{Consts.GroupName}已被使用");
         }
 
         var entry = await _dbContext.Groups.AddAsync(
@@ -189,7 +194,7 @@ public class InfoController : ControllerBase
 
         if (group is null)
         {
-            return ApiResult.CreateErr("Group not found");
+            return ApiResult.CreateErr($"{Consts.GroupName}未找到");
         }
 
         if (group.OwnerId == selfUserId)
@@ -219,7 +224,7 @@ public class InfoController : ControllerBase
 
             if (member is null)
             {
-                return ApiResult.CreateErr("You are not member of that group");
+                return ApiResult.CreateErr($"你不是该{Consts.GroupName}的成员");
             }
 
             _dbContext.GroupMembers.Remove(member);
@@ -241,7 +246,7 @@ public class InfoController : ControllerBase
 
         if (friend is null)
         {
-            return ApiResult.CreateErr("No such friend");
+            return ApiResult.CreateErr("没有这个好友");
         }
 
         var otherUserId = friend.FromUserId == selfUserId ? friend.ToUserId : friend.FromUserId;
@@ -328,4 +333,83 @@ public class InfoController : ControllerBase
 
         return ApiResult<GetGroupsResultData>.CreateOk(new GetGroupsResultData(groups));
     }
+
+    [HttpPost("GetFriendMessageLastTime")]
+    public async Task<ApiResult<GetFriendMessageLastTimeResultData>> GetFriendMessageLastTime(GetFriendMessageLastTimeRequestData request)
+    {
+        var userId = HttpContext.GetUserId();
+
+        var from = await _dbContext.UserFriends.FirstOrDefaultAsync(v => v.FromUserId == userId && v.ToUserId == request.FriendUserId);
+        if(from is { })
+        {
+            return ApiResult<GetFriendMessageLastTimeResultData>.CreateOk(new(from.FromLastReadTime));
+        }
+
+        var to = await _dbContext.UserFriends.FirstOrDefaultAsync(v => v.FromUserId == request.FriendUserId && v.ToUserId == userId);
+        if(to is { })
+        {
+            return ApiResult<GetFriendMessageLastTimeResultData>.CreateOk(new(to.ToLastReadTime));
+        }
+
+        return ApiResult<GetFriendMessageLastTimeResultData>.CreateErr("找不到好友关系");
+    }
+
+    [HttpPost("SetFriendMessageLastTime")]
+    public async Task<ApiResult> SetFriendMessageLastTime(SetFriendMessageLastTimeRequestData request)
+    {
+        var userId = HttpContext.GetUserId();
+
+        var from = await _dbContext.UserFriends.FirstOrDefaultAsync(v => v.FromUserId == userId && v.ToUserId == request.FriendUserId);
+        if (from is { })
+        {
+            from.FromLastReadTime = request.DateTime;
+            _dbContext.Update(from);
+            await _dbContext.SaveChangesAsync();
+            return ApiResult.CreateOk();
+        }
+
+        var to = await _dbContext.UserFriends.FirstOrDefaultAsync(v => v.FromUserId == request.FriendUserId && v.ToUserId == userId);
+        if (to is { })
+        {
+            to.ToLastReadTime = request.DateTime;
+            _dbContext.Update(to);
+            await _dbContext.SaveChangesAsync();
+            return ApiResult.CreateOk();
+        }
+
+        return ApiResult.CreateErr("找不到好友关系");
+    }
+
+    [HttpPost("GetGroupMessageLastTime")]
+    public async Task<ApiResult<GetGroupMessageLastTimeResultData>> GetGroupMessageLastTime(GetGroupMessageLastTimeRequestData request)
+    {
+        var userId = HttpContext.GetUserId();
+
+        var member = await _dbContext.GroupMembers.FirstOrDefaultAsync(v => v.UserId == userId && v.GroupId == request.GroupId);
+        if(member is { })
+        {
+            return ApiResult<GetGroupMessageLastTimeResultData>.CreateOk(new(member.LastReadTime));
+        }
+
+        return ApiResult<GetGroupMessageLastTimeResultData>.CreateErr("找不到群组成员关系");
+    }
+
+    [HttpPost("SetGroupMessageLastTime")]
+    public async Task<ApiResult> SetGroupMessageLastTime(SetGroupMessageLastTimeRequestData request)
+    {
+        var userId = HttpContext.GetUserId();
+
+        var member = await _dbContext.GroupMembers.FirstOrDefaultAsync(v => v.UserId == userId && v.GroupId == request.GroupId);
+        if(member is { })
+        {
+            member.LastReadTime = request.DateTime;
+            _dbContext.Update(member);
+            await _dbContext.SaveChangesAsync();
+            return ApiResult.CreateOk();
+        }
+
+        return ApiResult.CreateErr("找不到群组成员关系");
+    }
+
+
 }

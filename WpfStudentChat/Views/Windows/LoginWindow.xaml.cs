@@ -26,6 +26,12 @@ public partial class LoginWindow : UiWindow
         InitializeComponent();
 
         Wpf.Ui.Appearance.Watcher.Watch(this);
+        Loaded += LoginWindow_Loaded;
+    }
+
+    private void LoginWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Light);
     }
 
     [RelayCommand]

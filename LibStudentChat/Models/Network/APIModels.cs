@@ -24,9 +24,11 @@ namespace StudentChat.Models.Network
     public record class SendPrivateMessageRequestData(int ReceiverId, string Content, Attachment[]? ImageAttachments, Attachment[]? FileAttachments);
     public record class SendGroupMessageRequestData(int GroupId, string Content, Attachment[]? ImageAttachments, Attachment[]? FileAttachments);
 
+    public record class QueryLatestMessageRequestData(int Count);
+    public record class QueryLatestMessageResultData(Dictionary<User, PrivateMessage[]> PrivateMessages, Dictionary<Group, GroupMessage[]> GroupMessages);
 
 
-    public record class AddUserRequestData(User User, string PasswordHash);
+    public record class AddUserRequestData(User User, string PasswordHash, string? GroupName);
     public record class AddUserResultData(User User);
 
     public record class GetUsersRequestData(string? UserNameKeyword, string? NicknameKeyword, int Skip, int Count);
@@ -55,6 +57,15 @@ namespace StudentChat.Models.Network
 
     public record class GetFriendsResultData(User[] Friends);
     public record class GetGroupsResultData(Group[] Groups);
+
+
+    public record class GetFriendMessageLastTimeRequestData(int FriendUserId);
+    public record class GetFriendMessageLastTimeResultData(DateTimeOffset DateTime);
+    public record class SetFriendMessageLastTimeRequestData(int FriendUserId, DateTimeOffset DateTime);
+
+    public record class GetGroupMessageLastTimeRequestData(int GroupId);
+    public record class GetGroupMessageLastTimeResultData(DateTimeOffset DateTime);
+    public record class SetGroupMessageLastTimeRequestData(int GroupId, DateTimeOffset DateTime);
 
 
     public record class GetSentFriendRequestsResultData(FriendRequest[] Requests);

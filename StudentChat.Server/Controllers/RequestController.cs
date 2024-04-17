@@ -235,7 +235,7 @@ public class RequestController : ControllerBase
 
         if (groupAlreadyExist)
         {
-            return ApiResult.CreateErr("已经是群聊成员");
+            return ApiResult.CreateErr($"已经是{Consts.GroupName}成员");
         }
 
         var requestAlreadyExist = await _dbContext.GroupRequests.AnyAsync(r => r.SenderId == selfUserId && r.GroupId == request.GroupId && !r.IsDone);
@@ -250,7 +250,7 @@ public class RequestController : ControllerBase
 
         if (!groupExist)
         {
-            return ApiResult.CreateErr("群不存在");
+            return ApiResult.CreateErr($"{Consts.GroupName}不存在");
         }
 
         var entry = _dbContext.GroupRequests.Add(
@@ -352,12 +352,12 @@ public class RequestController : ControllerBase
 
         if (groupRequest is null)
         {
-            return ApiResult.CreateErr("没有这样的群请求");
+            return ApiResult.CreateErr($"没有这样的{Consts.GroupName}请求");
         }
 
         if (groupRequest.IsDone)
         {
-            return ApiResult.CreateErr("群请求已处理");
+            return ApiResult.CreateErr($"{Consts.GroupName}请求已处理");
         }
 
         var group = await _dbContext.Groups
@@ -366,7 +366,7 @@ public class RequestController : ControllerBase
 
         if (group.OwnerId != selfId)
         {
-            return ApiResult.CreateErr("不是群的所有者");
+            return ApiResult.CreateErr($"不是{Consts.GroupName}的所有者");
         }
 
         groupRequest.IsDone = true;
@@ -393,12 +393,12 @@ public class RequestController : ControllerBase
 
         if (groupRequest is null)
         {
-            return ApiResult.CreateErr("没有这样的群请求");
+            return ApiResult.CreateErr($"没有这样的{Consts.GroupName}请求");
         }
 
         if (groupRequest.IsDone)
         {
-            return ApiResult.CreateErr("群请求已处理");
+            return ApiResult.CreateErr($"{Consts.GroupName}请求已处理");
         }
 
         var group = await _dbContext.Groups
@@ -407,7 +407,7 @@ public class RequestController : ControllerBase
 
         if (group.OwnerId != selfId)
         {
-            return ApiResult.CreateErr("不是群的所有者");
+            return ApiResult.CreateErr($"不是{Consts.GroupName}的所有者");
         }
 
         groupRequest.IsDone = true;

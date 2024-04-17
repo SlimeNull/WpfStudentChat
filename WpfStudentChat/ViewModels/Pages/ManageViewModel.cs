@@ -27,7 +27,7 @@ public partial class ManageViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task ImportUsers() // Id UserName Nickname Password
+    public async Task ImportUsers() // Id UserName Nickname Password GroupName
     {
         OpenFileDialog dialog = new()
         {
@@ -43,7 +43,7 @@ public partial class ManageViewModel : ObservableObject
             XSSFWorkbook workbook = new(dialog.FileName);
             var sheet = workbook.GetSheetAt(0);
 
-            var users = new List<(User User, string Password)>();
+            var users = new List<(User User, string Password, string? GroupName)>();
 
             for (int i = 1; i <= sheet.LastRowNum; i++)
             {
@@ -60,6 +60,8 @@ public partial class ManageViewModel : ObservableObject
 
                 var passwordCell = row.GetCell(3);
                 var password = passwordCell.ToString();
+
+                var groupName = row.GetCell(4)?.ToString();
 
                 if (user.Id < 0)
                 {
@@ -79,14 +81,15 @@ public partial class ManageViewModel : ObservableObject
                     return;
                 }
 
-                users.Add((user, password));
+                users.Add((user, password, groupName));
             }
 
-            foreach (var (user, password) in users)
+            foreach (var (user, password, groupName) in users)
             {
                 try
                 {
-                    await _chatClientService.Client.AddUser(user, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(password))));
+                    var passwordHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(password)));
+                    await _chatClientService.Client.AddUser(user, passwordHash, groupName);
                 }
                 catch (Exception ex)
                 {

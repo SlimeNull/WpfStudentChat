@@ -10,9 +10,14 @@
       xmlns:ws="https://github.com/OrgEleCho/EleCho.WpfSuite"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      d:DataContext="{d:DesignInstance Type=local:ChatPage,IsDesignTimeCreatable=False}">
+      d:DataContext="{d:DesignInstance Type=local:ChatPage,IsDesignTimeCreatable=False}"
+      d:Background="White">
 
     <Page.Resources>
+        <ws:ValueConverterGroup x:Key="UnreadMessageVisibility">
+            <ws:NumberCompareConverter Comparison="GreatorThan" TargetValue="0" />
+            <ws:BooleanToVisibilityConverter />
+        </ws:ValueConverterGroup>
         <ws:BindingProxy x:Key="DataProxy" Data="{Binding}"/>
     </Page.Resources>
 
@@ -25,31 +30,54 @@
         <Border>
             <ListView ItemsSource="{Binding ViewModel.Sessions}"
                       SelectedItem="{Binding ViewModel.SelectedSession}"
-                      ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                      d:ItemsSource="{d:SampleData ItemCount=5}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="3" Orientation="Horizontal"
-                                    Background="Transparent">
-                            <StackPanel.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="删除"
-                                              Command="{Binding Source={StaticResource DataProxy},Path=Data.DeleteSessionCommand}"
-                                              CommandParameter="{Binding}"/>
-                                </ContextMenu>
-                            </StackPanel.ContextMenu>
-                            <ws:Image Width="32" Height="32" CornerRadius="3">
-                                <b:Interaction.Behaviors>
-                                    <mb:ChatImageLoadBehavior ImageHash="{Binding Subject.AvatarHash}"/>
-                                </b:Interaction.Behaviors>
-                            </ws:Image>
-                            <StackPanel Margin="8 0 0 0">
-                                <TextBlock Text="{Binding Subject.Name}"
-                                           FontSize="14"/>
-                                <TextBlock TextWrapping="NoWrap"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                           Text="{Binding LastMessageSummary}"/>
+                        <Grid>
+                            <Border HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Background="Red"
+                                    CornerRadius="5"
+                                    Width="15"
+                                    Height="12"
+                                    Visibility="{Binding UnreadMessageCount,Converter={StaticResource UnreadMessageVisibility}}">
+                                <TextBlock Text="{Binding UnreadMessageCount}"
+                                           Padding="0"
+                                           Margin="0"
+                                           d:Text="99"
+                                           FontSize="9"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center">
+                                    <TextBlock.Background>
+                                        <SolidColorBrush/>
+                                    </TextBlock.Background>
+                                </TextBlock>
+                            </Border>
+                            <StackPanel Margin="3" Orientation="Horizontal"
+                                        Background="Transparent">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="删除"
+                                                  Command="{Binding Source={StaticResource DataProxy},Path=Data.DeleteSessionCommand}"
+                                                  CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <ws:Image Width="32" Height="32" CornerRadius="3">
+                                    <b:Interaction.Behaviors>
+                                        <mb:ChatImageLoadBehavior ImageHash="{Binding Subject.AvatarHash}"/>
+                                    </b:Interaction.Behaviors>
+                                </ws:Image>
+                                <StackPanel Margin="8 0 0 0">
+                                    <TextBlock Text="{Binding Subject.Name}"
+                                               FontSize="14"/>
+                                    <TextBlock TextWrapping="NoWrap"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Text="{Binding LastMessageSummary}"/>
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

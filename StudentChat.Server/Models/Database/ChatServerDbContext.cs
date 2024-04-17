@@ -98,6 +98,11 @@ public class ChatServerDbContext : DbContext
             .HasForeignKey(e => e.GroupId)
             .IsRequired();
 
+        // Group.Name - Unique
+        modelBuilder.Entity<Group>()
+            .HasIndex(v => v.Name)
+            .IsUnique();
+
         // User.SentMessages
         modelBuilder.Entity<User>()
             .HasMany(e => e.SentPrivateMessages)

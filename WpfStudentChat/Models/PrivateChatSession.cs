@@ -1,20 +1,26 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Data;
 using StudentChat.Models;
 
 namespace WpfStudentChat.Models;
 
-public class PrivateChatSession : ObservableObject, IChatSession
+public partial class PrivateChatSession : ObservableObject, IChatSession
 {
     public PrivateChatSession(User subject)
     {
         Subject = subject;
 
         Messages.CollectionChanged += Messages_CollectionChanged;
+        BindingOperations.EnableCollectionSynchronization(Messages, Messages);
     }
 
     public User Subject { get; set; }
 
     public ObservableCollection<PrivateMessage> Messages { get; } = new();
+
+    [ObservableProperty] private int _unreadMessageCount;
+
+    public DateTimeOffset LastReadTime { get; set; }
 
     public string LastMessageSummary
     {

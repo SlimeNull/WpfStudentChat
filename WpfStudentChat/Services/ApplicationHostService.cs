@@ -45,8 +45,11 @@ public class ApplicationHostService : IHostedService
     private async Task HandleActivationAsync()
     {
         using var scope = _serviceProvider.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ChatDbContext>();
-        await db.Database.EnsureCreatedAsync();
+        var db = scope.ServiceProvider.GetService<ChatDbContext>();
+        if (db is { })
+        {
+            await db.Database.EnsureCreatedAsync();
+        }
 
         var chatClientService = _serviceProvider.GetRequiredService<ChatClientService>();
         var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
@@ -55,7 +58,7 @@ public class ApplicationHostService : IHostedService
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             _navigationWindow = mainWindow;
             _navigationWindow.ShowWindow();
-
+            
             if (!chatClientService.Client.IsAdmin)
             {
                 _navigationWindow.Navigate(typeof(Views.Pages.ChatPage));

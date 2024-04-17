@@ -1,20 +1,24 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Data;
 using StudentChat.Models;
 
 namespace WpfStudentChat.Models;
 
-public class GroupChatSession : ObservableObject, IChatSession
+public partial class GroupChatSession : ObservableObject, IChatSession
 {
     public GroupChatSession(Group subject)
     {
         Subject = subject;
 
         Messages.CollectionChanged += Messages_CollectionChanged;
+        BindingOperations.EnableCollectionSynchronization(Messages, Messages);
     }
 
     public Group Subject { get; }
 
     public ObservableCollection<GroupMessage> Messages { get; } = new();
+
+    public DateTimeOffset LastReadTime { get; set; }
 
     public string LastMessageSummary
     {
@@ -34,6 +38,8 @@ public class GroupChatSession : ObservableObject, IChatSession
             return lastMessage.Content;
         }
     }
+
+    [ObservableProperty] private int _unreadMessageCount;
 
     IIdentifiable IChatSession.Subject => Subject;
     IEnumerable<Message> IChatSession.Messages => Messages;
