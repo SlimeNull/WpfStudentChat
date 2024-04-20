@@ -237,7 +237,9 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <ws:StackPanel Orientation="Horizontal" Spacing="2">
-                    <ui:Button Content="发送图片" Padding="3 2" Command="{Binding OpenSendImageWindowCommand}"/>
+                    <ui:Button Content="发送图片" Padding="3 2"
+                               Appearance="Secondary"
+                               Command="{Binding OpenSendImageWindowCommand}"/>
                     <ui:Button Content="发送文件" Padding="3 2"/>
                 </ws:StackPanel>
                 <ui:TextBox Grid.Row="1"
@@ -253,6 +255,7 @@
                 <ui:Button Grid.Row="1"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Right"
+                           Appearance="Primary"
                            Margin="12"
                            Content="发送"
                            Command="{Binding SendMessageCommand}"/>

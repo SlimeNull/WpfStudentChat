@@ -135,4 +135,10 @@ public partial class MainWindow : Wpf.Ui.Controls.UiWindow, INavigationWindow
 
         _ = LoadProfileCommand.ExecuteAsync(null);
     }
+
+    [RelayCommand]
+    public void MarkCurrentChatSessionMessageAsRead()
+    {
+
+    }
 }

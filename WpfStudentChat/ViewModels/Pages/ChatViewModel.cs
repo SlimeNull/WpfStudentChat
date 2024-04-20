@@ -190,9 +190,15 @@ public partial class ChatViewModel : ObservableObject, IRecipient<PrivateMessage
         if (session is null)
             return;
 
-        await _chatClientService.Client.SetFriendMessageLastTime(message.Message.SenderId, DateTimeOffset.Now);
+        if (session != SelectedSession)
+        {
+            session.UnreadMessageCount++;
+        }
 
-        session.UnreadMessageCount++;
+        if (session == SelectedSession)
+        {
+            await _chatClientService.Client.SetFriendMessageLastTime(message.Message.SenderId, DateTimeOffset.Now);
+        }
     }
 
     async void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
@@ -201,8 +207,14 @@ public partial class ChatViewModel : ObservableObject, IRecipient<PrivateMessage
         if (session is null)
             return;
 
-        session.UnreadMessageCount++;
+        if (session != SelectedSession)
+        {
+            session.UnreadMessageCount++;
+        }
 
-        await _chatClientService.Client.SetGroupMessageLastTime(message.Message.GroupId, DateTimeOffset.Now);
+        if (session == SelectedSession)
+        {
+            await _chatClientService.Client.SetGroupMessageLastTime(message.Message.GroupId, DateTimeOffset.Now);
+        }
     }
 }

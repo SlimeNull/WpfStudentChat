@@ -45,13 +45,15 @@
                     <StackPanel Orientation="Horizontal"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center">
-                        <Button Content="聊天"
-                                Padding="15 6"
-                                Command="{Binding StartChatCommand}"/>
-                        <Button Content="删除"
-                                Padding="15 6"
-                                Margin="8 0 0 0 "
-                                Command="{Binding DeleteContactCommand}"/>
+                        <ui:Button Content="聊天"
+                                   Padding="15 6"
+                                   Appearance="Primary"
+                                   Command="{Binding StartChatCommand}"/>
+                        <ui:Button Content="删除"
+                                   Padding="15 6"
+                                   Margin="8 0 0 0 "
+                                   Appearance="Danger"
+                                   Command="{Binding DeleteContactCommand}"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>

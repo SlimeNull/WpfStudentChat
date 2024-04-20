@@ -135,6 +135,7 @@ namespace WpfStudentChat.Views.Pages
             {
                 var newSession = await ViewModel.AddPrivateSessionAsync(message.Message.SenderId);
                 newSession.Messages.Add(message.Message);
+                newSession.UnreadMessageCount = 1;
             }
         }
 
@@ -144,6 +145,7 @@ namespace WpfStudentChat.Views.Pages
             {
                 var newSession = await ViewModel.AddGroupSessionAsync(message.Message.GroupId);
                 newSession.Messages.Add(message.Message);
+                newSession.UnreadMessageCount = 1;
             }
         }
     }

@@ -42,6 +42,12 @@ public partial class PrivateMessagesPage : Page, IRecipient<PrivateMessageReceiv
         if (ViewModel.Session is null)
             return;
 
+        if (message.Message.SenderId != ViewModel.Session.Subject.Id &&
+            message.Message.ReceiverId != ViewModel.Session.Subject.Id)
+        {
+            return;
+        }
+
         var atBottom = MessagesScrollViewer.IsAtBottom();
         ViewModel.Session.Messages.Add(message.Message);
 

@@ -33,7 +33,7 @@ public partial class AiChatPage : Page
         DataContext = this;
         _chat = new OpenAIClient(new OpenAIAuthentication(configuration["OpenAi:Api-Key"]));
         InitializeComponent();
-        _chatClientService = chatClientService;
+        _chatClientService = chatClientService; 
 
         if (_chatClientService.Client.IsAdmin)
         {

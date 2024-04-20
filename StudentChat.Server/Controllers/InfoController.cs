@@ -163,7 +163,7 @@ public class InfoController : ControllerBase
             return ApiResult<CreateGroupResultData>.CreateErr($"{Consts.GroupName}不能为空");
         }
 
-        if(_dbContext.Groups.Any(g => g.Name == request.Group.Name))
+        if (_dbContext.Groups.Any(g => g.Name == request.Group.Name))
         {
             return ApiResult<CreateGroupResultData>.CreateErr($"{Consts.GroupName}已被使用");
         }
@@ -175,6 +175,15 @@ public class InfoController : ControllerBase
                 Name = request.Group.Name,
                 Description = request.Group.Description,
                 AvatarHash = request.Group.AvatarHash,
+            });
+
+        await _dbContext.SaveChangesAsync();
+
+        await _dbContext.GroupMembers.AddAsync(
+            new GroupMember()
+            {
+                GroupId = entry.Entity.Id,
+                UserId = selfUserId,
             });
 
         await _dbContext.SaveChangesAsync();
@@ -322,12 +331,12 @@ public class InfoController : ControllerBase
     {
         var selfUserId = HttpContext.GetUserId();
         var selfUser = await _dbContext.Users
-            .Include(user => user.OwnedGroups)
+            //.Include(user => user.OwnedGroups)
             .Include(user => user.JoindGroups)
             .FirstAsync(user => user.Id == selfUserId);
 
-        var groups = selfUser.OwnedGroups
-            .Concat(selfUser.JoindGroups)
+        var groups = selfUser.JoindGroups
+            //.Concat(selfUser.OwnedGroups)
             .Select(group => (CommonModels.Group)group)
             .ToArray();
 
@@ -340,13 +349,13 @@ public class InfoController : ControllerBase
         var userId = HttpContext.GetUserId();
 
         var from = await _dbContext.UserFriends.FirstOrDefaultAsync(v => v.FromUserId == userId && v.ToUserId == request.FriendUserId);
-        if(from is { })
+        if (from is { })
         {
             return ApiResult<GetFriendMessageLastTimeResultData>.CreateOk(new(from.FromLastReadTime));
         }
 
         var to = await _dbContext.UserFriends.FirstOrDefaultAsync(v => v.FromUserId == request.FriendUserId && v.ToUserId == userId);
-        if(to is { })
+        if (to is { })
         {
             return ApiResult<GetFriendMessageLastTimeResultData>.CreateOk(new(to.ToLastReadTime));
         }
@@ -386,7 +395,7 @@ public class InfoController : ControllerBase
         var userId = HttpContext.GetUserId();
 
         var member = await _dbContext.GroupMembers.FirstOrDefaultAsync(v => v.UserId == userId && v.GroupId == request.GroupId);
-        if(member is { })
+        if (member is { })
         {
             return ApiResult<GetGroupMessageLastTimeResultData>.CreateOk(new(member.LastReadTime));
         }
@@ -400,7 +409,7 @@ public class InfoController : ControllerBase
         var userId = HttpContext.GetUserId();
 
         var member = await _dbContext.GroupMembers.FirstOrDefaultAsync(v => v.UserId == userId && v.GroupId == request.GroupId);
-        if(member is { })
+        if (member is { })
         {
             member.LastReadTime = request.DateTime;
             _dbContext.Update(member);
