@@ -114,15 +114,17 @@
                                         </b:Interaction.Behaviors>
                                     </ws:Image>
 
+                                    <!-- 消息框 -->
                                     <ws:StackPanel x:Name="MessageContents"
                                                    Grid.Column="2"
-                                                   Spacing="8"
+                                                   Spacing="4"
                                                    HorizontalAlignment="Left">
-                                        <ui:Card Padding="8 8 8 0">
+                                        <ui:Card x:Name="Card"
+                                                 Padding="8 8 8 0">
                                             <StackPanel>
-                                                <TextBox Margin="0 0 0 8"
+                                                <TextBox x:Name="MessageTextBox"
+                                                         Margin="0 0 0 8"
                                                          IsReadOnly="True"
-                                                         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                                          Background="Transparent"
                                                          BorderThickness="0"
                                                          TextWrapping="Wrap"
@@ -206,6 +208,7 @@
                                                 </ItemsControl>
                                             </StackPanel>
                                         </ui:Card>
+                                        <TextBlock Text="{Binding SentTime,StringFormat='{}{0:yyyy/MM/dd HH:mm:ss}'}" />
                                     </ws:StackPanel>
                                 </Grid>
                                 <DataTemplate.Triggers>
@@ -213,6 +216,8 @@
                                                  Value="True">
                                         <Setter TargetName="Avatar" Property="Grid.Column" Value="4"/>
                                         <Setter TargetName="MessageContents" Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter TargetName="Card" Property="Control.Background" Value="DodgerBlue"/>
+                                        <Setter TargetName="MessageTextBox" Property="Control.Foreground" Value="White"/>
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>

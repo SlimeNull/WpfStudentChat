@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Security.Cryptography;
 using Microsoft.Win32;
 using StudentChat.Models;
 using WpfStudentChat.Services;
@@ -17,7 +18,7 @@ public partial class EditUserWindow : Window, INotifyPropertyChanged
 
     public User? User { get; set; } // clone
 
-    public string? UserPassword { get; set; }
+    public string? UserPasswordHash { get; set; }
     public Stream? AvatarStream { get; set; }
     public string? AvatarName { get; set; }
 
@@ -36,7 +37,7 @@ public partial class EditUserWindow : Window, INotifyPropertyChanged
         if (User is null)
             return;
 
-        await _chatClientService.Client.UpdateUserInfo(User, UserPassword);
+        await _chatClientService.Client.UpdateUserInfo(User, UserPasswordHash);
         DialogResult = true;
         Close();
     }
@@ -44,7 +45,9 @@ public partial class EditUserWindow : Window, INotifyPropertyChanged
     [RelayCommand]
     public void ResetPassword()
     {
-        UserPassword = "1234"; // 重置密码成1234
+        byte[] passwordHash = SHA256.HashData("1234"u8);
+        string passwordHashText = Convert.ToHexString(passwordHash);
+        UserPasswordHash = passwordHashText; // 重置密码成1234
     }
 
     [RelayCommand]

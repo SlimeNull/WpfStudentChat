@@ -63,6 +63,7 @@ public partial class PrivateMessagesPage : Page, IRecipient<PrivateMessageReceiv
             }
 
             await _chatClientService.Client.SendPrivateMessageAsync(ViewModel.Session.Subject.Id, textInput, null, null);
+            _ = _chatClientService.Client.SetFriendMessageLastTime(ViewModel.Session.Subject.Id, DateTimeOffset.Now);
         }
         catch (Exception ex)
         {
