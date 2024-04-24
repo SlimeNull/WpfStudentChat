@@ -25,7 +25,8 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
     IRecipient<FriendDecreasedMessage>,
     IRecipient<GroupIncreasedMessage>,
     IRecipient<GroupDecreasedMessage>,
-    IRecipient<FriendRequestReceivedMessage>
+    IRecipient<FriendRequestReceivedMessage>,
+    IRecipient<GroupRequestReceivedMessage>
 {
     private readonly ChatClientService _chatClientService;
     private readonly IServiceProvider _serviceProvider;
@@ -56,6 +57,7 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         messenger.Register<GroupIncreasedMessage>(this);
         messenger.Register<GroupDecreasedMessage>(this);
         messenger.Register<FriendRequestReceivedMessage>(this);
+        messenger.Register<GroupRequestReceivedMessage>(this);
 
         _friendRequestButtonAdorner = new UnreadAdorner(FriendRequestButton);
     }
@@ -223,6 +225,14 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         _friendRequestButtonAdorner.IsShow = true;
     }
 
+    void IRecipient<GroupRequestReceivedMessage>.Receive(GroupRequestReceivedMessage message)
+    {
+        if (message.Request.SenderId == _chatClientService.Client.GetSelfUserId())
+            return;
+
+        _friendRequestButtonAdorner.IsShow = true;
+    }
+
     private void ContactsListView_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
     {
         if (!e.Handled)
@@ -240,4 +250,5 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
                 parent.RaiseEvent(eventArg);
         }
     }
+
 }

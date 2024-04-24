@@ -240,7 +240,7 @@
                     <ui:Button Content="发送图片" Padding="3 2"
                                Appearance="Secondary"
                                Command="{Binding OpenSendImageWindowCommand}"/>
-                    <ui:Button Content="发送文件" Padding="3 2"/>
+                    <ui:Button Content="发送文件" Padding="3 2" Command="{Binding OpenSendFileDialogCommand}"/>
                 </ws:StackPanel>
                 <ui:TextBox Grid.Row="1"
                             Margin="0 1 0 0"

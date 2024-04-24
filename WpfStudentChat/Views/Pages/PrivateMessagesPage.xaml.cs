@@ -117,4 +117,38 @@ public partial class PrivateMessagesPage : Page, IRecipient<PrivateMessageReceiv
             }
         }
     }
+
+    [RelayCommand]
+    public async Task OpenSendFileDialog()
+    {
+        if (ViewModel.Session is null)
+            return;
+
+        var ofd = new OpenFileDialog()
+        {
+            CheckFileExists = true,
+            Filter = "Any file|*.*"
+        };
+
+        if (ofd.ShowDialog() ?? false)
+        {
+            try
+            {
+                var fileName = System.IO.Path.GetFileName(ofd.FileName);
+                var fileStream = File.OpenRead(ofd.FileName);
+                string attachmentHash = await _chatClientService.Client.UploadFileAsync(fileStream, fileName);
+                var fileAttachment = new Attachment()
+                {
+                    Name = fileName,
+                    AttachmentHash = attachmentHash
+                };
+
+                await _chatClientService.Client.SendPrivateMessageAsync(ViewModel.Session.Subject.Id, string.Empty, null, new Attachment[] { fileAttachment });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(App.Current.MainWindow, $"发送失败. {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
 }

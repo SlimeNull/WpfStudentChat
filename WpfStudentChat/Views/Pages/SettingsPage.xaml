@@ -26,7 +26,7 @@
             <ui:Button Content="修改密码"
                        Padding="10"
                        FontSize="18"
-                       Command="{Binding ViewModel.SetPasswordCommand}"/>
+                       Command="{Binding ViewModel.ShowSetPasswordWindowCommand}"/>
             <ui:Button Content="退出登录"
                        Padding="10"
                        FontSize="18"

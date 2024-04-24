@@ -5,7 +5,7 @@ namespace WpfStudentChat.ViewModels.Windows;
 public partial class SendImageViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _imagePath = string.Empty;
+    private string? _imagePath;
 
     [ObservableProperty]
     private string _caption = string.Empty;

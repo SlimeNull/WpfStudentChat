@@ -77,12 +77,16 @@ public class InfoController : ControllerBase
         var selfUserId = HttpContext.GetUserId();
         var user = await _dbContext.Users.FirstAsync(user => user.Id == selfUserId);
 
-        if (string.IsNullOrWhiteSpace(request.PasswordHash))
-        {
+        if (string.IsNullOrWhiteSpace(request.OldPasswordHash))
             return ApiResult.CreateErr("密码哈希值无效");
-        }
 
-        user.PasswordHash = request.PasswordHash;
+        if (string.IsNullOrWhiteSpace(request.NewPasswordHash))
+            return ApiResult.CreateErr("密码哈希值无效");
+
+        if(request.OldPasswordHash != user.PasswordHash)
+            return ApiResult.CreateErr("旧密码不正确");
+
+        user.PasswordHash = request.NewPasswordHash;
 
         await _dbContext.SaveChangesAsync();
 

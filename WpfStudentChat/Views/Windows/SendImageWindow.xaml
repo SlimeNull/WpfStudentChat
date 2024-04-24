@@ -12,6 +12,11 @@
         WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance Type=local:SendImageWindow}">
+
+    <Window.Resources>
+        <ws:StringToImageSourceConverter x:Key="StringToImageSourceConverter"/>
+    </Window.Resources>
+
     <Grid>
         <ws:StackPanel Margin="14" Spacing="8">
             <!--<Border Background="Transparent"
@@ -27,7 +32,7 @@
                 <ws:Image MaxWidth="300"
                           MaxHeight="400"
                           CornerRadius="5"
-                          Source="{Binding ViewModel.ImagePath}"
+                          Source="{Binding ViewModel.ImagePath,Converter={StaticResource StringToImageSourceConverter}}"
                           Background="Transparent"
                           BorderThickness="1"
                           BorderBrush="Gray">

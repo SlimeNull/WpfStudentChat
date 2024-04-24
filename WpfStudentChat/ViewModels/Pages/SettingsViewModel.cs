@@ -1,6 +1,7 @@
 ﻿using Wpf.Ui.Appearance;
 using Wpf.Ui.Common.Interfaces;
 using WpfStudentChat.Services;
+using WpfStudentChat.Views.Windows;
 
 namespace WpfStudentChat.ViewModels.Pages;
 
@@ -68,18 +69,10 @@ public partial class SettingsViewModel : ObservableObject, INavigationAware
     }
 
     [RelayCommand]
-    private async Task SetPassword()
+    private void OnShowSetPasswordWindow()
     {
-        var password = Microsoft.VisualBasic.Interaction.InputBox("设置密码", "提示");
-        if(string.IsNullOrWhiteSpace(password))
-            return;
-
-        if(password.Length < 6)
-        {
-            MessageBox.Show("密码不能小于6位", "警告", icon: MessageBoxImage.Warning, button: MessageBoxButton.OK);
-            return;
-        }
-
-        await _chatClientService.Client.SetSelfPasswordAsync(password);
+        var window = new SetPasswordWindow(_chatClientService);
+        window.Owner = Application.Current.MainWindow;
+        window.ShowDialog();
     }
 }

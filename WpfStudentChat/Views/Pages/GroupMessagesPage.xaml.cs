@@ -98,7 +98,7 @@ namespace WpfStudentChat.Views.Pages
         }
 
         [RelayCommand]
-        public async void OpenSendFileDialog()
+        public async Task OpenSendFileDialog()
         {
             if (ViewModel.Session is null)
                 return;
@@ -132,7 +132,7 @@ namespace WpfStudentChat.Views.Pages
         }
 
         [RelayCommand]
-        public async void SaveAttachment(Attachment attachment)
+        public async Task SaveAttachment(Attachment attachment)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {

@@ -43,7 +43,7 @@ namespace StudentChat.Models.Network
     public record class GetGroupResultData(Group Group);
     public record class SetUserRequestData(User User);
     public record class SetGroupRequestData(Group Group);
-    public record class SetPasswordRequestData(string PasswordHash);
+    public record class SetPasswordRequestData(string OldPasswordHash, string NewPasswordHash);
     public record class CreateGroupRequestData(Group Group);
     public record class CreateGroupResultData(Group Group);
 

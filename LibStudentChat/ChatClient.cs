@@ -466,15 +466,19 @@ public class ChatClient
             new SetUserRequestData(profile));
     }
 
-    public async Task SetSelfPasswordAsync(string password)
+    public async Task SetSelfPasswordAsync(string oldPassword, string newPassword)
     {
-        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-        byte[] passwordHash = SHA256.HashData(passwordBytes);
-        string passwordHashText = Convert.ToHexString(passwordHash);
+        byte[] oldPasswordBytes = Encoding.UTF8.GetBytes(oldPassword);
+        byte[] oldPasswordHash = SHA256.HashData(oldPasswordBytes);
+        string oldPasswordHashText = Convert.ToHexString(oldPasswordHash);
+
+        byte[] newPasswordBytes = Encoding.UTF8.GetBytes(newPassword);
+        byte[] newPasswordHash = SHA256.HashData(newPasswordBytes);
+        string newPasswordHashText = Convert.ToHexString(newPasswordHash);
 
         await PostAsync<SetPasswordRequestData>(
             "api/Info/SetSelfPassword",
-            new SetPasswordRequestData(passwordHashText));
+            new SetPasswordRequestData(oldPasswordHashText, newPasswordHashText));
     }
 
     public async Task<User> GetUserAsync(int userId)
