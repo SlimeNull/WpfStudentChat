@@ -1,5 +1,8 @@
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StudentChat.Server.Models;
@@ -9,6 +12,15 @@ using StudentChat.Server.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddHttpsRedirection(options =>
+    {
+        options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+        options.HttpsPort = 443;
+    });
+}
 
 // Add services to the container.
 
@@ -40,7 +52,8 @@ builder.Services.AddSwaggerGen(options =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
-            } , new string[]{}
+            },
+            []
         }
     });
 });
@@ -48,15 +61,17 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddSingleton<NotifyService>();
 builder.Services.AddScoped<AuthService>();
 
+var mysqlConnectionString = configuration.GetConnectionString("MySql");
+builder.Services.AddMySql<ChatServerDbContext>(mysqlConnectionString, ServerVersion.AutoDetect(mysqlConnectionString));
 #if DEBUG
-builder.Services.AddSqlite<ChatServerDbContext>("Data Source=bin/ChatServer.db");
+//builder.Services.AddSqlite<ChatServerDbContext>("Data Source=bin/ChatServer.db");
 #else
-builder.Services.AddSqlite<ChatServerDbContext>("Data Source=ChatServer.db");
+//builder.Services.AddSqlite<ChatServerDbContext>("Data Source=ChatServer.db");
 #endif
 
 builder.Services.Configure<AppConfig>(builder.Configuration.GetSection("AppConfig"));
 
-// ��Ȩ
+// 授权
 builder.Services.AddAuthentication(options => options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -85,6 +100,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -104,7 +121,7 @@ using (var scope = app.Services.CreateScope())
         await dbContext.Users.AddAsync(new User()
         {
             UserName = "Test",
-            PasswordHash = HashUtils.SHA256Text("TestHash"),
+             PasswordHash = HashUtils.SHA256Text("TestHash"),
         });
     }
 
@@ -123,3 +140,4 @@ using (var scope = app.Services.CreateScope())
 #endif
 
 await app.WaitForShutdownAsync();
+

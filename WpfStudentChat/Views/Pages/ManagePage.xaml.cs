@@ -60,6 +60,9 @@ public partial class ManagePage : Page
     {
         var users = userDataGrid.SelectedItems.Cast<User>().ToArray();
 
+        if (MessageBox.Show("是否确认删除", "警告", MessageBoxButton.YesNo) is not MessageBoxResult.Yes)
+            return;
+
         foreach (var user in users)
         {
             try

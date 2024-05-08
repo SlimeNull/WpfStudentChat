@@ -16,6 +16,7 @@ public partial class SetPasswordWindow : Window
 
     public SetPasswordWindow(ChatClientService chatClientService)
     {
+        DataContext = this;
         InitializeComponent();
         _chatClientService = chatClientService;
     }
@@ -40,12 +41,12 @@ public partial class SetPasswordWindow : Window
         {
             await _chatClientService.Client.SetSelfPasswordAsync(OldPassword, NewPassword);
             MessageBox.Show("修改成功");
+            Close();
         }
         catch (Exception ex)
         {
             MessageBox.Show($"修改失败 {ex.Message}");
         }
-        Close();
     }
 
     [RelayCommand]

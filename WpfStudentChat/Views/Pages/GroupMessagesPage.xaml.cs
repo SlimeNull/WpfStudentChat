@@ -23,138 +23,150 @@ using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
 using WpfStudentChat.Views.Windows;
 
-namespace WpfStudentChat.Views.Pages
+namespace WpfStudentChat.Views.Pages;
+
+/// <summary>
+/// GroupMessagesPage.xaml 的交互逻辑
+/// </summary>
+public partial class GroupMessagesPage : Page, IRecipient<GroupMessageReceivedMessage>
 {
-    /// <summary>
-    /// GroupMessagesPage.xaml 的交互逻辑
-    /// </summary>
-    public partial class GroupMessagesPage : Page, IRecipient<GroupMessageReceivedMessage>
+    private readonly ChatClientService _chatClientService;
+
+    public GroupMessagesPage(
+        GroupMessagesViewModel viewModel,
+        ChatClientService chatClientService,
+        IMessenger messenger)
     {
-        private readonly ChatClientService _chatClientService;
 
-        public GroupMessagesPage(
-            GroupMessagesViewModel viewModel,
-            ChatClientService chatClientService,
-            IMessenger messenger)
+        ViewModel = viewModel;
+        _chatClientService = chatClientService;
+        DataContext = this;
+
+        InitializeComponent();
+
+        messenger.Register<GroupMessageReceivedMessage>(this);
+    }
+
+    public GroupMessagesViewModel ViewModel { get; }
+
+    void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
+    {
+        if (ViewModel.Session is null)
+            return;
+
+        bool atBottom = MessagesScrollViewer.IsAtBottom();
+        ViewModel.Session.Messages.Add(message.Message);
+
+        if (atBottom)
+            MessagesScrollViewer.ScrollToBottom();
+    }
+
+    [RelayCommand]
+    public async Task SendMessageAsync()
+    {
+        string textInput = ViewModel.TextInput;
+
+        if (string.IsNullOrEmpty(textInput))
+            return;
+
+        try
         {
-
-            ViewModel = viewModel;
-            _chatClientService = chatClientService;
-            DataContext = this;
-
-            InitializeComponent();
-
-            messenger.Register<GroupMessageReceivedMessage>(this);
-        }
-
-        public GroupMessagesViewModel ViewModel { get; }
-
-        void IRecipient<GroupMessageReceivedMessage>.Receive(GroupMessageReceivedMessage message)
-        {
+            ViewModel.TextInput = string.Empty;
             if (ViewModel.Session is null)
+            {
                 return;
+            }
 
-            bool atBottom = MessagesScrollViewer.IsAtBottom();
-            ViewModel.Session.Messages.Add(message.Message);
-
-            if (atBottom)
-                MessagesScrollViewer.ScrollToBottom();
+            await _chatClientService.Client.SendGroupMessageAsync(ViewModel.Session.Subject.Id, textInput, null, null);
         }
-
-        [RelayCommand]
-        public async Task SendMessageAsync()
+        catch (Exception ex)
         {
-            string textInput = ViewModel.TextInput;
+            ViewModel.TextInput = textInput;
+            MessageBox.Show(App.Current.MainWindow, $"Failed to send message. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 
+    [RelayCommand]
+    public void OpenSendImageWindow()
+    {
+        if (ViewModel.Session is null)
+            return;
+
+        using var scope = App.Host.Services.CreateScope();
+        var window = scope.ServiceProvider.GetRequiredService<SendImageWindow>();
+        window.Owner = App.Current.MainWindow;
+        window.ViewModel.Target = ViewModel.Session.Subject;
+
+        window.ShowDialog();
+    }
+
+    [RelayCommand]
+    public async Task OpenSendFileDialog()
+    {
+        if (ViewModel.Session is null)
+            return;
+
+        var ofd = new OpenFileDialog()
+        {
+            CheckFileExists = true,
+            Filter = "Any file|*.*"
+        };
+
+        if (ofd.ShowDialog() ?? false)
+        {
             try
             {
-                ViewModel.TextInput = string.Empty;
-                if (ViewModel.Session is null)
+                var fileName = System.IO.Path.GetFileName(ofd.FileName);
+                var fileStream = File.OpenRead(ofd.FileName);
+                string attachmentHash = await _chatClientService.Client.UploadFileAsync(fileStream, fileName);
+                var fileAttachment = new Attachment()
                 {
-                    return;
-                }
+                    Name = fileName,
+                    AttachmentHash = attachmentHash
+                };
 
-                await _chatClientService.Client.SendGroupMessageAsync(ViewModel.Session.Subject.Id, textInput, null, null);
+                await _chatClientService.Client.SendGroupMessageAsync(ViewModel.Session.Subject.Id, string.Empty, null, new Attachment[] { fileAttachment });
             }
             catch (Exception ex)
             {
-                ViewModel.TextInput = textInput;
-                MessageBox.Show(App.Current.MainWindow, $"Failed to send message. {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(App.Current.MainWindow, $"发送失败. {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+    }
 
-        [RelayCommand]
-        public void OpenSendImageWindow()
+    [RelayCommand]
+    public async Task SaveAttachment(Attachment attachment)
+    {
+        SaveFileDialog sfd = new SaveFileDialog()
         {
-            if (ViewModel.Session is null)
-                return;
+            FileName = attachment.Name,
+            Filter = "Any file|*.*",
+            CheckPathExists = true,
+        };
 
-            using var scope = App.Host.Services.CreateScope();
-            var window = scope.ServiceProvider.GetRequiredService<SendImageWindow>();
-            window.Owner = App.Current.MainWindow;
-            window.ViewModel.Target = ViewModel.Session.Subject;
-
-            window.ShowDialog();
-        }
-
-        [RelayCommand]
-        public async Task OpenSendFileDialog()
+        if (sfd.ShowDialog() ?? false)
         {
-            if (ViewModel.Session is null)
-                return;
-
-            var ofd = new OpenFileDialog()
+            try
             {
-                CheckFileExists = true,
-                Filter = "Any file|*.*"
-            };
+                using var attachmentStream = await _chatClientService.Client.GetImageAsync(attachment.AttachmentHash);
+                using var fileStream = File.Create(sfd.FileName);
 
-            if (ofd.ShowDialog() ?? false)
+                await attachmentStream.CopyToAsync(fileStream);
+            }
+            catch (Exception ex)
             {
-                try
-                {
-                    var fileName = System.IO.Path.GetFileName(ofd.FileName);
-                    var fileStream = File.OpenRead(ofd.FileName);
-                    string attachmentHash = await _chatClientService.Client.UploadFileAsync(fileStream, fileName);
-                    var fileAttachment = new Attachment()
-                    {
-                        Name = fileName,
-                        AttachmentHash = attachmentHash
-                    };
-
-                    await _chatClientService.Client.SendGroupMessageAsync(ViewModel.Session.Subject.Id, string.Empty, null, new Attachment[] { fileAttachment });
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(App.Current.MainWindow, $"发送失败. {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                MessageBox.Show(App.Current.MainWindow, $"保存失败. {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+    }
 
-        [RelayCommand]
-        public async Task SaveAttachment(Attachment attachment)
+    private async void TextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key == System.Windows.Input.Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
         {
-            SaveFileDialog sfd = new SaveFileDialog()
-            {
-                FileName = attachment.Name,
-                Filter = "Any file|*.*",
-                CheckPathExists = true,
-            };
-
-            if (sfd.ShowDialog() ?? false)
-            {
-                try
-                {
-                    using var attachmentStream = await _chatClientService.Client.GetImageAsync(attachment.AttachmentHash);
-                    using var fileStream = File.Create(sfd.FileName);
-
-                    await attachmentStream.CopyToAsync(fileStream);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(App.Current.MainWindow, $"保存失败. {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            e.Handled = true;
+            await SendMessageAsync();
+            return;
         }
     }
 }

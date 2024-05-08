@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Controls;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
@@ -59,6 +60,9 @@ public partial class PrivateMessagesPage : Page, IRecipient<PrivateMessageReceiv
     public async Task SendMessageAsync()
     {
         string textInput = ViewModel.TextInput;
+
+        if (string.IsNullOrEmpty(textInput))
+            return;
 
         try
         {
@@ -149,6 +153,16 @@ public partial class PrivateMessagesPage : Page, IRecipient<PrivateMessageReceiv
             {
                 MessageBox.Show(App.Current.MainWindow, $"发送失败. {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+    }
+
+    private async void TextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key == System.Windows.Input.Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+        {
+            e.Handled = true;
+            await SendMessageAsync();
+            return;
         }
     }
 }

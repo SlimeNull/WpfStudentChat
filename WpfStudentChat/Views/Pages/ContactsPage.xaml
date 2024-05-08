@@ -19,7 +19,7 @@
         <b:EventTrigger EventName="Loaded">
             <b:InvokeCommandAction Command="{Binding LoadFriendsAndGroupsCommand}"/>
             <b:InvokeCommandAction Command="{Binding LoadAdornerCommand}"/>
-            <b:InvokeCommandAction Command="{Binding EnsureFriendRequestsCommand}"/>
+            <b:InvokeCommandAction Command="{Binding EnsureRequestMessagesCommand}"/>
         </b:EventTrigger>
     </b:Interaction.Triggers>
 
@@ -57,7 +57,8 @@
                                    Margin="0 3 0 0"
                                    Appearance="Primary"
                                    Command="{Binding ShowFriendRequestsPageCommand}"/>
-                        <ui:Button HorizontalAlignment="Stretch"
+                        <ui:Button Name="GroupRequestButton"
+                                   HorizontalAlignment="Stretch"
                                    Content="群聊请求"
                                    Padding="0 3"
                                    Margin="0 3 0 0"

@@ -33,6 +33,7 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
     private readonly INavigationService _navigationService;
 
     private readonly UnreadAdorner _friendRequestButtonAdorner;
+    private readonly UnreadAdorner _groupRequestButtonAdorner;
 
     private bool isLoadedAdorner = false;
 
@@ -60,6 +61,7 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         messenger.Register<GroupRequestReceivedMessage>(this);
 
         _friendRequestButtonAdorner = new UnreadAdorner(FriendRequestButton);
+        _groupRequestButtonAdorner = new UnreadAdorner(GroupRequestButton);
     }
 
     [RelayCommand]
@@ -70,15 +72,22 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         isLoadedAdorner = true;
 
         AdornerLayer.GetAdornerLayer(FriendRequestButton).Add(_friendRequestButtonAdorner); // 红点
+        AdornerLayer.GetAdornerLayer(GroupRequestButton).Add(_groupRequestButtonAdorner); // 红点
     }
 
     [RelayCommand]
-    public async Task EnsureFriendRequests()
+    public async Task EnsureRequestMessages()
     {
-        var requests = await _chatClientService.Client.GetFriendRequestsAsync(0);
-        if(requests.Any(request => !request.IsDone && request.SenderId != _chatClientService.Client.GetSelfUserId()))
+        var friendRequests = await _chatClientService.Client.GetFriendRequestsAsync(0);
+        if(friendRequests.Any(request => !request.IsDone && request.SenderId != _chatClientService.Client.GetSelfUserId()))
         {
             _friendRequestButtonAdorner.IsShow = true;
+        }
+
+        var groupRequests = await _chatClientService.Client.GetGroupRequestsAsync(0);
+        if(groupRequests.Any(request => !request.IsDone && request.SenderId != _chatClientService.Client.GetSelfUserId()))
+        {
+            _groupRequestButtonAdorner.IsShow = true;
         }
     }
 
@@ -155,6 +164,7 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
     {
         var page = _serviceProvider.GetRequiredService<GroupRequestsPage>();
         ContentFrame.Content = page;
+        _groupRequestButtonAdorner.IsShow = false;
     }
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -230,7 +240,7 @@ public partial class ContactsPage : Page, INavigableView<ContactsViewModel>,
         if (message.Request.SenderId == _chatClientService.Client.GetSelfUserId())
             return;
 
-        _friendRequestButtonAdorner.IsShow = true;
+        _groupRequestButtonAdorner.IsShow = true;
     }
 
     private void ContactsListView_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)

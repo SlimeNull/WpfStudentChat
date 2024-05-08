@@ -21,106 +21,105 @@ using WpfStudentChat.Services;
 using WpfStudentChat.ViewModels.Pages;
 using WpfStudentChat.Views.Windows;
 
-namespace WpfStudentChat.Views.Pages
+namespace WpfStudentChat.Views.Pages;
+
+/// <summary>
+/// Interaction logic for GroupRequestsPage.xaml
+/// </summary>
+public partial class GroupRequestsPage : Page, 
+    IRecipient<GroupRequestReceivedMessage>
 {
-    /// <summary>
-    /// Interaction logic for GroupRequestsPage.xaml
-    /// </summary>
-    public partial class GroupRequestsPage : Page, 
-        IRecipient<GroupRequestReceivedMessage>
+    private readonly ChatClientService _chatClientService;
+    public GroupRequestsViewModel ViewModel { get; }
+
+    const int LoadCount = 20;
+
+    public GroupRequestsPage(
+        GroupRequestsViewModel viewModel, 
+        ChatClientService chatClientService,
+        IMessenger messenger)
     {
-        private readonly ChatClientService _chatClientService;
-        public GroupRequestsViewModel ViewModel { get; }
+        _chatClientService = chatClientService;
 
-        const int LoadCount = 20;
+        ViewModel = viewModel;
+        DataContext = this;
 
-        public GroupRequestsPage(
-            GroupRequestsViewModel viewModel, 
-            ChatClientService chatClientService,
-            IMessenger messenger)
+        InitializeComponent();
+
+        messenger.Register(this);
+    }
+
+
+    [RelayCommand]
+    public async Task LoadRequests()
+    {
+        try
         {
-            _chatClientService = chatClientService;
-
-            ViewModel = viewModel;
-            DataContext = this;
-
-            InitializeComponent();
-
-            messenger.Register(this);
+            var requests = await _chatClientService.Client.GetGroupRequestsAsync(0, LoadCount);
+            ViewModel.Requests.Clear();
+            foreach (var request in requests)
+                ViewModel.Requests.Add(request);
         }
-
-
-        [RelayCommand]
-        public async Task LoadRequests()
+        catch (Exception ex)
         {
-            try
-            {
-                var requests = await _chatClientService.Client.GetGroupRequestsAsync(0, LoadCount);
-                ViewModel.Requests.Clear();
-                foreach (var request in requests)
-                    ViewModel.Requests.Add(request);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(Application.Current.MainWindow, $"Failed to load requests. {ex.Message}", "Error");
-            }
+            MessageBox.Show(Application.Current.MainWindow, $"Failed to load requests. {ex.Message}", "Error");
         }
+    }
 
-        [RelayCommand]
-        public async Task LoadMoreRequests()
+    [RelayCommand]
+    public async Task LoadMoreRequests()
+    {
+        try
         {
-            try
-            {
-                var requests = await _chatClientService.Client.GetGroupRequestsAsync(ViewModel.Requests.Count, LoadCount);
-                foreach (var request in requests)
-                    ViewModel.Requests.Add(request);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(Application.Current.MainWindow, $"Failed to load more requests. {ex.Message}", "Error");
-            }
+            var requests = await _chatClientService.Client.GetGroupRequestsAsync(ViewModel.Requests.Count, LoadCount);
+            foreach (var request in requests)
+                ViewModel.Requests.Add(request);
         }
-
-        [RelayCommand]
-        public async Task AcceptRequest(GroupRequest request)
+        catch (Exception ex)
         {
-            try
+            MessageBox.Show(Application.Current.MainWindow, $"Failed to load more requests. {ex.Message}", "Error");
+        }
+    }
+
+    [RelayCommand]
+    public async Task AcceptRequest(GroupRequest request)
+    {
+        try
+        {
+            await _chatClientService.Client.AcceptGroupRequestAsync(request.Id);
+            var index = ViewModel.Requests.IndexOf(request);
+            if (index != -1)
             {
-                await _chatClientService.Client.AcceptGroupRequestAsync(request.Id);
-                var index = ViewModel.Requests.IndexOf(request);
-                if (index != -1)
-                {
-                    ViewModel.Requests[index] = request with { IsDone = true };
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(App.Current.MainWindow, $"Failed to accept group request. {ex.Message}", "Error");
+                ViewModel.Requests[index] = request with { IsDone = true };
             }
         }
-
-        [RelayCommand]
-        public async Task RejectRequest(GroupRequest request)
+        catch (Exception ex)
         {
-            try
+            MessageBox.Show(App.Current.MainWindow, $"Failed to accept group request. {ex.Message}", "Error");
+        }
+    }
+
+    [RelayCommand]
+    public async Task RejectRequest(GroupRequest request)
+    {
+        try
+        {
+            await _chatClientService.Client.RejectGroupRequestAsync(request.Id, null);
+            var index = ViewModel.Requests.IndexOf(request);
+            if (index != -1)
             {
-                await _chatClientService.Client.RejectGroupRequestAsync(request.Id, null);
-                var index = ViewModel.Requests.IndexOf(request);
-                if (index != -1)
-                {
-                    ViewModel.Requests[index] = request with { IsDone = true };
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(App.Current.MainWindow, $"Failed to reject group request. {ex.Message}", "Error");
+                ViewModel.Requests[index] = request with { IsDone = true };
             }
         }
-
-
-        void IRecipient<GroupRequestReceivedMessage>.Receive(GroupRequestReceivedMessage message)
+        catch (Exception ex)
         {
-            ViewModel.Requests.Insert(0, message.Request);
+            MessageBox.Show(App.Current.MainWindow, $"Failed to reject group request. {ex.Message}", "Error");
         }
+    }
+
+
+    void IRecipient<GroupRequestReceivedMessage>.Receive(GroupRequestReceivedMessage message)
+    {
+        ViewModel.Requests.Insert(0, message.Request);
     }
 }

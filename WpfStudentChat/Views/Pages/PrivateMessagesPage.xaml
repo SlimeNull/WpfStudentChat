@@ -247,10 +247,11 @@
                             AcceptsReturn="True"
                             TextWrapping="Wrap"
                             BorderThickness="0 1 0 0"
-                            Text="{Binding ViewModel.TextInput,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
-                    <ui:TextBox.InputBindings>
-                        <KeyBinding Gesture="Control+Enter" Command="{Binding SendMessageCommand}"/>
-                    </ui:TextBox.InputBindings>
+                            Text="{Binding ViewModel.TextInput,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                            PreviewKeyDown="TextBox_PreviewKeyDown">
+                    <!--<ui:TextBox.InputBindings>
+                    <KeyBinding Gesture="Enter" Command="{Binding SendMessageCommand}"/>
+                    </ui:TextBox.InputBindings>-->
                 </ui:TextBox>
                 <ui:Button Grid.Row="1"
                            VerticalAlignment="Bottom"

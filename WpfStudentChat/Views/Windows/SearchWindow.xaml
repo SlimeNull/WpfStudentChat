@@ -110,7 +110,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchUserKeyword}"
+                        <ui:TextBox Grid.Column="0" Text="{Binding ViewModel.SearchGroupKeyword}"
                                     PlaceholderText="搜索群聊"/>
                         <Button Grid.Column="2" Content="搜索" Height="34"
                                 Command="{Binding SearchGroupsCommand}"/>

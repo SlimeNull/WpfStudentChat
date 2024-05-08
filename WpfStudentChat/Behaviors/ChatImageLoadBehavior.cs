@@ -49,7 +49,8 @@ public class ChatImageLoadBehavior : Behavior<EleCho.WpfSuite.Image>
 
             if (string.IsNullOrWhiteSpace(imageHash))
             {
-                imageLoadBehavior.AssociatedObject.Background = null;
+                if(imageLoadBehavior.AssociatedObject is not null)
+                    imageLoadBehavior.AssociatedObject.Background = null;
                 return;
             }
 
